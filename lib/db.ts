@@ -47,6 +47,8 @@ async function initDb(): Promise<void> {
         leave_type TEXT NOT NULL CHECK(leave_type IN ('emergency', 'normal')),
         start_date TEXT NOT NULL,
         end_date TEXT NOT NULL,
+        is_half_day SMALLINT DEFAULT 0,
+        half_day_period TEXT,
         reason TEXT NOT NULL,
         status TEXT DEFAULT 'pending'
           CHECK(status IN ('pending','admin_approved','approved','admin_rejected','super_admin_rejected')),
@@ -56,6 +58,19 @@ async function initDb(): Promise<void> {
         super_admin_id INTEGER REFERENCES hr_admins(id),
         super_admin_note TEXT,
         super_admin_action_at TIMESTAMPTZ,
+        created_at TIMESTAMPTZ DEFAULT NOW()
+      )
+    `);
+
+    // Add half-day columns to existing deployments (no-op on fresh)
+    await client.query(`ALTER TABLE hr_leave_applications ADD COLUMN IF NOT EXISTS is_half_day SMALLINT DEFAULT 0`);
+    await client.query(`ALTER TABLE hr_leave_applications ADD COLUMN IF NOT EXISTS half_day_period TEXT`);
+
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS hr_public_holidays (
+        id SERIAL PRIMARY KEY,
+        date TEXT UNIQUE NOT NULL,
+        name TEXT NOT NULL,
         created_at TIMESTAMPTZ DEFAULT NOW()
       )
     `);

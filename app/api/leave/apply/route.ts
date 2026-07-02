@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
   if (!employee) return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
 
   try {
-    const { leave_type, start_date, end_date, reason } = await request.json();
+    const { leave_type, start_date, end_date, is_half_day, half_day_period, reason } = await request.json();
 
     if (!leave_type || !start_date || !end_date || !reason?.trim()) {
       return NextResponse.json({ error: "All fields including reason are required." }, { status: 400 });
@@ -73,9 +73,9 @@ export async function POST(request: NextRequest) {
     }
 
     await query(`
-      INSERT INTO hr_leave_applications (employee_id, leave_type, start_date, end_date, reason, status)
-      VALUES ($1, $2, $3, $4, $5, 'pending')
-    `, [employee.id, leave_type, start_date, end_date, reason.trim()]);
+      INSERT INTO hr_leave_applications (employee_id, leave_type, start_date, end_date, is_half_day, half_day_period, reason, status)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, 'pending')
+    `, [employee.id, leave_type, start_date, end_date, is_half_day ? 1 : 0, half_day_period ?? null, reason.trim()]);
 
     return NextResponse.json({ success: true, message: "Leave application submitted successfully." });
   } catch {

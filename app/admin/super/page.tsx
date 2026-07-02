@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getAdminFromCookies } from "@/lib/admin-auth";
-import db from "@/lib/db";
+import { query } from "@/lib/db";
 import LeaveActionButtons from "@/components/LeaveActionButtons";
 
 interface LeaveWithEmployee {
@@ -58,30 +58,30 @@ export default async function SuperAdminPage() {
   if (!admin) redirect("/admin/login");
   if (admin.role !== "super_admin") redirect("/admin");
 
-  // Leaves awaiting super admin final approval
-  const pendingLeaves = db.prepare(`
+  const pendingResult = await query(`
     SELECT la.*,
       e.name as employee_name,
       e.email as employee_email,
       e.department,
       e.employee_code,
       a1.username as admin_username
-    FROM leave_applications la
-    JOIN employees e ON la.employee_id = e.id
-    LEFT JOIN admins a1 ON la.admin_id = a1.id
+    FROM hr_leave_applications la
+    JOIN hr_employees e ON la.employee_id = e.id
+    LEFT JOIN hr_admins a1 ON la.admin_id = a1.id
     WHERE la.status = 'admin_approved'
     ORDER BY la.admin_action_at ASC
-  `).all() as LeaveWithEmployee[];
+  `);
+  const pendingLeaves = pendingResult.rows as LeaveWithEmployee[];
 
-  // All leaves history for overview
-  const allLeaves = db.prepare(`
+  const allResult = await query(`
     SELECT la.id, la.leave_type, la.start_date, la.end_date, la.status, la.created_at,
       e.name as employee_name
-    FROM leave_applications la
-    JOIN employees e ON la.employee_id = e.id
+    FROM hr_leave_applications la
+    JOIN hr_employees e ON la.employee_id = e.id
     ORDER BY la.created_at DESC
     LIMIT 30
-  `).all() as AllLeave[];
+  `);
+  const allLeaves = allResult.rows as AllLeave[];
 
   const stats = {
     awaitingYou: pendingLeaves.length,
@@ -167,7 +167,6 @@ export default async function SuperAdminPage() {
                 <div key={leave.id} className="bg-white rounded-xl border p-5" style={{ borderColor: "#E2E8F0" }}>
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1 min-w-0">
-                      {/* Khidmat Guzar */}
                       <div className="flex items-center gap-2 mb-2">
                         <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white"
                           style={{ background: "linear-gradient(135deg, #7C3AED, #4F46E5)" }}>
@@ -183,7 +182,6 @@ export default async function SuperAdminPage() {
                         </div>
                       </div>
 
-                      {/* Leave info */}
                       <div className="flex items-center gap-2 flex-wrap mb-2">
                         <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{ backgroundColor: lm.bg, color: lm.color }}>
                           {lm.label} Leave

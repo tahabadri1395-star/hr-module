@@ -1,17 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
-import db from "@/lib/db";
+import { query } from "@/lib/db";
 import { getAdminTokenFromRequest, verifyAdminToken } from "@/lib/admin-auth";
-
-interface KhidmatGuzar {
-  id: number;
-  name: string;
-  email: string;
-  department: string | null;
-  employee_code: string | null;
-  active: number;
-  created_at: string;
-}
 
 export async function GET(request: NextRequest) {
   const token = getAdminTokenFromRequest(request);
@@ -19,12 +9,12 @@ export async function GET(request: NextRequest) {
   const admin = await verifyAdminToken(token);
   if (!admin) return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
 
-  const list = db.prepare(`
+  const result = await query(`
     SELECT id, name, email, department, employee_code, active, created_at
-    FROM employees ORDER BY name ASC
-  `).all() as KhidmatGuzar[];
+    FROM hr_employees ORDER BY name ASC
+  `);
 
-  return NextResponse.json({ list });
+  return NextResponse.json({ list: result.rows });
 }
 
 export async function POST(request: NextRequest) {
@@ -39,20 +29,20 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Name, email, and password are required." }, { status: 400 });
   }
 
-  const existing = db.prepare("SELECT id FROM employees WHERE email = ?").get(email.trim());
-  if (existing) return NextResponse.json({ error: "Email already registered." }, { status: 409 });
+  const existing = await query("SELECT id FROM hr_employees WHERE email = $1", [email.trim()]);
+  if (existing.rows[0]) return NextResponse.json({ error: "Email already registered." }, { status: 409 });
 
   if (employee_code?.trim()) {
-    const codeExists = db.prepare("SELECT id FROM employees WHERE employee_code = ?").get(employee_code.trim());
-    if (codeExists) return NextResponse.json({ error: "Employee code already in use." }, { status: 409 });
+    const codeExists = await query("SELECT id FROM hr_employees WHERE employee_code = $1", [employee_code.trim()]);
+    if (codeExists.rows[0]) return NextResponse.json({ error: "Employee code already in use." }, { status: 409 });
   }
 
-  const hash = bcrypt.hashSync(password.trim(), 10);
-  const result = db.prepare(`
-    INSERT INTO employees (name, email, department, employee_code, password_hash)
-    VALUES (?, ?, ?, ?, ?)
-  `).run(name.trim(), email.trim().toLowerCase(), department?.trim() || null, employee_code?.trim() || null, hash) as { lastInsertRowid: number };
+  const hash = await bcrypt.hash(password.trim(), 10);
+  const result = await query(`
+    INSERT INTO hr_employees (name, email, department, employee_code, password_hash)
+    VALUES ($1, $2, $3, $4, $5)
+    RETURNING id, name, email, department, employee_code, active, created_at
+  `, [name.trim(), email.trim().toLowerCase(), department?.trim() || null, employee_code?.trim() || null, hash]);
 
-  const created = db.prepare("SELECT id, name, email, department, employee_code, active, created_at FROM employees WHERE id = ?").get(result.lastInsertRowid);
-  return NextResponse.json({ success: true, employee: created }, { status: 201 });
+  return NextResponse.json({ success: true, employee: result.rows[0] }, { status: 201 });
 }

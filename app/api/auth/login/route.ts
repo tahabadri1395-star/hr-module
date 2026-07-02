@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
-import db from "@/lib/db";
+import { query } from "@/lib/db";
 import { signEmployeeToken, EMPLOYEE_COOKIE } from "@/lib/auth";
 
 interface Employee {
@@ -19,9 +19,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Email and password required." }, { status: 400 });
     }
 
-    const employee = db.prepare("SELECT * FROM employees WHERE email = ?").get(email) as Employee | undefined;
+    const result = await query("SELECT * FROM hr_employees WHERE email = $1", [email]);
+    const employee = result.rows[0] as Employee | undefined;
 
-    if (!employee || !bcrypt.compareSync(password, employee.password_hash)) {
+    if (!employee || !(await bcrypt.compare(password, employee.password_hash))) {
       return NextResponse.json({ error: "Invalid credentials." }, { status: 401 });
     }
 

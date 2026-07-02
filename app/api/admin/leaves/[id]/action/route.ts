@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import db from "@/lib/db";
+import { query } from "@/lib/db";
 import { getAdminTokenFromRequest, verifyAdminToken } from "@/lib/admin-auth";
 
 interface LeaveApp {
@@ -23,7 +23,8 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     return NextResponse.json({ error: "Action must be approve or reject." }, { status: 400 });
   }
 
-  const leave = db.prepare("SELECT id, status FROM leave_applications WHERE id = ?").get(leaveId) as LeaveApp | undefined;
+  const leaveResult = await query("SELECT id, status FROM hr_leave_applications WHERE id = $1", [leaveId]);
+  const leave = leaveResult.rows[0] as LeaveApp | undefined;
   if (!leave) return NextResponse.json({ error: "Leave application not found." }, { status: 404 });
 
   const now = new Date().toISOString();
@@ -33,11 +34,11 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       return NextResponse.json({ error: "This leave is not pending admin review." }, { status: 400 });
     }
     const newStatus = action === "approve" ? "admin_approved" : "admin_rejected";
-    db.prepare(`
-      UPDATE leave_applications
-      SET status = ?, admin_id = ?, admin_note = ?, admin_action_at = ?
-      WHERE id = ?
-    `).run(newStatus, admin.id, note ?? null, now, leaveId);
+    await query(`
+      UPDATE hr_leave_applications
+      SET status = $1, admin_id = $2, admin_note = $3, admin_action_at = $4
+      WHERE id = $5
+    `, [newStatus, admin.id, note ?? null, now, leaveId]);
 
     return NextResponse.json({ success: true, status: newStatus });
   }
@@ -47,11 +48,11 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       return NextResponse.json({ error: "This leave has not been approved by admin yet." }, { status: 400 });
     }
     const newStatus = action === "approve" ? "approved" : "super_admin_rejected";
-    db.prepare(`
-      UPDATE leave_applications
-      SET status = ?, super_admin_id = ?, super_admin_note = ?, super_admin_action_at = ?
-      WHERE id = ?
-    `).run(newStatus, admin.id, note ?? null, now, leaveId);
+    await query(`
+      UPDATE hr_leave_applications
+      SET status = $1, super_admin_id = $2, super_admin_note = $3, super_admin_action_at = $4
+      WHERE id = $5
+    `, [newStatus, admin.id, note ?? null, now, leaveId]);
 
     return NextResponse.json({ success: true, status: newStatus });
   }

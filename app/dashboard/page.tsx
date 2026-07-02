@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getEmployeeFromCookies } from "@/lib/auth";
-import db from "@/lib/db";
+import { query } from "@/lib/db";
 
 interface LeaveApp {
   id: number;
@@ -38,21 +38,22 @@ export default async function DashboardPage() {
   const employee = await getEmployeeFromCookies();
   if (!employee) redirect("/login");
 
-  const leaves = db.prepare(`
-    SELECT la.* FROM leave_applications la
-    WHERE la.employee_id = ?
+  const leavesResult = await query(`
+    SELECT la.* FROM hr_leave_applications la
+    WHERE la.employee_id = $1
     ORDER BY la.created_at DESC
-  `).all(employee.id) as LeaveApp[];
+  `, [employee.id]);
+  const leaves = leavesResult.rows as LeaveApp[];
 
   const currentYear = new Date().getFullYear();
-  const { emergency_used } = db.prepare(`
-    SELECT COUNT(*) as emergency_used FROM leave_applications
-    WHERE employee_id = ?
+  const countResult = await query(`
+    SELECT COUNT(*) as emergency_used FROM hr_leave_applications
+    WHERE employee_id = $1
       AND leave_type = 'emergency'
       AND status NOT IN ('admin_rejected','super_admin_rejected')
-      AND start_date BETWEEN ? AND ?
-  `).get(employee.id, `${currentYear}-01-01`, `${currentYear}-12-31`) as { emergency_used: number };
-
+      AND start_date BETWEEN $2 AND $3
+  `, [employee.id, `${currentYear}-01-01`, `${currentYear}-12-31`]);
+  const emergency_used = parseInt(countResult.rows[0].emergency_used, 10);
   const emergencyRemaining = Math.max(0, 7 - emergency_used);
 
   const pendingCount  = leaves.filter(l => l.status === "pending").length;

@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getAdminFromCookies } from "@/lib/admin-auth";
-import db from "@/lib/db";
+import { query } from "@/lib/db";
 import LeaveActionButtons from "@/components/LeaveActionButtons";
 
 interface LeaveWithEmployee {
@@ -36,20 +36,20 @@ export default async function AdminDashboardPage() {
   const admin = await getAdminFromCookies();
   if (!admin) redirect("/admin/login");
 
-  // Admin sees pending; super_admin should use /admin/super
   if (admin.role === "super_admin") redirect("/admin/super");
 
-  const leaves = db.prepare(`
+  const result = await query(`
     SELECT la.*,
       e.name as employee_name,
       e.email as employee_email,
       e.department,
       e.employee_code
-    FROM leave_applications la
-    JOIN employees e ON la.employee_id = e.id
+    FROM hr_leave_applications la
+    JOIN hr_employees e ON la.employee_id = e.id
     WHERE la.status = 'pending'
     ORDER BY la.created_at ASC
-  `).all() as LeaveWithEmployee[];
+  `);
+  const leaves = result.rows as LeaveWithEmployee[];
 
   const totalPending = leaves.length;
   const emergencyCount = leaves.filter(l => l.leave_type === "emergency").length;
@@ -137,7 +137,6 @@ export default async function AdminDashboardPage() {
                 <div key={leave.id} className="bg-white rounded-xl border p-5" style={{ borderColor: "#E2E8F0" }}>
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1 min-w-0">
-                      {/* Khidmat Guzar */}
                       <div className="flex items-center gap-2 mb-2">
                         <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white"
                           style={{ background: "linear-gradient(135deg, #4F46E5, #7C3AED)" }}>
@@ -153,7 +152,6 @@ export default async function AdminDashboardPage() {
                         </div>
                       </div>
 
-                      {/* Leave info */}
                       <div className="flex items-center gap-2 flex-wrap mb-2">
                         <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{ backgroundColor: lm.bg, color: lm.color }}>
                           {lm.label} Leave

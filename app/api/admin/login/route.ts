@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
-import db from "@/lib/db";
+import { query } from "@/lib/db";
 import { signAdminToken, ADMIN_COOKIE } from "@/lib/admin-auth";
 
 interface Admin {
@@ -18,9 +18,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Username and password required." }, { status: 400 });
     }
 
-    const admin = db.prepare("SELECT * FROM admins WHERE username = ?").get(username) as Admin | undefined;
+    const result = await query("SELECT * FROM hr_admins WHERE username = $1", [username]);
+    const admin = result.rows[0] as Admin | undefined;
 
-    if (!admin || !bcrypt.compareSync(password, admin.password_hash)) {
+    if (!admin || !(await bcrypt.compare(password, admin.password_hash))) {
       return NextResponse.json({ error: "Invalid credentials." }, { status: 401 });
     }
 

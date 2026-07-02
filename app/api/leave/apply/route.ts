@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import db from "@/lib/db";
+import { query } from "@/lib/db";
 import { getEmployeeTokenFromRequest, verifyEmployeeToken } from "@/lib/auth";
 
 const EMERGENCY_LIMIT = 7;
@@ -54,13 +54,15 @@ export async function POST(request: NextRequest) {
       const yearStart = `${currentYear}-01-01`;
       const yearEnd = `${currentYear}-12-31`;
 
-      const { count } = db.prepare(`
-        SELECT COUNT(*) as count FROM leave_applications
-        WHERE employee_id = ?
+      const countResult = await query(`
+        SELECT COUNT(*) as count FROM hr_leave_applications
+        WHERE employee_id = $1
           AND leave_type = 'emergency'
           AND status NOT IN ('admin_rejected', 'super_admin_rejected')
-          AND start_date BETWEEN ? AND ?
-      `).get(employee.id, yearStart, yearEnd) as { count: number };
+          AND start_date BETWEEN $2 AND $3
+      `, [employee.id, yearStart, yearEnd]);
+
+      const count = parseInt(countResult.rows[0].count, 10);
 
       if (count >= EMERGENCY_LIMIT) {
         return NextResponse.json({
@@ -70,10 +72,10 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    db.prepare(`
-      INSERT INTO leave_applications (employee_id, leave_type, start_date, end_date, reason, status)
-      VALUES (?, ?, ?, ?, ?, 'pending')
-    `).run(employee.id, leave_type, start_date, end_date, reason.trim());
+    await query(`
+      INSERT INTO hr_leave_applications (employee_id, leave_type, start_date, end_date, reason, status)
+      VALUES ($1, $2, $3, $4, $5, 'pending')
+    `, [employee.id, leave_type, start_date, end_date, reason.trim()]);
 
     return NextResponse.json({ success: true, message: "Leave application submitted successfully." });
   } catch {

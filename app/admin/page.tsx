@@ -125,9 +125,8 @@ export default async function AdminDashboardPage() {
         {/* Leave list */}
         {leaves.length === 0 ? (
           <div className="bg-white rounded-xl border py-16 text-center" style={{ borderColor: "#E2E8F0" }}>
-            <div className="text-4xl mb-3">✅</div>
-            <p className="font-medium text-sm" style={{ color: "#1E293B" }}>All caught up!</p>
-            <p className="text-xs mt-1" style={{ color: "#94A3B8" }}>No leave applications pending your review.</p>
+            <p className="font-medium text-sm mb-1" style={{ color: "#1E293B" }}>No pending applications</p>
+            <p className="text-xs" style={{ color: "#94A3B8" }}>All leave requests have been reviewed.</p>
           </div>
         ) : (
           <div className="space-y-3">

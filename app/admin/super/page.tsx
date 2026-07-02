@@ -155,9 +155,8 @@ export default async function SuperAdminPage() {
 
         {pendingLeaves.length === 0 ? (
           <div className="bg-white rounded-xl border py-12 text-center mb-8" style={{ borderColor: "#E2E8F0" }}>
-            <div className="text-4xl mb-3">🎉</div>
-            <p className="font-medium text-sm" style={{ color: "#1E293B" }}>Nothing pending your review</p>
-            <p className="text-xs mt-1" style={{ color: "#94A3B8" }}>All admin-approved applications have been processed.</p>
+            <p className="font-medium text-sm mb-1" style={{ color: "#1E293B" }}>No applications pending final approval</p>
+            <p className="text-xs" style={{ color: "#94A3B8" }}>All admin-approved applications have been processed.</p>
           </div>
         ) : (
           <div className="space-y-3 mb-8">
@@ -197,7 +196,7 @@ export default async function SuperAdminPage() {
                         </span>
                         {leave.admin_id && (
                           <span className="text-xs px-2 py-0.5 rounded" style={{ backgroundColor: "#EFF6FF", color: "#1D4ED8" }}>
-                            ✓ Reviewed by Admin
+                            Reviewed by Admin
                           </span>
                         )}
                       </div>

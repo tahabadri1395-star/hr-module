@@ -119,11 +119,11 @@ export default async function DashboardPage() {
 
         {/* Emergency leave banner */}
         {emergencyRemaining === 0 && (
-          <div className="mb-6 px-5 py-4 rounded-xl border flex items-center gap-3"
+          <div className="mb-6 px-5 py-4 rounded-xl border"
             style={{ backgroundColor: "#FFF1F2", borderColor: "#FECDD3" }}>
-            <span style={{ fontSize: 20 }}>⚠️</span>
-            <p className="text-sm" style={{ color: "#9F1239" }}>
-              You have used all 7 emergency leave allowances for {currentYear}. Only normal leave (2+ days advance) is available.
+            <p className="text-sm font-medium mb-0.5" style={{ color: "#9F1239" }}>Emergency Leave Limit Reached</p>
+            <p className="text-xs" style={{ color: "#BE123C" }}>
+              You have used all 7 emergency leave allowances for {currentYear}. Only normal leave (minimum 2 days advance notice) is available.
             </p>
           </div>
         )}
@@ -137,9 +137,8 @@ export default async function DashboardPage() {
 
           {leaves.length === 0 ? (
             <div className="py-16 text-center">
-              <div className="text-4xl mb-3">📋</div>
-              <p className="text-sm font-medium" style={{ color: "#1E293B" }}>No applications yet</p>
-              <p className="text-xs mt-1 mb-4" style={{ color: "#94A3B8" }}>Submit your first leave application</p>
+              <p className="text-sm font-medium mb-1" style={{ color: "#1E293B" }}>No applications yet</p>
+              <p className="text-xs mb-4" style={{ color: "#94A3B8" }}>Submit your first leave application</p>
               <Link href="/apply"
                 className="inline-block text-xs font-medium px-5 py-2.5 rounded-lg text-white"
                 style={{ background: "linear-gradient(135deg, #4F46E5, #7C3AED)" }}>

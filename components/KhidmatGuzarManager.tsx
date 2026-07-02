@@ -219,7 +219,7 @@ export default function KhidmatGuzarManager({ adminRole }: { adminRole: string }
         )}
         {success && (
           <div className="mb-4 px-4 py-3 rounded-lg text-sm" style={{ backgroundColor: "#F0FDF4", color: "#15803D" }}>
-            ✓ {success}
+            {success}
           </div>
         )}
 
@@ -349,16 +349,14 @@ export default function KhidmatGuzarManager({ adminRole }: { adminRole: string }
         {/* List */}
         {loading ? (
           <div className="bg-white rounded-xl border py-16 text-center" style={{ borderColor: "#E2E8F0" }}>
-            <div className="text-3xl mb-2 animate-pulse">⏳</div>
             <p className="text-sm" style={{ color: "#94A3B8" }}>Loading…</p>
           </div>
         ) : filtered.length === 0 ? (
           <div className="bg-white rounded-xl border py-16 text-center" style={{ borderColor: "#E2E8F0" }}>
-            <div className="text-4xl mb-3">👥</div>
-            <p className="font-medium text-sm" style={{ color: "#1E293B" }}>
+            <p className="font-medium text-sm mb-1" style={{ color: "#1E293B" }}>
               {search ? "No matches found" : "No Khidmat Guzars yet"}
             </p>
-            <p className="text-xs mt-1" style={{ color: "#94A3B8" }}>
+            <p className="text-xs" style={{ color: "#94A3B8" }}>
               {search ? "Try a different search term" : "Click \"Add Khidmat Guzar\" to get started"}
             </p>
           </div>

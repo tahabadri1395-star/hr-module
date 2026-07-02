@@ -100,7 +100,11 @@ export default function ApplyLeavePage() {
 
         {success ? (
           <div className="bg-white rounded-xl border p-10 text-center" style={{ borderColor: "#E2E8F0" }}>
-            <div className="text-5xl mb-4">✅</div>
+            <div className="w-12 h-12 rounded-full mx-auto mb-4 flex items-center justify-center" style={{ backgroundColor: "#F0FDF4" }}>
+              <svg width="22" height="22" fill="none" viewBox="0 0 24 24">
+                <path d="M5 13l4 4L19 7" stroke="#15803D" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
             <h2 className="text-lg font-semibold mb-2" style={{ color: "#1E293B" }}>Application Submitted</h2>
             <p className="text-sm" style={{ color: "#64748B" }}>Your leave request is pending approval. Redirecting...</p>
           </div>
@@ -112,8 +116,8 @@ export default function ApplyLeavePage() {
                 <label className="block text-xs font-medium mb-3" style={{ color: "#64748B" }}>Leave Type</label>
                 <div className="grid grid-cols-2 gap-3">
                   {[
-                    { value: "normal",    label: "Normal Leave",    desc: "Apply 2+ days in advance", icon: "📅", color: "#4338CA", bg: "#EEF2FF", border: "#C7D2FE" },
-                    { value: "emergency", label: "Emergency Leave",  desc: `${emergencyRemaining ?? "—"} of 7 remaining`, icon: "🚨", color: "#E11D48", bg: "#FFF1F2", border: "#FECDD3" },
+                    { value: "normal",    label: "Normal Leave",    desc: "Apply 2+ days in advance",                       color: "#4338CA", bg: "#EEF2FF", border: "#C7D2FE" },
+                    { value: "emergency", label: "Emergency Leave",  desc: `${emergencyRemaining ?? "—"} of 7 remaining`,   color: "#E11D48", bg: "#FFF1F2", border: "#FECDD3" },
                   ].map(opt => (
                     <button
                       key={opt.value}
@@ -128,11 +132,10 @@ export default function ApplyLeavePage() {
                         cursor: opt.value === "emergency" && emergencyRemaining === 0 ? "not-allowed" : "pointer",
                       }}
                     >
-                      <div className="text-xl mb-1">{opt.icon}</div>
-                      <div className="text-xs font-semibold" style={{ color: form.leave_type === opt.value ? opt.color : "#1E293B" }}>
+                      <div className="text-xs font-semibold mb-0.5" style={{ color: form.leave_type === opt.value ? opt.color : "#1E293B" }}>
                         {opt.label}
                       </div>
-                      <div className="text-xs mt-0.5" style={{ color: "#94A3B8" }}>{opt.desc}</div>
+                      <div className="text-xs" style={{ color: "#94A3B8" }}>{opt.desc}</div>
                       {form.leave_type === opt.value && (
                         <div className="absolute top-2 right-2 w-4 h-4 rounded-full flex items-center justify-center"
                           style={{ backgroundColor: opt.color }}>

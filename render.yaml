@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: hr-module
+    runtime: node
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATA_DIR
+        value: /data
+      - key: JWT_SECRET
+        generateValue: true
+      - key: ADMIN_JWT_SECRET
+        generateValue: true
+    disk:
+      name: hr-data
+      mountPath: /data
+      sizeGB: 1

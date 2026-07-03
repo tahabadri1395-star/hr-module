@@ -195,7 +195,7 @@ export default function AdminEmployeeProfilePage() {
                     onFocus={e=>(e.target.style.borderColor="#4F46E5")} onBlur={e=>(e.target.style.borderColor="#E2E8F0")}/>
                 </div>
                 <div className="col-span-2 border-t pt-4" style={{ borderColor: "#F1F5F9" }}>
-                  <p className="text-xs font-semibold mb-3" style={{ color: "#64748B" }}>Waris (Heir / Next of Kin)</p>
+                  <p className="text-xs font-semibold mb-3" style={{ color: "#64748B" }}>Hijiri Waras</p>
                   <div className="grid grid-cols-3 gap-4">
                     {([["Name","waris_name"],["Contact","waris_contact"],["Relation","waris_relation"]] as [string,keyof Profile][]).map(([label,key])=>(
                       <div key={key}>
@@ -218,9 +218,9 @@ export default function AdminEmployeeProfilePage() {
                 </div>
                 <div>
                   <Field label="Address" value={profile.address}/>
-                  <Field label="Waris (Heir)" value={profile.waris_name}/>
-                  <Field label="Waris Contact" value={profile.waris_contact}/>
-                  <Field label="Waris Relation" value={profile.waris_relation}/>
+                  <Field label="Hijiri Waras Name" value={profile.waris_name}/>
+                  <Field label="Hijiri Waras Contact" value={profile.waris_contact}/>
+                  <Field label="Hijiri Waras Relation" value={profile.waris_relation}/>
                 </div>
               </div>
             )}
@@ -249,7 +249,7 @@ export default function AdminEmployeeProfilePage() {
             {editSection === "docs" ? (
               <div className="grid grid-cols-2 gap-4">
                 {([
-                  ["ITS Number (Dawat ID)", "its_number"],
+                  ["ITS Number", "its_number"],
                   ["Passport Number", "passport_number"],
                   ["Passport Expiry", "passport_expiry"],
                   ["Aadhar Number", "aadhar_number"],
@@ -266,7 +266,7 @@ export default function AdminEmployeeProfilePage() {
             ) : (
               <div className="grid grid-cols-2 gap-x-8">
                 <div>
-                  <Field label="ITS Number (Dawat ID)" value={profile.its_number}/>
+                  <Field label="ITS Number" value={profile.its_number}/>
                   <Field label="Passport Number" value={profile.passport_number}/>
                   <Field label="Passport Expiry" value={profile.passport_expiry}/>
                 </div>

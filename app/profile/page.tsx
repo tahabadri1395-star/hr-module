@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 interface Employee { id: number; name: string; email: string; department: string | null; employee_code: string | null; }
-interface Profile { phone?: string; whatsapp?: string; address?: string; city?: string; date_of_birth?: string; waris_name?: string; waris_contact?: string; waris_relation?: string; }
+interface Profile { phone?: string; whatsapp?: string; address?: string; city?: string; date_of_birth?: string; its_number?: string; }
 interface Education { id: number; institution: string; degree: string | null; field: string | null; year_from: string | null; year_to: string | null; status: string; }
 interface TestResult { id: number; test_name: string; score: string | null; date: string | null; remarks: string | null; }
 
@@ -175,20 +175,6 @@ export default function ProfilePage() {
                     />
                   </div>
                 ))}
-                <div className="col-span-2 border-t pt-4 mt-2" style={{ borderColor: "#F1F5F9" }}>
-                  <p className="text-xs font-semibold mb-3" style={{ color: "#64748B" }}>Hijiri Waras</p>
-                  <div className="grid grid-cols-3 gap-4">
-                    {([["Name", "waris_name"], ["Contact", "waris_contact"], ["Relation", "waris_relation"]] as [string, keyof Profile][]).map(([label, key]) => (
-                      <div key={key}>
-                        <label className="block text-xs font-medium mb-1.5" style={{ color: "#64748B" }}>{label}</label>
-                        <input value={form[key] ?? ""} onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))}
-                          className={inputClass} style={inputStyle}
-                          onFocus={e => (e.target.style.borderColor = "#4F46E5")}
-                          onBlur={e => (e.target.style.borderColor = "#E2E8F0")} />
-                      </div>
-                    ))}
-                  </div>
-                </div>
               </div>
             ) : (
               <div className="grid grid-cols-2 gap-x-8">
@@ -200,9 +186,7 @@ export default function ProfilePage() {
                 </div>
                 <div>
                   <Field label="Address" value={profile.address} />
-                  <Field label="Hijiri Waras Name" value={profile.waris_name} />
-                  <Field label="Hijiri Waras Contact" value={profile.waris_contact} />
-                  <Field label="Hijiri Waras Relation" value={profile.waris_relation} />
+                  <Field label="ITS Number" value={profile.its_number} />
                 </div>
               </div>
             )}

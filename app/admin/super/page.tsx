@@ -122,8 +122,17 @@ export default async function SuperAdminPage() {
       </nav>
 
       <div className="max-w-5xl mx-auto px-6 py-8">
+        {/* Welcome */}
+        <div className="rounded-2xl p-6 mb-8" style={{ background: "linear-gradient(135deg, #1E1B4B 0%, #312E81 100%)" }}>
+          <p className="text-xs font-medium mb-1" style={{ color: "#A5B4FC" }}>
+            {new Date().toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
+          </p>
+          <h1 className="text-2xl font-bold text-white">Super Admin Dashboard</h1>
+          <p className="text-sm mt-1" style={{ color: "#A5B4FC" }}>HR Management System</p>
+        </div>
+
         <div className="mb-6">
-          <h1 className="text-2xl font-semibold" style={{ color: "#1E293B" }}>Final Approval — Super Admin</h1>
+          <h1 className="text-2xl font-semibold" style={{ color: "#1E293B" }}>Final Approval</h1>
           <p className="text-sm mt-1" style={{ color: "#64748B" }}>
             These applications have been reviewed by the admin and are awaiting your final decision.
           </p>
@@ -141,6 +150,29 @@ export default async function SuperAdminPage() {
               <p className="text-2xl font-bold" style={{ color: s.color }}>{s.value}</p>
               <p className="text-xs mt-1" style={{ color: "#94A3B8" }}>{s.label}</p>
             </div>
+          ))}
+        </div>
+
+        {/* Module shortcuts */}
+        <div className="grid grid-cols-3 gap-4 mb-8">
+          {[
+            { href: "/admin/tasks",    label: "Task Management", desc: "Assign tasks",          accent: "#0891B2", bg: "#ECFEFF", icon: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" },
+            { href: "/admin/calendar", label: "Calendar",        desc: "Team leave overview",   accent: "#059669", bg: "#ECFDF5", icon: "M8 7V3m8 4V3M3 11h18M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" },
+            { href: "/admin/settings", label: "Settings",        desc: "Manage the system",     accent: "#475569", bg: "#F1F5F9", icon: "M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z M15 12a3 3 0 11-6 0 3 3 0 016 0z" },
+          ].map(m => (
+            <Link key={m.label} href={m.href}
+              className="bg-white rounded-xl border p-4 flex flex-col gap-3 transition hover:shadow-sm"
+              style={{ borderColor: "#E2E8F0" }}>
+              <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ backgroundColor: m.bg }}>
+                <svg width="18" height="18" fill="none" viewBox="0 0 24 24">
+                  <path d={m.icon} stroke={m.accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
+              <div>
+                <p className="text-sm font-semibold" style={{ color: "#1E293B" }}>{m.label}</p>
+                <p className="text-xs mt-0.5" style={{ color: "#94A3B8" }}>{m.desc}</p>
+              </div>
+            </Link>
           ))}
         </div>
 

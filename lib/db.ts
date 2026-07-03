@@ -75,6 +75,56 @@ async function initDb(): Promise<void> {
       )
     `);
 
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS hr_employee_profiles (
+        employee_id INTEGER PRIMARY KEY REFERENCES hr_employees(id),
+        phone TEXT,
+        whatsapp TEXT,
+        address TEXT,
+        city TEXT,
+        date_of_birth TEXT,
+        waris_name TEXT,
+        waris_contact TEXT,
+        waris_relation TEXT,
+        its_number TEXT,
+        passport_number TEXT,
+        passport_expiry TEXT,
+        aadhar_number TEXT,
+        pan_number TEXT,
+        bank_name TEXT,
+        bank_account TEXT,
+        bank_ifsc TEXT,
+        bank_branch TEXT,
+        updated_at TIMESTAMPTZ DEFAULT NOW()
+      )
+    `);
+
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS hr_employee_education (
+        id SERIAL PRIMARY KEY,
+        employee_id INTEGER NOT NULL REFERENCES hr_employees(id),
+        institution TEXT NOT NULL,
+        degree TEXT,
+        field TEXT,
+        year_from TEXT,
+        year_to TEXT,
+        status TEXT DEFAULT 'completed',
+        created_at TIMESTAMPTZ DEFAULT NOW()
+      )
+    `);
+
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS hr_test_results (
+        id SERIAL PRIMARY KEY,
+        employee_id INTEGER NOT NULL REFERENCES hr_employees(id),
+        test_name TEXT NOT NULL,
+        score TEXT,
+        date TEXT,
+        remarks TEXT,
+        created_at TIMESTAMPTZ DEFAULT NOW()
+      )
+    `);
+
     // Seed admin accounts (no-op if already exist)
     const aqHash = await bcrypt.hash("AQ@Secure99", 10);
     await client.query(

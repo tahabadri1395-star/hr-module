@@ -442,6 +442,11 @@ export default function KhidmatGuzarManager({ adminRole }: { adminRole: string }
 
                         {/* Actions */}
                         <div className="flex items-center gap-2 shrink-0 flex-wrap justify-end">
+                          <Link href={`/admin/employees/${kg.id}/profile`}
+                            className="text-xs px-3 py-1.5 rounded-lg border transition-colors hover:bg-slate-50"
+                            style={{ borderColor: "#E2E8F0", color: "#4F46E5" }}>
+                            Profile
+                          </Link>
                           <button onClick={() => startEdit(kg)}
                             className="text-xs px-3 py-1.5 rounded-lg border transition-colors hover:bg-slate-50"
                             style={{ borderColor: "#E2E8F0", color: "#475569" }}>

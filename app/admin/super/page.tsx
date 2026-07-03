@@ -109,6 +109,7 @@ export default async function SuperAdminPage() {
           </span>
         </div>
         <div className="flex items-center gap-5">
+          <Link href="/admin/tasks" className="text-xs transition-colors hover:opacity-70" style={{ color: "#64748B" }}>Tasks</Link>
           <Link href="/admin/settings" className="text-xs transition-colors hover:opacity-70" style={{ color: "#64748B" }}>
             Settings
           </Link>

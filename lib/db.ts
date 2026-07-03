@@ -125,6 +125,22 @@ async function initDb(): Promise<void> {
       )
     `);
 
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS hr_tasks (
+        id SERIAL PRIMARY KEY,
+        title TEXT NOT NULL,
+        description TEXT,
+        assigned_to INTEGER NOT NULL REFERENCES hr_employees(id),
+        assigned_by TEXT NOT NULL,
+        priority TEXT DEFAULT 'medium' CHECK(priority IN ('low','medium','high')),
+        status TEXT DEFAULT 'pending' CHECK(status IN ('pending','ongoing','completed')),
+        due_date TEXT,
+        completed_at TIMESTAMPTZ,
+        created_at TIMESTAMPTZ DEFAULT NOW(),
+        updated_at TIMESTAMPTZ DEFAULT NOW()
+      )
+    `);
+
     // Seed admin accounts (no-op if already exist)
     const aqHash = await bcrypt.hash("AQ@Secure99", 10);
     await client.query(

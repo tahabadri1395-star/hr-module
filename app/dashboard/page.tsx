@@ -3,6 +3,13 @@ import Link from "next/link";
 import { getEmployeeFromCookies } from "@/lib/auth";
 import { query } from "@/lib/db";
 import CancelLeaveButton from "@/components/CancelLeaveButton";
+import TaskStatusButton from "@/components/TaskStatusButton";
+
+interface Task {
+  id: number; title: string; description: string | null;
+  assigned_by: string; priority: "low" | "medium" | "high"; status: "pending" | "ongoing" | "completed";
+  due_date: string | null; created_at: string;
+}
 
 interface LeaveApp {
   id: number;
@@ -45,12 +52,12 @@ export default async function DashboardPage() {
   const employee = await getEmployeeFromCookies();
   if (!employee) redirect("/login");
 
-  const leavesResult = await query(`
-    SELECT la.* FROM hr_leave_applications la
-    WHERE la.employee_id = $1
-    ORDER BY la.created_at DESC
-  `, [employee.id]);
+  const [leavesResult, tasksResult] = await Promise.all([
+    query(`SELECT la.* FROM hr_leave_applications la WHERE la.employee_id = $1 ORDER BY la.created_at DESC`, [employee.id]),
+    query(`SELECT * FROM hr_tasks WHERE assigned_to = $1 ORDER BY CASE status WHEN 'ongoing' THEN 1 WHEN 'pending' THEN 2 WHEN 'completed' THEN 3 END, created_at DESC`, [employee.id]),
+  ]);
   const leaves = leavesResult.rows as LeaveApp[];
+  const tasks = tasksResult.rows as Task[];
 
   const currentYear = new Date().getFullYear();
   const countResult = await query(`
@@ -127,6 +134,55 @@ export default async function DashboardPage() {
             <p className="text-xs" style={{ color: "#BE123C" }}>
               All 7 emergency leave allowances for {currentYear} are used. Only normal leave (2+ days advance) is available.
             </p>
+          </div>
+        )}
+
+        {/* Tasks */}
+        {tasks.length > 0 && (
+          <div className="bg-white rounded-xl border overflow-hidden mb-6" style={{ borderColor: "#E2E8F0" }}>
+            <div className="px-6 py-4 border-b flex items-center justify-between" style={{ borderColor: "#F1F5F9" }}>
+              <h2 className="font-semibold text-sm" style={{ color: "#1E293B" }}>My Tasks</h2>
+              <div className="flex gap-2 text-xs" style={{ color: "#94A3B8" }}>
+                <span>{tasks.filter(t => t.status === "ongoing").length} ongoing</span>
+                <span>·</span>
+                <span>{tasks.filter(t => t.status === "pending").length} pending</span>
+              </div>
+            </div>
+            <div className="divide-y" style={{ borderColor: "#F8FAFC" }}>
+              {tasks.filter(t => t.status !== "completed").map(task => {
+                const PRIORITY_META = {
+                  high:   { label: "High",   bg: "#FFF1F2", color: "#E11D48" },
+                  medium: { label: "Medium", bg: "#FFFBEB", color: "#B45309" },
+                  low:    { label: "Low",    bg: "#F0FDF4", color: "#15803D" },
+                };
+                const pm = PRIORITY_META[task.priority];
+                const isOverdue = task.due_date && new Date(task.due_date) < new Date();
+                return (
+                  <div key={task.id} className="px-6 py-4">
+                    <div className="flex items-start gap-2 flex-wrap mb-1">
+                      <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{ backgroundColor: pm.bg, color: pm.color }}>{pm.label}</span>
+                      {isOverdue && <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{ backgroundColor: "#FEF2F2", color: "#DC2626" }}>Overdue</span>}
+                    </div>
+                    <p className="text-sm font-semibold" style={{ color: "#1E293B" }}>{task.title}</p>
+                    {task.description && <p className="text-xs mt-0.5" style={{ color: "#64748B" }}>{task.description}</p>}
+                    {task.due_date && (
+                      <p className="text-xs mt-1" style={{ color: isOverdue ? "#DC2626" : "#94A3B8" }}>
+                        Due: {new Date(task.due_date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                      </p>
+                    )}
+                    <TaskStatusButton taskId={task.id} currentStatus={task.status} />
+                  </div>
+                );
+              })}
+              {tasks.filter(t => t.status === "completed").length > 0 && (
+                <div className="px-6 py-3">
+                  <p className="text-xs font-medium mb-2" style={{ color: "#94A3B8" }}>Completed</p>
+                  {tasks.filter(t => t.status === "completed").map(task => (
+                    <p key={task.id} className="text-xs py-1" style={{ color: "#CBD5E1", textDecoration: "line-through" }}>{task.title}</p>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         )}
 

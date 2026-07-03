@@ -83,6 +83,7 @@ export default async function AdminDashboardPage({ searchParams }: { searchParam
           <span className="text-xs px-2 py-0.5 rounded-full" style={{ backgroundColor: "#F1F5F9", color: "#475569" }}>Admin</span>
         </div>
         <div className="flex items-center gap-5">
+          <Link href="/admin/tasks" className="text-xs" style={{ color: "#64748B" }}>Tasks</Link>
           <Link href="/admin/calendar" className="text-xs" style={{ color: "#64748B" }}>Calendar</Link>
           <Link href="/admin/settings" className="text-xs" style={{ color: "#64748B" }}>Settings</Link>
           <form action="/api/admin/logout" method="POST">

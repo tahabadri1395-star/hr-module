@@ -141,6 +141,41 @@ async function initDb(): Promise<void> {
       )
     `);
 
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS hr_travel_requests (
+        id SERIAL PRIMARY KEY,
+        employee_id INTEGER NOT NULL REFERENCES hr_employees(id),
+        travel_type TEXT NOT NULL CHECK(travel_type IN ('site_visit','outstation','local')),
+        destination TEXT NOT NULL,
+        purpose TEXT NOT NULL,
+        travel_date TEXT NOT NULL,
+        return_date TEXT,
+        estimated_cost NUMERIC(10,2),
+        status TEXT DEFAULT 'pending' CHECK(status IN ('pending','approved','rejected')),
+        admin_note TEXT,
+        approved_by TEXT,
+        approved_at TIMESTAMPTZ,
+        created_at TIMESTAMPTZ DEFAULT NOW()
+      )
+    `);
+
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS hr_reimbursements (
+        id SERIAL PRIMARY KEY,
+        travel_id INTEGER REFERENCES hr_travel_requests(id) ON DELETE SET NULL,
+        employee_id INTEGER NOT NULL REFERENCES hr_employees(id),
+        description TEXT NOT NULL,
+        amount NUMERIC(10,2) NOT NULL,
+        receipt_date TEXT NOT NULL,
+        category TEXT DEFAULT 'other' CHECK(category IN ('transport','accommodation','meals','other')),
+        status TEXT DEFAULT 'pending' CHECK(status IN ('pending','approved','rejected')),
+        admin_note TEXT,
+        approved_by TEXT,
+        approved_at TIMESTAMPTZ,
+        created_at TIMESTAMPTZ DEFAULT NOW()
+      )
+    `);
+
     // Seed admin accounts (no-op if already exist)
     const aqHash = await bcrypt.hash("AQ@Secure99", 10);
     await client.query(

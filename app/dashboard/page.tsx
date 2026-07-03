@@ -40,12 +40,14 @@ export default async function DashboardPage() {
   if (!employee) redirect("/login");
 
   const currentYear = new Date().getFullYear();
-  const [leavesRes, tasksRes, emergencyRes] = await Promise.all([
+  const [leavesRes, tasksRes, emergencyRes, empRes] = await Promise.all([
     query(`SELECT * FROM hr_leave_applications WHERE employee_id=$1 ORDER BY created_at DESC`, [employee.id]),
     query(`SELECT * FROM hr_tasks WHERE assigned_to=$1 ORDER BY CASE status WHEN 'ongoing' THEN 1 WHEN 'pending' THEN 2 ELSE 3 END, created_at DESC`, [employee.id]),
     query(`SELECT COUNT(*) as used FROM hr_leave_applications WHERE employee_id=$1 AND leave_type='emergency' AND status NOT IN ('admin_rejected','super_admin_rejected') AND start_date BETWEEN $2 AND $3`,
       [employee.id, `${currentYear}-01-01`, `${currentYear}-12-31`]),
+    query(`SELECT department FROM hr_employees WHERE id=$1`, [employee.id]),
   ]);
+  const department: string | null = empRes.rows[0]?.department ?? null;
 
   const leaves      = leavesRes.rows as LeaveApp[];
   const tasks       = tasksRes.rows as Task[];
@@ -59,6 +61,7 @@ export default async function DashboardPage() {
     { href: "#tasks",   label: "My Tasks",      desc: `${activeTasks.length} active`, icon: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4", accent: "#0891B2", bg: "#ECFEFF" },
     { href: "/profile", label: "My Profile",    desc: "Personal information",         icon: "M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z", accent: "#7C3AED", bg: "#F5F3FF" },
     { href: "#leaves",  label: "Leave History", desc: `${leaves.length} applications`, icon: "M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z", accent: "#059669", bg: "#ECFDF5" },
+    { href: "/travel",  label: "Travel",        desc: "Requests & reimbursements",     icon: "M12 19l9 2-9-18-9 18 9-2zm0 0v-8", accent: "#0891B2", bg: "#ECFEFF" },
   ];
 
   return (
@@ -92,7 +95,7 @@ export default async function DashboardPage() {
               {new Date().toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
             </p>
             <h1 className="text-2xl font-bold text-white">Welcome, {employee.name.split(" ")[0]}</h1>
-            {employee.department && <p className="text-sm mt-1" style={{ color: "#94A3B8" }}>{employee.department}</p>}
+            {department && <p className="text-sm mt-1" style={{ color: "#94A3B8" }}>{department}</p>}
           </div>
           <div className="hidden sm:flex flex-col items-end gap-2">
             {emergLeft === 0 ? (

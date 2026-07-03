@@ -3,177 +3,194 @@ import Link from "next/link";
 import { getAdminFromCookies } from "@/lib/admin-auth";
 import { query } from "@/lib/db";
 
-interface RecentLeave {
-  id: number; leave_type: string; start_date: string; employee_name: string; created_at: string;
-}
+interface RecentLeave { id: number; leave_type: string; start_date: string; employee_name: string; created_at: string; }
+interface RecentTask  { id: number; title: string; status: string; employee_name: string; due_date: string | null; }
 
-function fmt(d: string) {
-  return new Date(d).toLocaleDateString("en-US", { month: "short", day: "numeric" });
-}
+function fmt(d: string) { return new Date(d).toLocaleDateString("en-US", { month: "short", day: "numeric" }); }
 
 export default async function AdminDashboardPage() {
   const admin = await getAdminFromCookies();
   if (!admin) redirect("/admin/login");
   if (admin.role === "super_admin") redirect("/admin/super");
 
-  const [leavesRes, kgRes, tasksRes, recentRes] = await Promise.all([
-    query(`SELECT COUNT(*) as total, COUNT(*) FILTER (WHERE leave_type='emergency') as emergency FROM hr_leave_applications WHERE status='pending'`),
-    query(`SELECT COUNT(*) as total FROM hr_employees WHERE active=1`),
-    query(`SELECT COUNT(*) as total, COUNT(*) FILTER (WHERE status='ongoing') as ongoing FROM hr_tasks WHERE status != 'completed'`),
-    query(`SELECT la.id, la.leave_type, la.start_date, e.name as employee_name, la.created_at FROM hr_leave_applications la JOIN hr_employees e ON e.id=la.employee_id WHERE la.status='pending' ORDER BY la.created_at ASC LIMIT 5`),
+  const [statsRes, recentLeavesRes, recentTasksRes, muraRes] = await Promise.all([
+    query(`SELECT
+      (SELECT COUNT(*) FROM hr_leave_applications WHERE status='pending') as pending_leaves,
+      (SELECT COUNT(*) FROM hr_leave_applications WHERE status='pending' AND leave_type='emergency') as emerg_leaves,
+      (SELECT COUNT(*) FROM hr_employees WHERE active=1) as total_kgs,
+      (SELECT COUNT(*) FROM hr_tasks WHERE status != 'completed') as open_tasks,
+      (SELECT COUNT(*) FROM hr_travel_requests WHERE status='pending') as pending_travel,
+      (SELECT COUNT(*) FROM hr_reimbursements WHERE status='pending') as pending_reimb,
+      (SELECT COUNT(*) FROM hr_murasalat) as total_mura`),
+    query(`SELECT la.id, la.leave_type, la.start_date, e.name as employee_name, la.created_at FROM hr_leave_applications la JOIN hr_employees e ON e.id=la.employee_id WHERE la.status='pending' ORDER BY la.created_at ASC LIMIT 6`),
+    query(`SELECT t.id, t.title, t.status, t.due_date, e.name as employee_name FROM hr_tasks t JOIN hr_employees e ON e.id=t.assigned_to WHERE t.status!='completed' ORDER BY t.created_at DESC LIMIT 4`),
+    query(`SELECT id, title, priority, created_at FROM hr_murasalat ORDER BY created_at DESC LIMIT 3`),
   ]);
 
-  const pendingLeaves  = parseInt(leavesRes.rows[0].total, 10);
-  const emergencyLeaves = parseInt(leavesRes.rows[0].emergency, 10);
-  const totalKGs       = parseInt(kgRes.rows[0].total, 10);
-  const openTasks      = parseInt(tasksRes.rows[0].total, 10);
-  const ongoingTasks   = parseInt(tasksRes.rows[0].ongoing, 10);
-  const recent         = recentRes.rows as RecentLeave[];
+  const s             = statsRes.rows[0];
+  const pendingLeaves = parseInt(s.pending_leaves, 10);
+  const emergLeaves   = parseInt(s.emerg_leaves, 10);
+  const totalKGs      = parseInt(s.total_kgs, 10);
+  const openTasks     = parseInt(s.open_tasks, 10);
+  const pendingTravel = parseInt(s.pending_travel, 10);
+  const pendingReimb  = parseInt(s.pending_reimb, 10);
+  const recentLeaves  = recentLeavesRes.rows as RecentLeave[];
+  const recentTasks   = recentTasksRes.rows as RecentTask[];
+  const recentMura    = muraRes.rows;
 
   const modules = [
-    {
-      href: "/admin/leaves", label: "Leave Approvals", desc: "Review and approve requests",
-      badge: pendingLeaves > 0 ? pendingLeaves : null, badgeColor: "#B45309", badgeBg: "#FFFBEB",
-      icon: "M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z",
-      accent: "#4F46E5", bg: "#EEF2FF",
-    },
-    {
-      href: "/admin/tasks", label: "Task Management", desc: "Assign and track tasks",
-      badge: openTasks > 0 ? openTasks : null, badgeColor: "#0891B2", badgeBg: "#ECFEFF",
-      icon: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4",
-      accent: "#0891B2", bg: "#ECFEFF",
-    },
-    {
-      href: "/admin/settings?tab=khidmat-guzars", label: "Khidmat Guzars", desc: `${totalKGs} active members`,
-      badge: null, badgeColor: "", badgeBg: "",
-      icon: "M17 20H7a2 2 0 01-2-2V9l5-5h7a2 2 0 012 2v12a2 2 0 01-2 2zM9 3v4a1 1 0 001 1h4",
-      accent: "#7C3AED", bg: "#F5F3FF",
-    },
-    {
-      href: "/admin/calendar", label: "Calendar", desc: "Team leave overview",
-      badge: null, badgeColor: "", badgeBg: "",
-      icon: "M8 7V3m8 4V3M3 11h18M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z",
-      accent: "#059669", bg: "#ECFDF5",
-    },
-    {
-      href: "/admin/settings", label: "Settings", desc: "Manage holidays & accounts",
-      badge: null, badgeColor: "", badgeBg: "",
-      icon: "M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z M15 12a3 3 0 11-6 0 3 3 0 016 0z",
-      accent: "#475569", bg: "#F1F5F9",
-    },
+    { href: "/admin/leaves",    label: "Leave Approvals",  badge: pendingLeaves,               color: "#F59E0B", desc: `${emergLeaves} emergency` },
+    { href: "/admin/tasks",     label: "Task Management",  badge: openTasks,                   color: "#3B82F6", desc: "assign & track" },
+    { href: "/admin/travel",    label: "Travel & Claims",  badge: pendingTravel + pendingReimb, color: "#10B981", desc: `${pendingReimb} claims` },
+    { href: "/admin/murasalat", label: "Murasalat",        badge: parseInt(s.total_mura, 10),  color: "#8B5CF6", desc: "circulars" },
+    { href: "/admin/calendar",  label: "Calendar",         badge: 0,                           color: "#06B6D4", desc: "team overview" },
+    { href: "/admin/settings",  label: "Settings",         badge: 0,                           color: "#6B7280", desc: `${totalKGs} active KGs` },
   ];
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: "#F8FAFC" }}>
-      <nav className="bg-white border-b px-6 h-14 flex items-center justify-between sticky top-0 z-10" style={{ borderColor: "#E2E8F0" }}>
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "linear-gradient(135deg, #0F172A, #1E293B)" }}>
-            <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
-              <path d="M12 2L3 7v10l9 5 9-5V7l-9-5z" stroke="white" strokeWidth="2" strokeLinejoin="round"/>
-            </svg>
+    <div className="min-h-screen" style={{ backgroundColor: "#0F172A" }}>
+      {/* Dark top bar */}
+      <div style={{ backgroundColor: "#0F172A" }}>
+        <nav className="px-6 h-14 flex items-center justify-between max-w-6xl mx-auto">
+          <div className="flex items-center gap-3">
+            <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ backgroundColor: "#F59E0B" }}>
+              <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path d="M12 2L3 7v10l9 5 9-5V7l-9-5z" stroke="#0F172A" strokeWidth="2.5" strokeLinejoin="round"/></svg>
+            </div>
+            <span className="font-bold text-sm text-white">HR Module</span>
+            <span className="text-xs px-2 py-0.5 rounded text-white/50" style={{ backgroundColor: "#1E293B" }}>Admin</span>
           </div>
-          <span className="font-semibold text-sm" style={{ color: "#1E293B" }}>HR Module</span>
-          <span className="text-xs px-2 py-0.5 rounded-full" style={{ backgroundColor: "#F1F5F9", color: "#475569" }}>Admin</span>
-        </div>
-        <div className="flex items-center gap-5">
           <form action="/api/admin/logout" method="POST">
-            <button type="submit" className="text-xs" style={{ color: "#94A3B8" }}>Sign Out</button>
+            <button type="submit" className="text-xs" style={{ color: "#475569" }}>Sign Out</button>
           </form>
-        </div>
-      </nav>
+        </nav>
 
-      <div className="max-w-5xl mx-auto px-6 py-8">
-
-        {/* Welcome */}
-        <div className="rounded-2xl p-6 mb-8" style={{ background: "linear-gradient(135deg, #0F172A 0%, #1E293B 100%)" }}>
-          <p className="text-xs font-medium mb-1" style={{ color: "#64748B" }}>
+        {/* Header stats strip */}
+        <div className="px-6 pb-8 pt-2 max-w-6xl mx-auto">
+          <p className="text-xs mb-2" style={{ color: "#475569" }}>
             {new Date().toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
           </p>
-          <h1 className="text-2xl font-bold text-white">Admin Dashboard</h1>
-          <p className="text-sm mt-1" style={{ color: "#64748B" }}>HR Management System</p>
+          <h1 className="text-3xl font-bold text-white mb-6">Operations Centre</h1>
+          <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
+            {[
+              { label: "Pending Leaves",  value: pendingLeaves,  color: "#F59E0B" },
+              { label: "Emergency",       value: emergLeaves,    color: "#EF4444" },
+              { label: "Open Tasks",      value: openTasks,      color: "#3B82F6" },
+              { label: "Travel Pending",  value: pendingTravel,  color: "#10B981" },
+              { label: "Claims Pending",  value: pendingReimb,   color: "#8B5CF6" },
+              { label: "Active KGs",      value: totalKGs,       color: "#94A3B8" },
+            ].map(s => (
+              <div key={s.label} className="rounded-xl px-4 py-3" style={{ backgroundColor: "#1E293B" }}>
+                <p className="text-2xl font-bold" style={{ color: s.color }}>{s.value}</p>
+                <p className="text-xs mt-0.5" style={{ color: "#64748B" }}>{s.label}</p>
+              </div>
+            ))}
+          </div>
         </div>
+      </div>
 
-        {/* Stats */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
-          {[
-            { label: "Pending Approvals", value: pendingLeaves,  color: "#B45309", bg: "#FFFBEB", sub: `${emergencyLeaves} emergency` },
-            { label: "Active KGs",        value: totalKGs,        color: "#4F46E5", bg: "#EEF2FF", sub: "members" },
-            { label: "Open Tasks",        value: openTasks,       color: "#0891B2", bg: "#ECFEFF", sub: `${ongoingTasks} ongoing` },
-            { label: "Modules",           value: 3,               color: "#7C3AED", bg: "#F5F3FF", sub: "active" },
-          ].map(s => (
-            <div key={s.label} className="bg-white rounded-xl border px-5 py-4" style={{ borderColor: "#E2E8F0" }}>
-              <p className="text-2xl font-bold" style={{ color: s.color }}>{s.value}</p>
-              <p className="text-xs mt-1 font-medium" style={{ color: "#64748B" }}>{s.label}</p>
-              <p className="text-xs" style={{ color: "#94A3B8" }}>{s.sub}</p>
-            </div>
-          ))}
-        </div>
-
+      {/* Body */}
+      <div className="rounded-t-3xl min-h-screen px-6 py-6 max-w-6xl mx-auto" style={{ backgroundColor: "#F1F5F9" }}>
         {/* Module Grid */}
-        <h2 className="text-xs font-semibold uppercase tracking-wider mb-3" style={{ color: "#94A3B8" }}>Modules</h2>
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-8">
+        <h2 className="text-xs font-semibold uppercase tracking-widest mb-3" style={{ color: "#94A3B8" }}>Modules</h2>
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6">
           {modules.map(m => (
             <Link key={m.label} href={m.href}
-              className="bg-white rounded-xl border p-5 flex flex-col gap-3 transition hover:shadow-sm relative"
-              style={{ borderColor: "#E2E8F0" }}>
-              {m.badge !== null && (
-                <span className="absolute top-4 right-4 text-xs font-bold px-2 py-0.5 rounded-full"
-                  style={{ backgroundColor: m.badgeBg, color: m.badgeColor }}>
-                  {m.badge}
-                </span>
-              )}
-              <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: m.bg }}>
-                <svg width="20" height="20" fill="none" viewBox="0 0 24 24">
-                  <path d={m.icon} stroke={m.accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
+              className="bg-white rounded-2xl p-4 flex items-center gap-4 hover:shadow-md transition"
+              style={{ border: "1px solid #E2E8F0" }}>
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: m.color + "18" }}>
+                {m.badge > 0 && (
+                  <span className="text-sm font-bold" style={{ color: m.color }}>{m.badge}</span>
+                )}
+                {m.badge === 0 && (
+                  <span className="text-xs font-bold" style={{ color: m.color }}>—</span>
+                )}
               </div>
-              <div>
-                <p className="text-sm font-semibold" style={{ color: "#1E293B" }}>{m.label}</p>
-                <p className="text-xs mt-0.5" style={{ color: "#94A3B8" }}>{m.desc}</p>
+              <div className="min-w-0">
+                <p className="text-sm font-semibold truncate" style={{ color: "#1E293B" }}>{m.label}</p>
+                <p className="text-xs" style={{ color: "#94A3B8" }}>{m.desc}</p>
               </div>
             </Link>
           ))}
         </div>
 
-        {/* Recent Pending Leaves */}
-        {recent.length > 0 && (
-          <div className="bg-white rounded-xl border overflow-hidden" style={{ borderColor: "#E2E8F0" }}>
-            <div className="px-6 py-4 border-b flex items-center justify-between" style={{ borderColor: "#F1F5F9" }}>
-              <h2 className="text-sm font-semibold" style={{ color: "#1E293B" }}>Awaiting Your Review</h2>
-              <Link href="/admin/leaves" className="text-xs font-medium" style={{ color: "#4F46E5" }}>Review all →</Link>
+        <div className="grid sm:grid-cols-2 gap-4">
+          {/* Pending Leaves */}
+          <div className="bg-white rounded-2xl overflow-hidden" style={{ border: "1px solid #E2E8F0" }}>
+            <div className="px-5 py-3.5 flex items-center justify-between" style={{ borderBottom: "1px solid #F1F5F9" }}>
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: "#F59E0B" }}></div>
+                <p className="text-sm font-semibold" style={{ color: "#1E293B" }}>Pending Leaves</p>
+              </div>
+              <Link href="/admin/leaves" className="text-xs font-medium" style={{ color: "#F59E0B" }}>Review all →</Link>
             </div>
-            <div className="divide-y" style={{ borderColor: "#F8FAFC" }}>
-              {recent.map(l => (
-                <div key={l.id} className="px-6 py-3.5 flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0"
-                      style={{ background: "linear-gradient(135deg, #4F46E5, #7C3AED)" }}>
-                      {l.employee_name.charAt(0)}
-                    </div>
+            {recentLeaves.length === 0 ? (
+              <p className="px-5 py-8 text-center text-sm" style={{ color: "#94A3B8" }}>All cleared</p>
+            ) : (
+              <div className="divide-y" style={{ borderColor: "#F8FAFC" }}>
+                {recentLeaves.map(l => (
+                  <div key={l.id} className="px-5 py-3 flex items-center justify-between">
                     <div>
                       <p className="text-sm font-medium" style={{ color: "#1E293B" }}>{l.employee_name}</p>
-                      <p className="text-xs" style={{ color: "#94A3B8" }}>
-                        <span className="capitalize">{l.leave_type}</span> · {fmt(l.start_date)}
-                      </p>
+                      <p className="text-xs capitalize" style={{ color: "#94A3B8" }}>{l.leave_type} · {fmt(l.start_date)}</p>
                     </div>
+                    <Link href="/admin/leaves" className="text-xs px-3 py-1.5 rounded-lg font-medium" style={{ backgroundColor: "#FFFBEB", color: "#B45309" }}>Review</Link>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <span className="text-xs" style={{ color: "#94A3B8" }}>Applied {fmt(l.created_at)}</span>
-                    <Link href="/admin/leaves" className="text-xs font-medium px-3 py-1.5 rounded-lg border"
-                      style={{ borderColor: "#E2E8F0", color: "#4F46E5" }}>Review</Link>
-                  </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
-        )}
 
-        {recent.length === 0 && (
-          <div className="bg-white rounded-xl border px-6 py-8 text-center" style={{ borderColor: "#E2E8F0" }}>
-            <p className="text-sm font-medium" style={{ color: "#1E293B" }}>All caught up</p>
-            <p className="text-xs mt-1" style={{ color: "#94A3B8" }}>No pending leave applications</p>
+          {/* Active Tasks */}
+          <div className="bg-white rounded-2xl overflow-hidden" style={{ border: "1px solid #E2E8F0" }}>
+            <div className="px-5 py-3.5 flex items-center justify-between" style={{ borderBottom: "1px solid #F1F5F9" }}>
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: "#3B82F6" }}></div>
+                <p className="text-sm font-semibold" style={{ color: "#1E293B" }}>Active Tasks</p>
+              </div>
+              <Link href="/admin/tasks" className="text-xs font-medium" style={{ color: "#3B82F6" }}>Manage →</Link>
+            </div>
+            {recentTasks.length === 0 ? (
+              <p className="px-5 py-8 text-center text-sm" style={{ color: "#94A3B8" }}>No open tasks</p>
+            ) : (
+              <div className="divide-y" style={{ borderColor: "#F8FAFC" }}>
+                {recentTasks.map(t => (
+                  <div key={t.id} className="px-5 py-3 flex items-center justify-between">
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-medium truncate" style={{ color: "#1E293B" }}>{t.title}</p>
+                      <p className="text-xs" style={{ color: "#94A3B8" }}>{t.employee_name}{t.due_date ? ` · Due ${fmt(t.due_date)}` : ""}</p>
+                    </div>
+                    <span className="text-xs px-2 py-0.5 rounded-full ml-3 capitalize font-medium shrink-0"
+                      style={{ backgroundColor: t.status === "ongoing" ? "#EFF6FF" : "#FFFBEB", color: t.status === "ongoing" ? "#1D4ED8" : "#B45309" }}>
+                      {t.status}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
-        )}
+
+          {/* Recent Murasalat */}
+          {recentMura.length > 0 && (
+            <div className="bg-white rounded-2xl overflow-hidden sm:col-span-2" style={{ border: "1px solid #E2E8F0" }}>
+              <div className="px-5 py-3.5 flex items-center justify-between" style={{ borderBottom: "1px solid #F1F5F9" }}>
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full" style={{ backgroundColor: "#8B5CF6" }}></div>
+                  <p className="text-sm font-semibold" style={{ color: "#1E293B" }}>Recent Murasalat</p>
+                </div>
+                <Link href="/admin/murasalat" className="text-xs font-medium" style={{ color: "#8B5CF6" }}>Manage →</Link>
+              </div>
+              <div className="grid sm:grid-cols-3 divide-x" style={{ borderColor: "#F1F5F9" }}>
+                {recentMura.map((m: { id: number; title: string; priority: string; created_at: string }) => (
+                  <div key={m.id} className="px-5 py-4">
+                    {m.priority === "urgent" && <span className="text-xs font-bold px-2 py-0.5 rounded-full mb-1 inline-block" style={{ backgroundColor: "#FEF2F2", color: "#DC2626" }}>Urgent</span>}
+                    <p className="text-sm font-semibold" style={{ color: "#1E293B" }}>{m.title}</p>
+                    <p className="text-xs mt-0.5" style={{ color: "#94A3B8" }}>{fmt(m.created_at)}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

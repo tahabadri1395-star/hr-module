@@ -8,7 +8,10 @@ types.setTypeParser(1184, (v: string) => v);
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL!,
   ssl: process.env.NODE_ENV === "production" ? { rejectUnauthorized: false } : false,
-  max: 5,
+  max: 10,
+  idleTimeoutMillis: 60000,
+  connectionTimeoutMillis: 5000,
+  allowExitOnIdle: false,
 });
 
 let initPromise: Promise<void> | null = null;
@@ -173,6 +176,28 @@ async function initDb(): Promise<void> {
         approved_by TEXT,
         approved_at TIMESTAMPTZ,
         created_at TIMESTAMPTZ DEFAULT NOW()
+      )
+    `);
+
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS hr_murasalat (
+        id SERIAL PRIMARY KEY,
+        title TEXT NOT NULL,
+        body TEXT NOT NULL,
+        department TEXT,
+        priority TEXT DEFAULT 'normal' CHECK(priority IN ('urgent','normal','info')),
+        created_by TEXT NOT NULL,
+        created_at TIMESTAMPTZ DEFAULT NOW()
+      )
+    `);
+
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS hr_murasalat_reads (
+        id SERIAL PRIMARY KEY,
+        murasalat_id INTEGER NOT NULL REFERENCES hr_murasalat(id) ON DELETE CASCADE,
+        employee_id INTEGER NOT NULL REFERENCES hr_employees(id),
+        read_at TIMESTAMPTZ DEFAULT NOW(),
+        UNIQUE(murasalat_id, employee_id)
       )
     `);
 

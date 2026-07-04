@@ -202,6 +202,19 @@ async function initDb(): Promise<void> {
     `);
 
     await client.query(`
+      CREATE TABLE IF NOT EXISTS hr_documents (
+        id SERIAL PRIMARY KEY,
+        title TEXT NOT NULL,
+        description TEXT,
+        category TEXT NOT NULL CHECK(category IN ('policy','form','certificate','circular','sop','other')),
+        file_url TEXT NOT NULL,
+        department TEXT,
+        created_by TEXT NOT NULL,
+        created_at TIMESTAMPTZ DEFAULT NOW()
+      )
+    `);
+
+    await client.query(`
       CREATE TABLE IF NOT EXISTS hr_assets (
         id SERIAL PRIMARY KEY,
         name TEXT NOT NULL,

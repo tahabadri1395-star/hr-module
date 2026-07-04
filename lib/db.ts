@@ -202,6 +202,32 @@ async function initDb(): Promise<void> {
     `);
 
     await client.query(`
+      CREATE TABLE IF NOT EXISTS hr_assets (
+        id SERIAL PRIMARY KEY,
+        name TEXT NOT NULL,
+        asset_type TEXT NOT NULL CHECK(asset_type IN ('laptop','software','paid_app','hardware','other')),
+        serial_number TEXT,
+        license_key TEXT,
+        description TEXT,
+        status TEXT DEFAULT 'available' CHECK(status IN ('available','assigned','maintenance','retired')),
+        created_at TIMESTAMPTZ DEFAULT NOW()
+      )
+    `);
+
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS hr_asset_assignments (
+        id SERIAL PRIMARY KEY,
+        asset_id INTEGER NOT NULL REFERENCES hr_assets(id) ON DELETE CASCADE,
+        employee_id INTEGER NOT NULL REFERENCES hr_employees(id),
+        assigned_by TEXT NOT NULL,
+        assigned_at TIMESTAMPTZ DEFAULT NOW(),
+        returned_at TIMESTAMPTZ,
+        notes TEXT,
+        status TEXT DEFAULT 'active' CHECK(status IN ('active','returned'))
+      )
+    `);
+
+    await client.query(`
       CREATE TABLE IF NOT EXISTS hr_polls (
         id SERIAL PRIMARY KEY,
         title TEXT NOT NULL,

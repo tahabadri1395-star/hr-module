@@ -27,7 +27,8 @@ export default async function AdminDashboardPage() {
       (SELECT COUNT(*) FROM hr_assets) as total_assets,
       (SELECT COUNT(*) FROM hr_documents) as total_docs,
       (SELECT COUNT(*) FROM hr_courses WHERE status='active') as active_courses,
-      (SELECT COUNT(DISTINCT employee_id) FROM hr_attendance WHERE date=CURRENT_DATE::text) as clocked_today`),
+      (SELECT COUNT(DISTINCT employee_id) FROM hr_attendance WHERE date=CURRENT_DATE::text) as clocked_today,
+      (SELECT COUNT(*) FROM hr_expenses WHERE status='pending') as pending_expenses`),
     query(`SELECT la.id, la.leave_type, la.start_date, e.name as employee_name, la.created_at FROM hr_leave_applications la JOIN hr_employees e ON e.id=la.employee_id WHERE la.status='pending' ORDER BY la.created_at ASC LIMIT 6`),
     query(`SELECT t.id, t.title, t.status, t.due_date, e.name as employee_name FROM hr_tasks t JOIN hr_employees e ON e.id=t.assigned_to WHERE t.status!='completed' ORDER BY t.created_at DESC LIMIT 4`),
     query(`SELECT id, title, priority, created_at FROM hr_murasalat ORDER BY created_at DESC LIMIT 3`),
@@ -49,7 +50,8 @@ export default async function AdminDashboardPage() {
   const totalAssets = parseInt(s.total_assets, 10);
   const totalDocs      = parseInt(s.total_docs, 10);
   const activeCourses  = parseInt(s.active_courses, 10);
-  const clockedToday   = parseInt(s.clocked_today, 10);
+  const clockedToday    = parseInt(s.clocked_today, 10);
+  const pendingExpenses = parseInt(s.pending_expenses, 10);
 
   const modules = [
     { href: "/admin/leaves",    label: "Leave Approvals",  badge: pendingLeaves,               color: "#F59E0B", desc: `${emergLeaves} emergency` },
@@ -61,8 +63,9 @@ export default async function AdminDashboardPage() {
     { href: "/admin/assets",    label: "Asset Tracking",   badge: totalAssets,  color: "#B45309", desc: "equipment & software" },
     { href: "/admin/documents", label: "Document Vault",   badge: totalDocs,      color: "#1D4ED8", desc: "policies & forms" },
     { href: "/admin/lms",        label: "L&D",              badge: activeCourses, color: "#059669", desc: "courses & training" },
-    { href: "/admin/attendance", label: "Attendance",       badge: clockedToday,  color: "#0891B2", desc: "clocked in today" },
-    { href: "/admin/settings",   label: "Settings",         badge: 0,             color: "#6B7280", desc: `${totalKGs} active KGs` },
+    { href: "/admin/attendance", label: "Attendance",       badge: clockedToday,    color: "#0891B2", desc: "clocked in today" },
+    { href: "/admin/expenses",   label: "Expense Claims",   badge: pendingExpenses, color: "#B91C1C", desc: "pending approval" },
+    { href: "/admin/settings",   label: "Settings",         badge: 0,               color: "#6B7280", desc: `${totalKGs} active KGs` },
   ];
 
   return (

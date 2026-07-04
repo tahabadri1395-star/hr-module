@@ -332,6 +332,24 @@ async function initDb(): Promise<void> {
       )
     `);
 
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS hr_expenses (
+        id SERIAL PRIMARY KEY,
+        employee_id INTEGER NOT NULL REFERENCES hr_employees(id),
+        title TEXT NOT NULL,
+        description TEXT,
+        category TEXT NOT NULL CHECK(category IN ('travel','food','accommodation','office_supplies','communication','other')),
+        amount NUMERIC(10,2) NOT NULL,
+        receipt_url TEXT,
+        expense_date TEXT NOT NULL,
+        status TEXT DEFAULT 'pending' CHECK(status IN ('pending','approved','rejected')),
+        admin_note TEXT,
+        approved_by TEXT,
+        approved_at TIMESTAMPTZ,
+        created_at TIMESTAMPTZ DEFAULT NOW()
+      )
+    `);
+
     // Seed admin accounts (no-op if already exist)
     const aqHash = await bcrypt.hash("AQ@Secure99", 10);
     await client.query(

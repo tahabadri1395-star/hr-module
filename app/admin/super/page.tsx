@@ -41,7 +41,8 @@ export default async function SuperAdminPage() {
       (SELECT COUNT(*) FROM hr_documents) as total_docs,
       (SELECT COUNT(*) FROM hr_courses WHERE status='active') as active_courses,
       (SELECT COUNT(*) FROM hr_reimbursements WHERE status='pending') as pending_reimb,
-      (SELECT COUNT(DISTINCT employee_id) FROM hr_attendance WHERE date=CURRENT_DATE::text) as clocked_today`),
+      (SELECT COUNT(DISTINCT employee_id) FROM hr_attendance WHERE date=CURRENT_DATE::text) as clocked_today,
+      (SELECT COUNT(*) FROM hr_expenses WHERE status='pending') as pending_expenses`),
   ]);
 
   const pendingLeaves = pendingRes.rows as LeaveWithEmployee[];
@@ -72,6 +73,7 @@ export default async function SuperAdminPage() {
             <Link href="/admin/documents" className="text-xs text-white/60 hover:text-white">Documents</Link>
             <Link href="/admin/lms"        className="text-xs text-white/60 hover:text-white">L&D</Link>
             <Link href="/admin/attendance" className="text-xs text-white/60 hover:text-white">Attendance</Link>
+            <Link href="/admin/expenses"  className="text-xs text-white/60 hover:text-white">Expenses</Link>
             <Link href="/admin/travel"    className="text-xs text-white/60 hover:text-white">Travel</Link>
             <Link href="/admin/settings"  className="text-xs text-white/60 hover:text-white">Settings</Link>
             <form action="/api/admin/logout" method="POST">
@@ -113,19 +115,20 @@ export default async function SuperAdminPage() {
       <div className="max-w-6xl mx-auto px-6 py-8">
 
         {/* All modules grid */}
-        <div className="grid grid-cols-4 sm:grid-cols-11 gap-2 mb-8">
+        <div className="grid grid-cols-4 sm:grid-cols-12 gap-2 mb-8">
           {[
             { href: "/admin/leaves",     label: "Leaves",      badge: parseInt(s.awaiting,10) + parseInt(s.pending_admin,10), color: "#F59E0B" },
-            { href: "/admin/tasks",      label: "Tasks",       badge: parseInt(s.open_tasks,10),      color: "#3B82F6" },
+            { href: "/admin/tasks",      label: "Tasks",       badge: parseInt(s.open_tasks,10),       color: "#3B82F6" },
             { href: "/admin/travel",     label: "Travel",      badge: parseInt(s.pending_travel,10) + parseInt(s.pending_reimb,10), color: "#10B981" },
-            { href: "/admin/murasalat",  label: "Murasalat",  badge: parseInt(s.total_mura,10),       color: "#8B5CF6" },
-            { href: "/admin/arz",        label: "Arz",         badge: parseInt(s.open_arz,10),         color: "#EA580C" },
-            { href: "/admin/polls",      label: "Polls",       badge: parseInt(s.active_polls,10),     color: "#06B6D4" },
-            { href: "/admin/assets",     label: "Assets",      badge: parseInt(s.total_assets,10),     color: "#B45309" },
-            { href: "/admin/documents",  label: "Documents",   badge: parseInt(s.total_docs,10),       color: "#1D4ED8" },
-            { href: "/admin/lms",        label: "L&D",         badge: parseInt(s.active_courses,10),   color: "#059669" },
-            { href: "/admin/attendance", label: "Attendance",  badge: parseInt(s.clocked_today,10),    color: "#0891B2" },
-            { href: "/admin/settings",   label: "Settings",    badge: parseInt(s.total_kgs,10),        color: "#6B7280" },
+            { href: "/admin/murasalat",  label: "Murasalat",  badge: parseInt(s.total_mura,10),        color: "#8B5CF6" },
+            { href: "/admin/arz",        label: "Arz",         badge: parseInt(s.open_arz,10),          color: "#EA580C" },
+            { href: "/admin/polls",      label: "Polls",       badge: parseInt(s.active_polls,10),      color: "#06B6D4" },
+            { href: "/admin/assets",     label: "Assets",      badge: parseInt(s.total_assets,10),      color: "#B45309" },
+            { href: "/admin/documents",  label: "Documents",   badge: parseInt(s.total_docs,10),        color: "#1D4ED8" },
+            { href: "/admin/lms",        label: "L&D",         badge: parseInt(s.active_courses,10),    color: "#059669" },
+            { href: "/admin/attendance", label: "Attendance",  badge: parseInt(s.clocked_today,10),     color: "#0891B2" },
+            { href: "/admin/expenses",   label: "Expenses",    badge: parseInt(s.pending_expenses,10),  color: "#B91C1C" },
+            { href: "/admin/settings",   label: "Settings",    badge: parseInt(s.total_kgs,10),         color: "#6B7280" },
           ].map(m => (
             <Link key={m.label} href={m.href}
               className="bg-white rounded-2xl py-3 px-2 flex flex-col items-center gap-1.5 text-center hover:shadow-md transition relative"

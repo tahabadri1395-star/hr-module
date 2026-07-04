@@ -30,11 +30,12 @@ export default async function DashboardPage() {
   const empRes = await query(`SELECT department FROM hr_employees WHERE id=$1`, [employee.id]);
   const dept: string | null = empRes.rows[0]?.department ?? null;
 
-  const [leavesRes, tasksRes, emergRes, muraRes] = await Promise.all([
+  const [leavesRes, tasksRes, emergRes, muraRes, arzRes] = await Promise.all([
     query(`SELECT * FROM hr_leave_applications WHERE employee_id=$1 ORDER BY created_at DESC`, [employee.id]),
     query(`SELECT * FROM hr_tasks WHERE assigned_to=$1 ORDER BY CASE status WHEN 'ongoing' THEN 1 WHEN 'pending' THEN 2 ELSE 3 END, created_at DESC`, [employee.id]),
     query(`SELECT COUNT(*) as used FROM hr_leave_applications WHERE employee_id=$1 AND leave_type='emergency' AND status NOT IN ('admin_rejected','super_admin_rejected') AND start_date BETWEEN $2 AND $3`, [employee.id, `${yr}-01-01`, `${yr}-12-31`]),
     query(`SELECT m.*, CASE WHEN mr.id IS NOT NULL THEN true ELSE false END as is_read FROM hr_murasalat m LEFT JOIN hr_murasalat_reads mr ON mr.murasalat_id=m.id AND mr.employee_id=$1 WHERE m.department IS NULL OR m.department=$2 ORDER BY m.created_at DESC LIMIT 5`, [employee.id, dept ?? ""]),
+    query(`SELECT COUNT(*) as open FROM hr_arz WHERE employee_id=$1 AND status IN ('open','in_progress')`, [employee.id]),
   ]);
 
   const leaves = leavesRes.rows as LeaveApp[];
@@ -44,6 +45,7 @@ export default async function DashboardPage() {
   const pendingLeaves = leaves.filter(l => l.status === "pending" || l.status === "admin_approved");
   const murasalat  = muraRes.rows as Murasalat[];
   const unreadMura = murasalat.filter(m => !m.is_read).length;
+  const openArz = parseInt(arzRes.rows[0].open, 10);
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#F0F4FF" }}>
@@ -81,11 +83,12 @@ export default async function DashboardPage() {
 
       {/* Module Cards */}
       <div className="max-w-4xl mx-auto px-4 -mt-4">
-        <div className="grid grid-cols-3 sm:grid-cols-5 gap-3 mb-6">
+        <div className="grid grid-cols-3 sm:grid-cols-6 gap-3 mb-6">
           {[
             { href: "/apply",      label: "Apply Leave",   icon: "M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z", color: "#4F46E5", badge: null },
             { href: "#tasks",      label: "My Tasks",      icon: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4", color: "#0891B2", badge: activeTasks.length || null },
             { href: "/murasalat",  label: "Murasalat",     icon: "M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z", color: "#7C3AED", badge: unreadMura || null },
+            { href: "/arz",        label: "Personal Arz",  icon: "M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z", color: "#EA580C", badge: openArz || null },
             { href: "/travel",     label: "Travel",        icon: "M12 19l9 2-9-18-9 18 9-2zm0 0v-8", color: "#059669", badge: null },
             { href: "/profile",    label: "My Profile",    icon: "M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z", color: "#DC2626", badge: null },
           ].map(m => (

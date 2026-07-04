@@ -21,7 +21,8 @@ export default async function AdminDashboardPage() {
       (SELECT COUNT(*) FROM hr_tasks WHERE status != 'completed') as open_tasks,
       (SELECT COUNT(*) FROM hr_travel_requests WHERE status='pending') as pending_travel,
       (SELECT COUNT(*) FROM hr_reimbursements WHERE status='pending') as pending_reimb,
-      (SELECT COUNT(*) FROM hr_murasalat) as total_mura`),
+      (SELECT COUNT(*) FROM hr_murasalat) as total_mura,
+      (SELECT COUNT(*) FROM hr_arz WHERE status IN ('open','in_progress')) as open_arz`),
     query(`SELECT la.id, la.leave_type, la.start_date, e.name as employee_name, la.created_at FROM hr_leave_applications la JOIN hr_employees e ON e.id=la.employee_id WHERE la.status='pending' ORDER BY la.created_at ASC LIMIT 6`),
     query(`SELECT t.id, t.title, t.status, t.due_date, e.name as employee_name FROM hr_tasks t JOIN hr_employees e ON e.id=t.assigned_to WHERE t.status!='completed' ORDER BY t.created_at DESC LIMIT 4`),
     query(`SELECT id, title, priority, created_at FROM hr_murasalat ORDER BY created_at DESC LIMIT 3`),
@@ -38,12 +39,14 @@ export default async function AdminDashboardPage() {
   const recentTasks   = recentTasksRes.rows as RecentTask[];
   const recentMura    = muraRes.rows;
 
+  const openArz = parseInt(s.open_arz, 10);
+
   const modules = [
     { href: "/admin/leaves",    label: "Leave Approvals",  badge: pendingLeaves,               color: "#F59E0B", desc: `${emergLeaves} emergency` },
     { href: "/admin/tasks",     label: "Task Management",  badge: openTasks,                   color: "#3B82F6", desc: "assign & track" },
     { href: "/admin/travel",    label: "Travel & Claims",  badge: pendingTravel + pendingReimb, color: "#10B981", desc: `${pendingReimb} claims` },
     { href: "/admin/murasalat", label: "Murasalat",        badge: parseInt(s.total_mura, 10),  color: "#8B5CF6", desc: "circulars" },
-    { href: "/admin/calendar",  label: "Calendar",         badge: 0,                           color: "#06B6D4", desc: "team overview" },
+    { href: "/admin/arz",       label: "Personal Arz",     badge: openArz,                     color: "#EA580C", desc: "requests & grievances" },
     { href: "/admin/settings",  label: "Settings",         badge: 0,                           color: "#6B7280", desc: `${totalKGs} active KGs` },
   ];
 

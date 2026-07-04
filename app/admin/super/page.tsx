@@ -33,7 +33,14 @@ export default async function SuperAdminPage() {
       (SELECT COUNT(*) FROM hr_leave_applications WHERE status IN ('admin_rejected','super_admin_rejected')) as rejected,
       (SELECT COUNT(*) FROM hr_employees WHERE active=1) as total_kgs,
       (SELECT COUNT(*) FROM hr_tasks WHERE status!='completed') as open_tasks,
-      (SELECT COUNT(*) FROM hr_travel_requests WHERE status='pending') as pending_travel`),
+      (SELECT COUNT(*) FROM hr_travel_requests WHERE status='pending') as pending_travel,
+      (SELECT COUNT(*) FROM hr_murasalat) as total_mura,
+      (SELECT COUNT(*) FROM hr_arz WHERE status IN ('open','in_progress')) as open_arz,
+      (SELECT COUNT(*) FROM hr_polls WHERE status='active') as active_polls,
+      (SELECT COUNT(*) FROM hr_assets) as total_assets,
+      (SELECT COUNT(*) FROM hr_documents) as total_docs,
+      (SELECT COUNT(*) FROM hr_courses WHERE status='active') as active_courses,
+      (SELECT COUNT(*) FROM hr_reimbursements WHERE status='pending') as pending_reimb`),
   ]);
 
   const pendingLeaves = pendingRes.rows as LeaveWithEmployee[];
@@ -54,10 +61,17 @@ export default async function SuperAdminPage() {
             <span className="font-bold text-sm text-white">HR Module</span>
             <span className="text-xs px-2 py-0.5 rounded-full text-white/80" style={{ backgroundColor: "rgba(255,255,255,0.15)" }}>Super Admin</span>
           </div>
-          <div className="flex items-center gap-5">
-            <Link href="/admin/tasks"    className="text-xs text-white/60 hover:text-white">Tasks</Link>
+          <div className="flex items-center gap-4 flex-wrap">
+            <Link href="/admin/leaves"    className="text-xs text-white/60 hover:text-white">Leaves</Link>
+            <Link href="/admin/tasks"     className="text-xs text-white/60 hover:text-white">Tasks</Link>
             <Link href="/admin/murasalat" className="text-xs text-white/60 hover:text-white">Murasalat</Link>
-            <Link href="/admin/settings" className="text-xs text-white/60 hover:text-white">Settings</Link>
+            <Link href="/admin/arz"       className="text-xs text-white/60 hover:text-white">Arz</Link>
+            <Link href="/admin/polls"     className="text-xs text-white/60 hover:text-white">Polls</Link>
+            <Link href="/admin/assets"    className="text-xs text-white/60 hover:text-white">Assets</Link>
+            <Link href="/admin/documents" className="text-xs text-white/60 hover:text-white">Documents</Link>
+            <Link href="/admin/lms"       className="text-xs text-white/60 hover:text-white">L&D</Link>
+            <Link href="/admin/travel"    className="text-xs text-white/60 hover:text-white">Travel</Link>
+            <Link href="/admin/settings"  className="text-xs text-white/60 hover:text-white">Settings</Link>
             <form action="/api/admin/logout" method="POST">
               <button type="submit" className="text-xs text-white/40 hover:text-white/70">Sign Out</button>
             </form>
@@ -96,23 +110,31 @@ export default async function SuperAdminPage() {
       {/* White body */}
       <div className="max-w-6xl mx-auto px-6 py-8">
 
-        {/* Quick nav */}
-        <div className="grid grid-cols-3 gap-3 mb-8">
+        {/* All modules grid */}
+        <div className="grid grid-cols-5 sm:grid-cols-10 gap-2 mb-8">
           {[
-            { href: "/admin/tasks",    label: "Task Management",  sub: `${parseInt(s.open_tasks,10)} open`,       color: "#0891B2" },
-            { href: "/admin/calendar", label: "Leave Calendar",   sub: "Team overview",                           color: "#059669" },
-            { href: "/admin/travel",   label: "Travel & Claims",  sub: `${parseInt(s.pending_travel,10)} pending`, color: "#7C3AED" },
+            { href: "/admin/leaves",    label: "Leaves",       badge: parseInt(s.awaiting,10) + parseInt(s.pending_admin,10), color: "#F59E0B" },
+            { href: "/admin/tasks",     label: "Tasks",        badge: parseInt(s.open_tasks,10),     color: "#3B82F6" },
+            { href: "/admin/travel",    label: "Travel",       badge: parseInt(s.pending_travel,10) + parseInt(s.pending_reimb,10), color: "#10B981" },
+            { href: "/admin/murasalat", label: "Murasalat",   badge: parseInt(s.total_mura,10),      color: "#8B5CF6" },
+            { href: "/admin/arz",       label: "Arz",          badge: parseInt(s.open_arz,10),        color: "#EA580C" },
+            { href: "/admin/polls",     label: "Polls",        badge: parseInt(s.active_polls,10),    color: "#06B6D4" },
+            { href: "/admin/assets",    label: "Assets",       badge: parseInt(s.total_assets,10),    color: "#B45309" },
+            { href: "/admin/documents", label: "Documents",    badge: parseInt(s.total_docs,10),      color: "#1D4ED8" },
+            { href: "/admin/lms",       label: "L&D",          badge: parseInt(s.active_courses,10),  color: "#059669" },
+            { href: "/admin/settings",  label: "Settings",     badge: parseInt(s.total_kgs,10),       color: "#6B7280" },
           ].map(m => (
             <Link key={m.label} href={m.href}
-              className="bg-white rounded-2xl px-5 py-4 flex items-center justify-between hover:shadow-md transition"
+              className="bg-white rounded-2xl py-3 px-2 flex flex-col items-center gap-1.5 text-center hover:shadow-md transition relative"
               style={{ border: "1px solid #E2E8F0" }}>
-              <div>
-                <p className="text-sm font-semibold" style={{ color: "#1E293B" }}>{m.label}</p>
-                <p className="text-xs mt-0.5" style={{ color: "#94A3B8" }}>{m.sub}</p>
+              {m.badge > 0 && (
+                <span className="absolute top-1.5 right-1.5 min-w-4 h-4 rounded-full text-white text-xs flex items-center justify-center font-bold px-1"
+                  style={{ backgroundColor: m.color, fontSize: "10px" }}>{m.badge}</span>
+              )}
+              <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ backgroundColor: m.color + "18" }}>
+                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: m.color }}></div>
               </div>
-              <svg width="16" height="16" fill="none" viewBox="0 0 24 24" style={{ color: m.color }}>
-                <path d="M9 5l7 7-7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-              </svg>
+              <span className="text-xs font-semibold leading-tight" style={{ color: "#1E293B" }}>{m.label}</span>
             </Link>
           ))}
         </div>

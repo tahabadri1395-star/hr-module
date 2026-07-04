@@ -202,6 +202,35 @@ async function initDb(): Promise<void> {
     `);
 
     await client.query(`
+      CREATE TABLE IF NOT EXISTS hr_courses (
+        id SERIAL PRIMARY KEY,
+        title TEXT NOT NULL,
+        description TEXT,
+        category TEXT NOT NULL CHECK(category IN ('technical','soft_skills','compliance','leadership','safety','other')),
+        content_url TEXT,
+        instructor TEXT,
+        duration_hours NUMERIC(5,1),
+        department TEXT,
+        status TEXT DEFAULT 'active' CHECK(status IN ('active','archived')),
+        created_by TEXT NOT NULL,
+        created_at TIMESTAMPTZ DEFAULT NOW()
+      )
+    `);
+
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS hr_course_progress (
+        id SERIAL PRIMARY KEY,
+        course_id INTEGER NOT NULL REFERENCES hr_courses(id) ON DELETE CASCADE,
+        employee_id INTEGER NOT NULL REFERENCES hr_employees(id),
+        status TEXT DEFAULT 'not_started' CHECK(status IN ('not_started','in_progress','completed')),
+        started_at TIMESTAMPTZ,
+        completed_at TIMESTAMPTZ,
+        score INTEGER,
+        UNIQUE(course_id, employee_id)
+      )
+    `);
+
+    await client.query(`
       CREATE TABLE IF NOT EXISTS hr_documents (
         id SERIAL PRIMARY KEY,
         title TEXT NOT NULL,

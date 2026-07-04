@@ -30,7 +30,7 @@ export default async function DashboardPage() {
   const empRes = await query(`SELECT department FROM hr_employees WHERE id=$1`, [employee.id]);
   const dept: string | null = empRes.rows[0]?.department ?? null;
 
-  const [leavesRes, tasksRes, emergRes, muraRes, arzRes, pollsRes, assetsRes, docsRes] = await Promise.all([
+  const [leavesRes, tasksRes, emergRes, muraRes, arzRes, pollsRes, assetsRes, docsRes, lmsRes] = await Promise.all([
     query(`SELECT * FROM hr_leave_applications WHERE employee_id=$1 ORDER BY created_at DESC`, [employee.id]),
     query(`SELECT * FROM hr_tasks WHERE assigned_to=$1 ORDER BY CASE status WHEN 'ongoing' THEN 1 WHEN 'pending' THEN 2 ELSE 3 END, created_at DESC`, [employee.id]),
     query(`SELECT COUNT(*) as used FROM hr_leave_applications WHERE employee_id=$1 AND leave_type='emergency' AND status NOT IN ('admin_rejected','super_admin_rejected') AND start_date BETWEEN $2 AND $3`, [employee.id, `${yr}-01-01`, `${yr}-12-31`]),
@@ -39,6 +39,7 @@ export default async function DashboardPage() {
     query(`SELECT COUNT(*) as pending FROM hr_polls p WHERE p.status='active' AND NOT EXISTS (SELECT 1 FROM hr_poll_votes WHERE poll_id=p.id AND employee_id=$1)`, [employee.id]),
     query(`SELECT COUNT(*) as count FROM hr_asset_assignments WHERE employee_id=$1 AND status='active'`, [employee.id]),
     query(`SELECT COUNT(*) as count FROM hr_documents WHERE department IS NULL OR department=(SELECT department FROM hr_employees WHERE id=$1)`, [employee.id]),
+    query(`SELECT COUNT(*) as count FROM hr_courses c WHERE c.status='active' AND (c.department IS NULL OR c.department=(SELECT department FROM hr_employees WHERE id=$1)) AND NOT EXISTS (SELECT 1 FROM hr_course_progress WHERE course_id=c.id AND employee_id=$1 AND status='completed')`, [employee.id]),
   ]);
 
   const leaves = leavesRes.rows as LeaveApp[];
@@ -51,7 +52,8 @@ export default async function DashboardPage() {
   const openArz = parseInt(arzRes.rows[0].open, 10);
   const pendingPolls = parseInt(pollsRes.rows[0].pending, 10);
   const myAssets = parseInt(assetsRes.rows[0].count, 10);
-  const docCount = parseInt(docsRes.rows[0].count, 10);
+  const docCount     = parseInt(docsRes.rows[0].count, 10);
+  const pendingLMS   = parseInt(lmsRes.rows[0].count, 10);
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#F0F4FF" }}>
@@ -89,7 +91,7 @@ export default async function DashboardPage() {
 
       {/* Module Cards */}
       <div className="max-w-4xl mx-auto px-4 -mt-4">
-        <div className="grid grid-cols-5 sm:grid-cols-9 gap-2 mb-6">
+        <div className="grid grid-cols-5 sm:grid-cols-10 gap-2 mb-6">
           {[
             { href: "/apply",      label: "Apply Leave",   icon: "M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z", color: "#4F46E5", badge: null },
             { href: "#tasks",      label: "My Tasks",      icon: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4", color: "#0891B2", badge: activeTasks.length || null },
@@ -98,6 +100,7 @@ export default async function DashboardPage() {
             { href: "/polls",      label: "Polls",         icon: "M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z", color: "#0891B2", badge: pendingPolls || null },
             { href: "/assets",     label: "My Assets",     icon: "M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4", color: "#B45309", badge: myAssets || null },
             { href: "/documents",  label: "Documents",     icon: "M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z", color: "#1D4ED8", badge: docCount || null },
+            { href: "/lms",        label: "Training",      icon: "M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253", color: "#059669", badge: pendingLMS || null },
             { href: "/travel",     label: "Travel",        icon: "M12 19l9 2-9-18-9 18 9-2zm0 0v-8", color: "#059669", badge: null },
             { href: "/profile",    label: "My Profile",    icon: "M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z", color: "#DC2626", badge: null },
           ].map(m => (

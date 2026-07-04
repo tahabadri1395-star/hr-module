@@ -4,7 +4,7 @@ import { getEmployeeTokenFromRequest, verifyEmployeeToken } from "@/lib/auth";
 
 export async function GET(req: NextRequest) {
   const token = getEmployeeTokenFromRequest(req);
-  const employee = token ? verifyEmployeeToken(token) : null;
+  const employee = token ? await verifyEmployeeToken(token) : null;
   if (!employee) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const status = req.nextUrl.searchParams.get("status");
@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   const token = getEmployeeTokenFromRequest(req);
-  const employee = token ? verifyEmployeeToken(token) : null;
+  const employee = token ? await verifyEmployeeToken(token) : null;
   if (!employee) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const { title, description, category, amount, receipt_url, expense_date } = await req.json();

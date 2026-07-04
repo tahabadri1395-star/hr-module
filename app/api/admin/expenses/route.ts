@@ -4,7 +4,7 @@ import { getAdminTokenFromRequest, verifyAdminToken } from "@/lib/admin-auth";
 
 export async function GET(req: NextRequest) {
   const token = getAdminTokenFromRequest(req);
-  const admin = token ? verifyAdminToken(token) : null;
+  const admin = token ? await verifyAdminToken(token) : null;
   if (!admin) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const status = req.nextUrl.searchParams.get("status") || "all";

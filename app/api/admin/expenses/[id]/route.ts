@@ -4,7 +4,7 @@ import { getAdminTokenFromRequest, verifyAdminToken } from "@/lib/admin-auth";
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const token = getAdminTokenFromRequest(req);
-  const admin = token ? verifyAdminToken(token) : null;
+  const admin = token ? await verifyAdminToken(token) : null;
   if (!admin) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const { id } = await params;
@@ -24,7 +24,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const token = getAdminTokenFromRequest(req);
-  const admin = token ? verifyAdminToken(token) : null;
+  const admin = token ? await verifyAdminToken(token) : null;
   if (!admin) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const { id } = await params;

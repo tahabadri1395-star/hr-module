@@ -202,6 +202,38 @@ async function initDb(): Promise<void> {
     `);
 
     await client.query(`
+      CREATE TABLE IF NOT EXISTS hr_polls (
+        id SERIAL PRIMARY KEY,
+        title TEXT NOT NULL,
+        description TEXT,
+        status TEXT DEFAULT 'active' CHECK(status IN ('active','closed')),
+        created_by TEXT NOT NULL,
+        created_at TIMESTAMPTZ DEFAULT NOW(),
+        closes_at TIMESTAMPTZ
+      )
+    `);
+
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS hr_poll_options (
+        id SERIAL PRIMARY KEY,
+        poll_id INTEGER NOT NULL REFERENCES hr_polls(id) ON DELETE CASCADE,
+        option_text TEXT NOT NULL,
+        display_order INTEGER DEFAULT 0
+      )
+    `);
+
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS hr_poll_votes (
+        id SERIAL PRIMARY KEY,
+        poll_id INTEGER NOT NULL REFERENCES hr_polls(id) ON DELETE CASCADE,
+        option_id INTEGER NOT NULL REFERENCES hr_poll_options(id) ON DELETE CASCADE,
+        employee_id INTEGER NOT NULL REFERENCES hr_employees(id),
+        voted_at TIMESTAMPTZ DEFAULT NOW(),
+        UNIQUE(poll_id, employee_id)
+      )
+    `);
+
+    await client.query(`
       CREATE TABLE IF NOT EXISTS hr_arz (
         id SERIAL PRIMARY KEY,
         employee_id INTEGER NOT NULL REFERENCES hr_employees(id),

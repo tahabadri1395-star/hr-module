@@ -202,6 +202,21 @@ async function initDb(): Promise<void> {
     `);
 
     await client.query(`
+      CREATE TABLE IF NOT EXISTS hr_attendance (
+        id SERIAL PRIMARY KEY,
+        employee_id INTEGER NOT NULL REFERENCES hr_employees(id),
+        date TEXT NOT NULL,
+        clock_in TEXT,
+        clock_out TEXT,
+        status TEXT DEFAULT 'present' CHECK(status IN ('present','absent','late','half_day')),
+        notes TEXT,
+        marked_by TEXT DEFAULT 'self',
+        created_at TIMESTAMPTZ DEFAULT NOW(),
+        UNIQUE(employee_id, date)
+      )
+    `);
+
+    await client.query(`
       CREATE TABLE IF NOT EXISTS hr_courses (
         id SERIAL PRIMARY KEY,
         title TEXT NOT NULL,

@@ -5,7 +5,7 @@ import Link from "next/link";
 
 interface AttendanceRecord {
   id: number; date: string; clock_in: string | null; clock_out: string | null;
-  status: "present" | "late" | "absent" | "half_day"; notes: string | null;
+  status: "present" | "late" | "absent" | "half_day"; notes: string | null; marked_by: string;
 }
 
 const STATUS_META = {
@@ -136,6 +136,12 @@ export default function AttendancePage() {
             )}
           </div>
 
+          {todayRecord?.marked_by === "site_visit" && (
+            <div className="mb-3 px-3 py-2 rounded-xl text-xs" style={{ backgroundColor: "#F5F3FF", color: "#7C3AED" }}>
+              🧳 You&apos;re auto-marked present today for an approved site visit/travel request. You can still clock in/out below to log your actual times — location won&apos;t be checked today.
+            </div>
+          )}
+
           {todayRecord ? (
             <div className="grid grid-cols-2 gap-3 mb-3">
               <div className="p-3 rounded-xl" style={{ backgroundColor: "#F0FDF4" }}>
@@ -156,14 +162,14 @@ export default function AttendancePage() {
           {msg && <p className="text-xs mb-2" style={{ color: "#DC2626" }}>{msg}</p>}
 
           <div className="flex gap-3">
-            {!todayRecord && (
+            {!todayRecord?.clock_in && (
               <button onClick={() => clockAction("clock_in")} disabled={acting}
                 className="flex-1 text-sm font-semibold py-2.5 rounded-xl text-white"
                 style={{ background: "linear-gradient(135deg, #4F46E5, #7C3AED)", opacity: acting ? 0.7 : 1 }}>
                 {acting ? "…" : "Clock In"}
               </button>
             )}
-            {todayRecord && !todayRecord.clock_out && (
+            {todayRecord?.clock_in && !todayRecord.clock_out && (
               <button onClick={() => clockAction("clock_out")} disabled={acting}
                 className="flex-1 text-sm font-semibold py-2.5 rounded-xl"
                 style={{ backgroundColor: "#ECFDF5", color: "#16A34A", border: "2px solid #BBF7D0", opacity: acting ? 0.7 : 1 }}>

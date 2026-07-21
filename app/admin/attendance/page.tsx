@@ -249,8 +249,11 @@ export default function AdminAttendancePage() {
                     </div>
                     <p className="text-xs" style={{ color: "#94A3B8" }}>
                       {fmtDate(rec.date)} · {fmtTime(rec.clock_in)} {rec.clock_out ? `→ ${fmtTime(rec.clock_out)}` : ""}
-                      {rec.marked_by !== "self" ? ` · marked by ${rec.marked_by}` : ""}
+                      {rec.marked_by !== "self" && rec.marked_by !== "site_visit" ? ` · marked by ${rec.marked_by}` : ""}
                     </p>
+                    {rec.marked_by === "site_visit" && (
+                      <p className="text-xs mt-0.5" style={{ color: "#7C3AED" }}>🧳 Auto-marked — approved site visit/travel</p>
+                    )}
                     {rec.marked_by === "self" && (
                       <p className="text-xs mt-0.5" style={{ color: rec.clock_in_location_name ? "#16A34A" : "#DC2626" }}>
                         📍 {rec.clock_in_location_name || (rec.clock_in_lat ? "Location recorded, no site configured" : "No location recorded")}

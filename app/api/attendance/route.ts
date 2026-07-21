@@ -44,22 +44,37 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Location is required to clock in/out. Please enable location access and try again." }, { status: 400 });
   }
 
-  const geofence = await checkGeofence(lat, lng);
-  if (!geofence.ok) {
-    const distText = geofence.nearestDistance != null ? `${geofence.nearestDistance}m` : "an unknown distance";
-    const nameText = geofence.nearestName ? ` from ${geofence.nearestName}` : "";
-    return NextResponse.json({ error: `You must be at a registered work location to clock in/out. You're ${distText}${nameText}.` }, { status: 403 });
+  const onApprovedTravel = await query(
+    `SELECT 1 FROM hr_travel_requests
+     WHERE employee_id=$1 AND status='approved' AND $2 BETWEEN travel_date AND COALESCE(return_date, travel_date)`,
+    [employee.id, today]
+  );
+  const geofenceBypassed = onApprovedTravel.rows.length > 0;
+
+  let locationName: string | null = null;
+  if (!geofenceBypassed) {
+    const geofence = await checkGeofence(lat, lng);
+    if (!geofence.ok) {
+      const distText = geofence.nearestDistance != null ? `${geofence.nearestDistance}m` : "an unknown distance";
+      const nameText = geofence.nearestName ? ` from ${geofence.nearestName}` : "";
+      return NextResponse.json({ error: `You must be at a registered work location to clock in/out. You're ${distText}${nameText}.` }, { status: 403 });
+    }
+    locationName = geofence.locationName;
   }
 
   const existing = await query(`SELECT * FROM hr_attendance WHERE employee_id=$1 AND date=$2`, [employee.id, today]);
 
   if (action === "clock_in") {
-    if (existing.rows.length) return NextResponse.json({ error: "Already clocked in today." }, { status: 400 });
+    if (existing.rows.length && existing.rows[0].marked_by === "self") {
+      return NextResponse.json({ error: "Already clocked in today." }, { status: 400 });
+    }
     const status = computeStatus(timeNow);
     await query(
-      `INSERT INTO hr_attendance (employee_id, date, clock_in, status, clock_in_lat, clock_in_lng, clock_in_location_name)
-       VALUES ($1,$2,$3,$4,$5,$6,$7)`,
-      [employee.id, today, timeNow, status, lat, lng, geofence.locationName]
+      `INSERT INTO hr_attendance (employee_id, date, clock_in, status, clock_in_lat, clock_in_lng, clock_in_location_name, marked_by)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,'self')
+       ON CONFLICT (employee_id, date) DO UPDATE SET
+         clock_in=$3, status=$4, clock_in_lat=$5, clock_in_lng=$6, clock_in_location_name=$7, marked_by='self'`,
+      [employee.id, today, timeNow, status, lat, lng, locationName]
     );
     return NextResponse.json({ success: true, status, clock_in: timeNow });
   }
@@ -69,7 +84,7 @@ export async function POST(request: NextRequest) {
     if (existing.rows[0].clock_out) return NextResponse.json({ error: "Already clocked out." }, { status: 400 });
     await query(
       `UPDATE hr_attendance SET clock_out=$1, clock_out_lat=$2, clock_out_lng=$3, clock_out_location_name=$4 WHERE employee_id=$5 AND date=$6`,
-      [timeNow, lat, lng, geofence.locationName, employee.id, today]
+      [timeNow, lat, lng, locationName, employee.id, today]
     );
     return NextResponse.json({ success: true, clock_out: timeNow });
   }

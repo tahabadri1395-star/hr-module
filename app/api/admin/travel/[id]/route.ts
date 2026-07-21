@@ -18,6 +18,33 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     WHERE id=$4 RETURNING *
   `, [status, admin_note || null, admin.username, parseInt(id)]);
 
-  if (!result.rows[0]) return NextResponse.json({ error: "Not found." }, { status: 404 });
-  return NextResponse.json({ success: true, travel: result.rows[0] });
+  const travel = result.rows[0];
+  if (!travel) return NextResponse.json({ error: "Not found." }, { status: 404 });
+
+  // Every date covered by an approved travel/site-visit request is auto-marked present,
+  // so field staff aren't blocked by attendance geofencing on days they're legitimately elsewhere.
+  const dates: string[] = [];
+  const start = new Date(travel.travel_date + "T00:00:00");
+  const end = new Date((travel.return_date || travel.travel_date) + "T00:00:00");
+  for (let d = new Date(start); d <= end && dates.length < 90; d.setDate(d.getDate() + 1)) {
+    dates.push(d.toISOString().slice(0, 10));
+  }
+
+  if (status === "approved") {
+    for (const date of dates) {
+      await query(`
+        INSERT INTO hr_attendance (employee_id, date, status, marked_by, notes)
+        VALUES ($1,$2,'present','site_visit',$3)
+        ON CONFLICT (employee_id, date) DO UPDATE SET
+          status='present', marked_by='site_visit', notes=$3
+          WHERE hr_attendance.marked_by <> 'self'
+      `, [travel.employee_id, date, `Auto-marked: approved ${travel.travel_type.replace("_", " ")} — ${travel.destination}`]);
+    }
+  } else {
+    for (const date of dates) {
+      await query(`DELETE FROM hr_attendance WHERE employee_id=$1 AND date=$2 AND marked_by='site_visit'`, [travel.employee_id, date]);
+    }
+  }
+
+  return NextResponse.json({ success: true, travel });
 }

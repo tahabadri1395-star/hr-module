@@ -19,7 +19,7 @@ function formatDate(d: string) {
   return new Date(d).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
 }
 
-export default function KhidmatGuzarManager({ adminRole }: { adminRole: string }) {
+export default function KhidmatGuzarManager() {
   const [list, setList] = useState<KG[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAdd, setShowAdd] = useState(false);
@@ -164,37 +164,9 @@ export default function KhidmatGuzarManager({ adminRole }: { adminRole: string }
     return matchSearch && matchFilter;
   });
 
-  const dashLink = adminRole === "super_admin" ? "/admin/super" : "/admin";
-
   return (
-    <div className="min-h-screen" style={{ backgroundColor: "#F8FAFC" }}>
-      {/* Nav */}
-      <nav className="bg-white border-b px-6 h-14 flex items-center justify-between sticky top-0 z-10"
-        style={{ borderColor: "#E2E8F0" }}>
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg flex items-center justify-center"
-            style={{ background: adminRole === "super_admin" ? "linear-gradient(135deg, #7C3AED, #4F46E5)" : "linear-gradient(135deg, #0F172A, #1E293B)" }}>
-            <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
-              <path d="M12 2L3 7v10l9 5 9-5V7l-9-5z" stroke="white" strokeWidth="2" strokeLinejoin="round"/>
-            </svg>
-          </div>
-          <span className="font-semibold text-sm" style={{ color: "#1E293B" }}>HR Module</span>
-          <span className="text-xs px-2 py-0.5 rounded-full"
-            style={adminRole === "super_admin"
-              ? { backgroundColor: "#EDE9FE", color: "#7C3AED" }
-              : { backgroundColor: "#F1F5F9", color: "#475569" }}>
-            {adminRole === "super_admin" ? "Super Admin" : "Admin"}
-          </span>
-        </div>
-        <div className="flex items-center gap-5">
-          <Link href={dashLink} className="text-xs" style={{ color: "#64748B" }}>← Dashboard</Link>
-          <form action="/api/admin/logout" method="POST">
-            <button type="submit" className="text-xs hover:opacity-70" style={{ color: "#94A3B8" }}>Sign Out</button>
-          </form>
-        </div>
-      </nav>
-
-      <div className="max-w-5xl mx-auto px-6 py-8">
+    <div>
+      <div>
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div>

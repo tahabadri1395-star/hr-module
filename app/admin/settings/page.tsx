@@ -59,7 +59,7 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
         </div>
 
         {tab === "khidmat-guzars" ? (
-          <KhidmatGuzarManager adminRole={admin.role} />
+          <KhidmatGuzarManager />
         ) : tab === "work-locations" ? (
           <WorkLocationsManager />
         ) : (

@@ -44,15 +44,41 @@ export default function AttendancePage() {
 
   useEffect(() => { load(); }, [load]);
 
+  function getLocation(): Promise<{ lat: number; lng: number }> {
+    return new Promise((resolve, reject) => {
+      if (!navigator.geolocation) {
+        reject(new Error("Your browser doesn't support location access, so clock in/out isn't available here."));
+        return;
+      }
+      navigator.geolocation.getCurrentPosition(
+        pos => resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+        err => {
+          if (err.code === err.PERMISSION_DENIED) {
+            reject(new Error("Location access was denied. Please enable location for this site and try again."));
+          } else {
+            reject(new Error("Couldn't get your location. Please check your device's location settings and try again."));
+          }
+        },
+        { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+      );
+    });
+  }
+
   async function clockAction(action: "clock_in" | "clock_out") {
     setActing(true); setMsg("");
-    const res = await fetch("/api/attendance", {
-      method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ action }),
-    });
-    setActing(false);
-    if (res.ok) { load(); }
-    else { const d = await res.json(); setMsg(d.error || "Failed."); }
+    try {
+      const { lat, lng } = await getLocation();
+      const res = await fetch("/api/attendance", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action, lat, lng }),
+      });
+      if (res.ok) { load(); }
+      else { const d = await res.json(); setMsg(d.error || "Failed."); }
+    } catch (err) {
+      setMsg(err instanceof Error ? err.message : "Failed.");
+    } finally {
+      setActing(false);
+    }
   }
 
   const recordMap: Record<string, AttendanceRecord> = {};

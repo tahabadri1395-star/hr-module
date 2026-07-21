@@ -3,13 +3,14 @@ import Link from "next/link";
 import { getAdminFromCookies } from "@/lib/admin-auth";
 import KhidmatGuzarManager from "@/components/KhidmatGuzarManager";
 import HolidayManager from "@/components/HolidayManager";
+import WorkLocationsManager from "@/components/WorkLocationsManager";
 
 export default async function SettingsPage({ searchParams }: { searchParams: Promise<{ tab?: string }> }) {
   const admin = await getAdminFromCookies();
   if (!admin) redirect("/admin/login");
 
   const sp = await searchParams;
-  const tab = sp.tab === "holidays" ? "holidays" : "khidmat-guzars";
+  const tab = sp.tab === "holidays" ? "holidays" : sp.tab === "work-locations" ? "work-locations" : "khidmat-guzars";
 
   const backUrl = admin.role === "super_admin" ? "/admin/super" : "/admin";
 
@@ -43,6 +44,7 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
           {[
             { key: "khidmat-guzars", label: "Khidmat Guzars" },
             { key: "holidays",        label: "Public Holidays" },
+            { key: "work-locations",  label: "Work Locations" },
           ].map(t => (
             <Link key={t.key} href={`/admin/settings?tab=${t.key}`}
               className="text-sm font-medium px-5 py-2 rounded-lg transition-colors"
@@ -58,6 +60,8 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
 
         {tab === "khidmat-guzars" ? (
           <KhidmatGuzarManager adminRole={admin.role} />
+        ) : tab === "work-locations" ? (
+          <WorkLocationsManager />
         ) : (
           <HolidayManager />
         )}

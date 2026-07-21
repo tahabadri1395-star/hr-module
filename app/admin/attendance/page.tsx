@@ -7,6 +7,8 @@ interface Record {
   id: number; employee_id: number; employee_name: string; department: string | null;
   employee_code: string | null; date: string; clock_in: string | null; clock_out: string | null;
   status: "present" | "late" | "absent" | "half_day"; notes: string | null; marked_by: string;
+  clock_in_location_name: string | null; clock_out_location_name: string | null;
+  clock_in_lat: string | null; clock_in_lng: string | null;
 }
 interface Summary {
   id: number; name: string; department: string | null;
@@ -249,6 +251,11 @@ export default function AdminAttendancePage() {
                       {fmtDate(rec.date)} · {fmtTime(rec.clock_in)} {rec.clock_out ? `→ ${fmtTime(rec.clock_out)}` : ""}
                       {rec.marked_by !== "self" ? ` · marked by ${rec.marked_by}` : ""}
                     </p>
+                    {rec.marked_by === "self" && (
+                      <p className="text-xs mt-0.5" style={{ color: rec.clock_in_location_name ? "#16A34A" : "#DC2626" }}>
+                        📍 {rec.clock_in_location_name || (rec.clock_in_lat ? "Location recorded, no site configured" : "No location recorded")}
+                      </p>
+                    )}
                     {rec.notes && <p className="text-xs mt-0.5 italic" style={{ color: "#94A3B8" }}>{rec.notes}</p>}
                   </div>
                   <span className="text-xs font-semibold px-2 py-0.5 rounded-full shrink-0" style={{ backgroundColor: meta.bg, color: meta.color }}>{meta.label}</span>

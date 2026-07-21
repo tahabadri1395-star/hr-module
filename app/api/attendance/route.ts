@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { query } from "@/lib/db";
 import { getEmployeeTokenFromRequest, verifyEmployeeToken } from "@/lib/auth";
+import { checkGeofence } from "@/lib/geo";
 
 const LATE_HOUR = 9;
 const LATE_MIN  = 30;
@@ -35,9 +36,20 @@ export async function POST(request: NextRequest) {
   const employee = await verifyEmployeeToken(token);
   if (!employee) return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
 
-  const { action } = await request.json(); // "clock_in" | "clock_out"
+  const { action, lat, lng } = await request.json(); // "clock_in" | "clock_out"
   const today = new Date().toISOString().slice(0, 10);
   const timeNow = new Date().toTimeString().slice(0, 5); // HH:MM
+
+  if (typeof lat !== "number" || typeof lng !== "number") {
+    return NextResponse.json({ error: "Location is required to clock in/out. Please enable location access and try again." }, { status: 400 });
+  }
+
+  const geofence = await checkGeofence(lat, lng);
+  if (!geofence.ok) {
+    const distText = geofence.nearestDistance != null ? `${geofence.nearestDistance}m` : "an unknown distance";
+    const nameText = geofence.nearestName ? ` from ${geofence.nearestName}` : "";
+    return NextResponse.json({ error: `You must be at a registered work location to clock in/out. You're ${distText}${nameText}.` }, { status: 403 });
+  }
 
   const existing = await query(`SELECT * FROM hr_attendance WHERE employee_id=$1 AND date=$2`, [employee.id, today]);
 
@@ -45,8 +57,9 @@ export async function POST(request: NextRequest) {
     if (existing.rows.length) return NextResponse.json({ error: "Already clocked in today." }, { status: 400 });
     const status = computeStatus(timeNow);
     await query(
-      `INSERT INTO hr_attendance (employee_id, date, clock_in, status) VALUES ($1,$2,$3,$4)`,
-      [employee.id, today, timeNow, status]
+      `INSERT INTO hr_attendance (employee_id, date, clock_in, status, clock_in_lat, clock_in_lng, clock_in_location_name)
+       VALUES ($1,$2,$3,$4,$5,$6,$7)`,
+      [employee.id, today, timeNow, status, lat, lng, geofence.locationName]
     );
     return NextResponse.json({ success: true, status, clock_in: timeNow });
   }
@@ -54,7 +67,10 @@ export async function POST(request: NextRequest) {
   if (action === "clock_out") {
     if (!existing.rows.length) return NextResponse.json({ error: "Not clocked in yet." }, { status: 400 });
     if (existing.rows[0].clock_out) return NextResponse.json({ error: "Already clocked out." }, { status: 400 });
-    await query(`UPDATE hr_attendance SET clock_out=$1 WHERE employee_id=$2 AND date=$3`, [timeNow, employee.id, today]);
+    await query(
+      `UPDATE hr_attendance SET clock_out=$1, clock_out_lat=$2, clock_out_lng=$3, clock_out_location_name=$4 WHERE employee_id=$5 AND date=$6`,
+      [timeNow, lat, lng, geofence.locationName, employee.id, today]
+    );
     return NextResponse.json({ success: true, clock_out: timeNow });
   }
 

@@ -217,6 +217,25 @@ async function initDb(): Promise<void> {
       )
     `);
 
+    // GPS geofencing for self-service clock in/out
+    await client.query(`ALTER TABLE hr_attendance ADD COLUMN IF NOT EXISTS clock_in_lat NUMERIC(10,7)`);
+    await client.query(`ALTER TABLE hr_attendance ADD COLUMN IF NOT EXISTS clock_in_lng NUMERIC(10,7)`);
+    await client.query(`ALTER TABLE hr_attendance ADD COLUMN IF NOT EXISTS clock_in_location_name TEXT`);
+    await client.query(`ALTER TABLE hr_attendance ADD COLUMN IF NOT EXISTS clock_out_lat NUMERIC(10,7)`);
+    await client.query(`ALTER TABLE hr_attendance ADD COLUMN IF NOT EXISTS clock_out_lng NUMERIC(10,7)`);
+    await client.query(`ALTER TABLE hr_attendance ADD COLUMN IF NOT EXISTS clock_out_location_name TEXT`);
+
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS hr_work_locations (
+        id SERIAL PRIMARY KEY,
+        name TEXT NOT NULL,
+        latitude NUMERIC(10,7) NOT NULL,
+        longitude NUMERIC(10,7) NOT NULL,
+        radius_meters INTEGER NOT NULL DEFAULT 150,
+        created_at TIMESTAMPTZ DEFAULT NOW()
+      )
+    `);
+
     await client.query(`
       CREATE TABLE IF NOT EXISTS hr_courses (
         id SERIAL PRIMARY KEY,

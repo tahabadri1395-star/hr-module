@@ -360,11 +360,13 @@ async function initDb(): Promise<void> {
       ["30303943", aqHash, "admin"]
     );
 
+    // Aliasger Bs's super admin login uses his ITS number as the username instead of a name-based one.
+    await client.query(`UPDATE hr_admins SET username=$1 WHERE username=$2`, ["20359529", "AliasgerBs"]);
     const abHash = await bcrypt.hash("AB@Secure99", 10);
     await client.query(
       `INSERT INTO hr_admins (username, password_hash, role) VALUES ($1, $2, $3)
        ON CONFLICT (username) DO NOTHING`,
-      ["AliasgerBs", abHash, "super_admin"]
+      ["20359529", abHash, "super_admin"]
     );
   } finally {
     client.release();

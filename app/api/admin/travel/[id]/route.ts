@@ -48,3 +48,28 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 
   return NextResponse.json({ success: true, travel });
 }
+
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const token = getAdminTokenFromRequest(request);
+  if (!token) return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
+  const admin = await verifyAdminToken(token);
+  if (!admin) return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
+
+  const { id } = await params;
+  const existing = await query(`SELECT * FROM hr_travel_requests WHERE id=$1`, [parseInt(id)]);
+  const travel = existing.rows[0];
+  if (!travel) return NextResponse.json({ error: "Not found." }, { status: 404 });
+
+  const dates: string[] = [];
+  const start = new Date(travel.travel_date + "T00:00:00");
+  const end = new Date((travel.return_date || travel.travel_date) + "T00:00:00");
+  for (let d = new Date(start); d <= end && dates.length < 90; d.setDate(d.getDate() + 1)) {
+    dates.push(d.toISOString().slice(0, 10));
+  }
+  for (const date of dates) {
+    await query(`DELETE FROM hr_attendance WHERE employee_id=$1 AND date=$2 AND marked_by='site_visit'`, [travel.employee_id, date]);
+  }
+
+  await query(`DELETE FROM hr_travel_requests WHERE id=$1`, [parseInt(id)]);
+  return NextResponse.json({ success: true });
+}

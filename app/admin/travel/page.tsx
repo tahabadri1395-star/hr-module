@@ -88,6 +88,12 @@ export default function AdminTravelPage() {
     load();
   }
 
+  async function removeTravel(id: number) {
+    if (!confirm("Delete this travel request? Any auto-marked attendance for it will be removed too.")) return;
+    await fetch(`/api/admin/travel/${id}`, { method: "DELETE" });
+    load();
+  }
+
   const filteredTravel = travel.filter(t => filterStatus === "all" || t.status === filterStatus);
   const pendingTravel  = travel.filter(t => t.status === "pending").length;
   const pendingExpense = expenseStats ? parseInt(expenseStats.pending, 10) : 0;
@@ -206,14 +212,18 @@ export default function AdminTravelPage() {
                           </div>
                           {t.admin_note && <p className="text-xs mt-1.5 italic" style={{ color: "#64748B" }}>Note: {t.admin_note}</p>}
                         </div>
-                        {t.status === "pending" && (
-                          <div className="flex gap-2 shrink-0">
-                            <button onClick={() => openAction(t.id, "approved")}
-                              className="text-xs px-3 py-1.5 rounded-lg text-white font-medium" style={{ background: "linear-gradient(135deg,#059669,#047857)" }}>Approve</button>
-                            <button onClick={() => openAction(t.id, "rejected")}
-                              className="text-xs px-3 py-1.5 rounded-lg border font-medium" style={{ borderColor: "#FECACA", color: "#DC2626", backgroundColor: "#FEF2F2" }}>Reject</button>
-                          </div>
-                        )}
+                        <div className="flex gap-2 shrink-0">
+                          {t.status === "pending" && (
+                            <>
+                              <button onClick={() => openAction(t.id, "approved")}
+                                className="text-xs px-3 py-1.5 rounded-lg text-white font-medium" style={{ background: "linear-gradient(135deg,#059669,#047857)" }}>Approve</button>
+                              <button onClick={() => openAction(t.id, "rejected")}
+                                className="text-xs px-3 py-1.5 rounded-lg border font-medium" style={{ borderColor: "#FECACA", color: "#DC2626", backgroundColor: "#FEF2F2" }}>Reject</button>
+                            </>
+                          )}
+                          <button onClick={() => removeTravel(t.id)}
+                            className="text-xs px-3 py-1.5 rounded-lg" style={{ backgroundColor: "#F1F5F9", color: "#94A3B8" }}>Delete</button>
+                        </div>
                       </div>
                     </div>
                   );

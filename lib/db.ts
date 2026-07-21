@@ -101,6 +101,7 @@ async function initDb(): Promise<void> {
         updated_at TIMESTAMPTZ DEFAULT NOW()
       )
     `);
+    await client.query(`ALTER TABLE hr_employee_profiles ADD COLUMN IF NOT EXISTS personal_email TEXT`);
 
     await client.query(`
       CREATE TABLE IF NOT EXISTS hr_employee_education (
@@ -284,37 +285,10 @@ async function initDb(): Promise<void> {
       )
     `);
 
-    await client.query(`
-      CREATE TABLE IF NOT EXISTS hr_polls (
-        id SERIAL PRIMARY KEY,
-        title TEXT NOT NULL,
-        description TEXT,
-        status TEXT DEFAULT 'active' CHECK(status IN ('active','closed')),
-        created_by TEXT NOT NULL,
-        created_at TIMESTAMPTZ DEFAULT NOW(),
-        closes_at TIMESTAMPTZ
-      )
-    `);
-
-    await client.query(`
-      CREATE TABLE IF NOT EXISTS hr_poll_options (
-        id SERIAL PRIMARY KEY,
-        poll_id INTEGER NOT NULL REFERENCES hr_polls(id) ON DELETE CASCADE,
-        option_text TEXT NOT NULL,
-        display_order INTEGER DEFAULT 0
-      )
-    `);
-
-    await client.query(`
-      CREATE TABLE IF NOT EXISTS hr_poll_votes (
-        id SERIAL PRIMARY KEY,
-        poll_id INTEGER NOT NULL REFERENCES hr_polls(id) ON DELETE CASCADE,
-        option_id INTEGER NOT NULL REFERENCES hr_poll_options(id) ON DELETE CASCADE,
-        employee_id INTEGER NOT NULL REFERENCES hr_employees(id),
-        voted_at TIMESTAMPTZ DEFAULT NOW(),
-        UNIQUE(poll_id, employee_id)
-      )
-    `);
+    // Polls module retired — drop tables (children before parent) on any deployment that still has them
+    await client.query(`DROP TABLE IF EXISTS hr_poll_votes`);
+    await client.query(`DROP TABLE IF EXISTS hr_poll_options`);
+    await client.query(`DROP TABLE IF EXISTS hr_polls`);
 
     await client.query(`
       CREATE TABLE IF NOT EXISTS hr_arz (
@@ -350,12 +324,40 @@ async function initDb(): Promise<void> {
       )
     `);
 
+    // Travel & Expenses merge: expense claims can optionally link back to a travel request,
+    // replacing the old standalone hr_reimbursements table.
+    await client.query(`ALTER TABLE hr_expenses ADD COLUMN IF NOT EXISTS travel_id INTEGER REFERENCES hr_travel_requests(id) ON DELETE SET NULL`);
+    await client.query(`ALTER TABLE hr_expenses ADD COLUMN IF NOT EXISTS legacy_reimbursement_id INTEGER UNIQUE`);
+
+    // One-time backfill of pre-merge reimbursement claims into hr_expenses (idempotent via the unique legacy id)
+    await client.query(`
+      INSERT INTO hr_expenses (employee_id, title, category, amount, expense_date, travel_id, status, admin_note, approved_by, approved_at, created_at, legacy_reimbursement_id)
+      SELECT
+        r.employee_id,
+        r.description,
+        CASE r.category WHEN 'transport' THEN 'travel' WHEN 'meals' THEN 'food' WHEN 'accommodation' THEN 'accommodation' ELSE 'other' END,
+        r.amount,
+        r.receipt_date,
+        r.travel_id,
+        r.status,
+        r.admin_note,
+        r.approved_by,
+        r.approved_at,
+        r.created_at,
+        r.id
+      FROM hr_reimbursements r
+      ON CONFLICT (legacy_reimbursement_id) DO NOTHING
+    `);
+
     // Seed admin accounts (no-op if already exist)
+    // Abbas Qamari's admin login uses his ITS number as the username instead of a name-based one.
+    // Migrate any pre-existing "AbbasQamari" account in place so his password/history carry over.
+    await client.query(`UPDATE hr_admins SET username=$1 WHERE username=$2`, ["30303943", "AbbasQamari"]);
     const aqHash = await bcrypt.hash("AQ@Secure99", 10);
     await client.query(
       `INSERT INTO hr_admins (username, password_hash, role) VALUES ($1, $2, $3)
        ON CONFLICT (username) DO NOTHING`,
-      ["AbbasQamari", aqHash, "admin"]
+      ["30303943", aqHash, "admin"]
     );
 
     const abHash = await bcrypt.hash("AB@Secure99", 10);

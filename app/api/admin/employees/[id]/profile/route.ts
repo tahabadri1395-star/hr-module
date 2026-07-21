@@ -44,6 +44,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     its_number, passport_number, passport_expiry,
     aadhar_number, pan_number,
     bank_name, bank_account, bank_ifsc, bank_branch,
+    personal_email,
   } = body;
 
   await query(`
@@ -52,21 +53,21 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       waris_name, waris_contact, waris_relation,
       its_number, passport_number, passport_expiry,
       aadhar_number, pan_number,
-      bank_name, bank_account, bank_ifsc, bank_branch, updated_at
-    ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,NOW())
+      bank_name, bank_account, bank_ifsc, bank_branch, personal_email, updated_at
+    ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,NOW())
     ON CONFLICT (employee_id) DO UPDATE SET
       phone=$2, whatsapp=$3, address=$4, city=$5, date_of_birth=$6,
       waris_name=$7, waris_contact=$8, waris_relation=$9,
       its_number=$10, passport_number=$11, passport_expiry=$12,
       aadhar_number=$13, pan_number=$14,
-      bank_name=$15, bank_account=$16, bank_ifsc=$17, bank_branch=$18, updated_at=NOW()
+      bank_name=$15, bank_account=$16, bank_ifsc=$17, bank_branch=$18, personal_email=$19, updated_at=NOW()
   `, [
     empId,
     phone||null, whatsapp||null, address||null, city||null, date_of_birth||null,
     waris_name||null, waris_contact||null, waris_relation||null,
     its_number||null, passport_number||null, passport_expiry||null,
     aadhar_number||null, pan_number||null,
-    bank_name||null, bank_account||null, bank_ifsc||null, bank_branch||null,
+    bank_name||null, bank_account||null, bank_ifsc||null, bank_branch||null, personal_email||null,
   ]);
 
   return NextResponse.json({ success: true });

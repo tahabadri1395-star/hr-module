@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 interface Employee { id: number; name: string; email: string; department: string | null; employee_code: string | null; }
-interface Profile { phone?: string; whatsapp?: string; address?: string; city?: string; date_of_birth?: string; its_number?: string; }
+interface Profile { phone?: string; whatsapp?: string; address?: string; city?: string; date_of_birth?: string; its_number?: string; personal_email?: string; }
 interface Education { id: number; institution: string; degree: string | null; field: string | null; year_from: string | null; year_to: string | null; status: string; }
 interface TestResult { id: number; test_name: string; score: string | null; date: string | null; remarks: string | null; }
 
@@ -187,6 +187,7 @@ export default function ProfilePage() {
                 <div>
                   <Field label="Address" value={profile.address} />
                   <Field label="ITS Number" value={profile.its_number} />
+                  <Field label="Personal Email" value={profile.personal_email} />
                 </div>
               </div>
             )}

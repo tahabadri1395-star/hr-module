@@ -8,11 +8,8 @@ export async function GET(request: NextRequest) {
   const employee = await verifyEmployeeToken(token);
   if (!employee) return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
 
-  const [travelRes, reimbRes] = await Promise.all([
-    query(`SELECT * FROM hr_travel_requests WHERE employee_id=$1 ORDER BY created_at DESC`, [employee.id]),
-    query(`SELECT * FROM hr_reimbursements WHERE employee_id=$1 ORDER BY created_at DESC`, [employee.id]),
-  ]);
-  return NextResponse.json({ travel: travelRes.rows, reimbursements: reimbRes.rows });
+  const travelRes = await query(`SELECT * FROM hr_travel_requests WHERE employee_id=$1 ORDER BY created_at DESC`, [employee.id]);
+  return NextResponse.json({ travel: travelRes.rows });
 }
 
 export async function POST(request: NextRequest) {

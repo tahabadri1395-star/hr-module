@@ -20,10 +20,8 @@ export default async function AdminDashboardPage() {
       (SELECT COUNT(*) FROM hr_employees WHERE active=1) as total_kgs,
       (SELECT COUNT(*) FROM hr_tasks WHERE status != 'completed') as open_tasks,
       (SELECT COUNT(*) FROM hr_travel_requests WHERE status='pending') as pending_travel,
-      (SELECT COUNT(*) FROM hr_reimbursements WHERE status='pending') as pending_reimb,
       (SELECT COUNT(*) FROM hr_murasalat) as total_mura,
       (SELECT COUNT(*) FROM hr_arz WHERE status IN ('open','in_progress')) as open_arz,
-      (SELECT COUNT(*) FROM hr_polls WHERE status='active') as active_polls,
       (SELECT COUNT(*) FROM hr_assets) as total_assets,
       (SELECT COUNT(*) FROM hr_documents) as total_docs,
       (SELECT COUNT(*) FROM hr_courses WHERE status='active') as active_courses,
@@ -40,13 +38,11 @@ export default async function AdminDashboardPage() {
   const totalKGs      = parseInt(s.total_kgs, 10);
   const openTasks     = parseInt(s.open_tasks, 10);
   const pendingTravel = parseInt(s.pending_travel, 10);
-  const pendingReimb  = parseInt(s.pending_reimb, 10);
   const recentLeaves  = recentLeavesRes.rows as RecentLeave[];
   const recentTasks   = recentTasksRes.rows as RecentTask[];
   const recentMura    = muraRes.rows;
 
   const openArz = parseInt(s.open_arz, 10);
-  const activePolls = parseInt(s.active_polls, 10);
   const totalAssets = parseInt(s.total_assets, 10);
   const totalDocs      = parseInt(s.total_docs, 10);
   const activeCourses  = parseInt(s.active_courses, 10);
@@ -56,15 +52,13 @@ export default async function AdminDashboardPage() {
   const modules = [
     { href: "/admin/leaves",    label: "Leave Approvals",  badge: pendingLeaves,               color: "#F59E0B", desc: `${emergLeaves} emergency` },
     { href: "/admin/tasks",     label: "Task Management",  badge: openTasks,                   color: "#3B82F6", desc: "assign & track" },
-    { href: "/admin/travel",    label: "Travel & Claims",  badge: pendingTravel + pendingReimb, color: "#10B981", desc: `${pendingReimb} claims` },
+    { href: "/admin/travel",    label: "Travel & Expenses", badge: pendingTravel + pendingExpenses, color: "#10B981", desc: `${pendingExpenses} claims` },
     { href: "/admin/murasalat", label: "Murasalat",        badge: parseInt(s.total_mura, 10),  color: "#8B5CF6", desc: "circulars" },
     { href: "/admin/arz",       label: "Personal Arz",     badge: openArz,                     color: "#EA580C", desc: "requests & grievances" },
-    { href: "/admin/polls",     label: "Polls",            badge: activePolls,                  color: "#06B6D4", desc: "active polls" },
     { href: "/admin/assets",    label: "Asset Tracking",   badge: totalAssets,  color: "#B45309", desc: "equipment & software" },
     { href: "/admin/documents", label: "Document Vault",   badge: totalDocs,      color: "#1D4ED8", desc: "policies & forms" },
     { href: "/admin/lms",        label: "L&D",              badge: activeCourses, color: "#059669", desc: "courses & training" },
     { href: "/admin/attendance", label: "Attendance",       badge: clockedToday,    color: "#0891B2", desc: "clocked in today" },
-    { href: "/admin/expenses",   label: "Expense Claims",   badge: pendingExpenses, color: "#B91C1C", desc: "pending approval" },
     { href: "/admin/settings",   label: "Settings",         badge: 0,               color: "#6B7280", desc: `${totalKGs} active KGs` },
   ];
 
@@ -97,7 +91,7 @@ export default async function AdminDashboardPage() {
               { label: "Emergency",       value: emergLeaves,    color: "#EF4444" },
               { label: "Open Tasks",      value: openTasks,      color: "#3B82F6" },
               { label: "Travel Pending",  value: pendingTravel,  color: "#10B981" },
-              { label: "Claims Pending",  value: pendingReimb,   color: "#8B5CF6" },
+              { label: "Claims Pending",  value: pendingExpenses, color: "#8B5CF6" },
               { label: "Active KGs",      value: totalKGs,       color: "#94A3B8" },
             ].map(s => (
               <div key={s.label} className="rounded-xl px-4 py-3" style={{ backgroundColor: "#1E293B" }}>

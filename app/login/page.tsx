@@ -6,7 +6,7 @@ import Link from "next/link";
 
 export default function LoginPage() {
   const router = useRouter();
-  const [form, setForm] = useState({ email: "", password: "" });
+  const [form, setForm] = useState({ its_number: "", password: "" });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -52,13 +52,14 @@ export default function LoginPage() {
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
               <label className="block text-xs font-medium mb-1.5" style={{ color: "#64748B" }}>
-                Email Address
+                ITS Number
               </label>
               <input
-                type="email"
-                value={form.email}
-                onChange={e => setForm({ ...form, email: e.target.value })}
-                placeholder="you@company.com"
+                type="text"
+                inputMode="numeric"
+                value={form.its_number}
+                onChange={e => setForm({ ...form, its_number: e.target.value })}
+                placeholder="e.g. 30303943"
                 className="w-full px-3.5 py-2.5 rounded-lg text-sm border outline-none transition-colors"
                 style={{ borderColor: "#E2E8F0", color: "#1E293B" }}
                 onFocus={e => (e.target.style.borderColor = "#4F46E5")}

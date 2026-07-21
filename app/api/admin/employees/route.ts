@@ -25,17 +25,15 @@ export async function POST(request: NextRequest) {
 
   const { name, email, department, employee_code, password } = await request.json();
 
-  if (!name?.trim() || !email?.trim() || !password?.trim()) {
-    return NextResponse.json({ error: "Name, email, and password are required." }, { status: 400 });
+  if (!name?.trim() || !email?.trim() || !employee_code?.trim() || !password?.trim()) {
+    return NextResponse.json({ error: "Name, email, ITS number, and password are required." }, { status: 400 });
   }
 
   const existing = await query("SELECT id FROM hr_employees WHERE email = $1", [email.trim()]);
   if (existing.rows[0]) return NextResponse.json({ error: "Email already registered." }, { status: 409 });
 
-  if (employee_code?.trim()) {
-    const codeExists = await query("SELECT id FROM hr_employees WHERE employee_code = $1", [employee_code.trim()]);
-    if (codeExists.rows[0]) return NextResponse.json({ error: "Employee code already in use." }, { status: 409 });
-  }
+  const codeExists = await query("SELECT id FROM hr_employees WHERE employee_code = $1", [employee_code.trim()]);
+  if (codeExists.rows[0]) return NextResponse.json({ error: "ITS number already in use." }, { status: 409 });
 
   const hash = await bcrypt.hash(password.trim(), 10);
   const result = await query(`

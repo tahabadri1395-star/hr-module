@@ -7,19 +7,20 @@ interface Employee {
   id: number;
   name: string;
   email: string;
+  employee_code: string;
   password_hash: string;
   active: number;
 }
 
 export async function POST(request: NextRequest) {
   try {
-    const { email, password } = await request.json();
+    const { its_number, password } = await request.json();
 
-    if (!email || !password) {
-      return NextResponse.json({ error: "Email and password required." }, { status: 400 });
+    if (!its_number || !password) {
+      return NextResponse.json({ error: "ITS number and password required." }, { status: 400 });
     }
 
-    const result = await query("SELECT * FROM hr_employees WHERE email = $1", [email]);
+    const result = await query("SELECT * FROM hr_employees WHERE employee_code = $1", [its_number.trim()]);
     const employee = result.rows[0] as Employee | undefined;
 
     if (!employee || !(await bcrypt.compare(password, employee.password_hash))) {

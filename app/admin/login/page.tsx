@@ -1,11 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 export default function AdminLoginPage() {
-  const router = useRouter();
   const [form, setForm] = useState({ username: "", password: "" });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -23,9 +21,7 @@ export default function AdminLoginPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Invalid credentials.");
       // super_admin goes to /admin/super, admin goes to /admin
-      if (data.role === "super_admin") router.push("/admin/super");
-      else router.push("/admin");
-      router.refresh();
+      window.location.href = data.role === "super_admin" ? "/admin/super" : "/admin";
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Login failed.");
     } finally {

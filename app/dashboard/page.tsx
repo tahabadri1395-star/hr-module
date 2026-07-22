@@ -119,7 +119,7 @@ export default async function DashboardPage() {
 
       {/* Module Cards */}
       <div className="max-w-4xl mx-auto px-4 -mt-4">
-        <div className="grid grid-cols-4 sm:grid-cols-12 gap-2 mb-6 animate-in animate-in-delay-1">
+        <div className="flex flex-wrap justify-center gap-2 mb-6 animate-in animate-in-delay-1">
           {[
             { href: "/apply",      label: "Apply Leave",   icon: "M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z", color: "#4F46E5", badge: null },
             { href: "#tasks",      label: "My Tasks",      icon: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4", color: "#0891B2", badge: activeTasks.length || null },
@@ -132,7 +132,7 @@ export default async function DashboardPage() {
             { href: "/travel",     label: "Travel & Expenses", icon: "M12 19l9 2-9-18-9 18 9-2zm0 0v-8", color: "#059669", badge: (pendingExpenses + pendingTravel) || null },
             { href: "/profile",    label: "My Profile",    icon: "M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z", color: "#DC2626", badge: null },
           ].map(m => (
-            <Link key={m.label} href={m.href} className="card-hover bg-white p-3 flex flex-col items-center gap-1.5 text-center relative"
+            <Link key={m.label} href={m.href} className="card-hover bg-white p-3 flex flex-col items-center gap-1.5 text-center relative w-[calc(25%-6px)] sm:w-[76px]"
               style={{ borderRadius: "var(--radius-lg)", boxShadow: "var(--shadow-sm)" }}>
               {m.badge && <span className="absolute top-1.5 right-1.5 w-4 h-4 rounded-full text-white text-xs flex items-center justify-center font-bold" style={{ backgroundColor: m.color, fontSize: "10px" }}>{m.badge}</span>}
               <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ backgroundColor: m.color + "18" }}>

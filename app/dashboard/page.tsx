@@ -22,6 +22,24 @@ const P_BG    = { high: "#FFF1F2", medium: "#FFFBEB", low: "#F0FDF4" };
 
 function fmt(d: string) { return new Date(d).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }); }
 
+function EmergencyRing({ remaining, total }: { remaining: number; total: number }) {
+  const size = 56, stroke = 6, r = (size - stroke) / 2, c = 2 * Math.PI * r;
+  const frac = total > 0 ? remaining / total : 0;
+  return (
+    <div className="relative shrink-0" style={{ width: size, height: size }}>
+      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} style={{ transform: "rotate(-90deg)" }}>
+        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="#EEF2FF" strokeWidth={stroke} />
+        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="#4F46E5" strokeWidth={stroke}
+          strokeDasharray={c} strokeDashoffset={c * (1 - frac)} strokeLinecap="round"
+          style={{ transition: "stroke-dashoffset 600ms var(--ease-out)" }} />
+      </svg>
+      <div className="absolute inset-0 flex items-center justify-center">
+        <span className="text-sm font-bold" style={{ color: "#1E293B" }}>{remaining}</span>
+      </div>
+    </div>
+  );
+}
+
 export default async function DashboardPage() {
   const employee = await getEmployeeFromCookies();
   if (!employee) redirect("/login");
@@ -65,7 +83,7 @@ export default async function DashboardPage() {
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#F0F4FF" }}>
       {/* Nav */}
-      <nav className="px-6 h-14 flex items-center justify-between" style={{ background: "linear-gradient(135deg, #4F46E5, #7C3AED)" }}>
+      <nav className="px-6 h-14 flex items-center justify-between sticky top-0 z-20" style={{ background: "linear-gradient(135deg, #4F46E5, #7C3AED)", boxShadow: "0 1px 0 rgba(255,255,255,0.08)" }}>
         <div className="flex items-center gap-3">
           <div className="w-7 h-7 rounded-lg bg-white/20 flex items-center justify-center">
             <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path d="M12 2L3 7v10l9 5 9-5V7l-9-5z" stroke="white" strokeWidth="2" strokeLinejoin="round"/></svg>
@@ -75,30 +93,33 @@ export default async function DashboardPage() {
         </div>
         <div className="flex items-center gap-4">
           <span className="text-sm text-white/80 hidden sm:block">{employee.name}</span>
-          <Link href="/profile" className="text-xs text-white/70 hover:text-white">Profile</Link>
+          <Link href="/profile" className="text-xs text-white/70 hover:text-white transition-colors">Profile</Link>
           <form action="/api/auth/logout" method="POST">
-            <button type="submit" className="text-xs text-white/50 hover:text-white/80">Sign Out</button>
+            <button type="submit" className="text-xs text-white/50 hover:text-white/80 transition-colors">Sign Out</button>
           </form>
         </div>
       </nav>
 
       {/* Hero */}
-      <div className="px-6 py-8 text-center" style={{ background: "linear-gradient(135deg, #4F46E5, #7C3AED)" }}>
-        <div className="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center text-2xl font-bold text-white mx-auto mb-3">
-          {employee.name.charAt(0)}
-        </div>
-        <h1 className="text-xl font-bold text-white">Welcome, {employee.name.split(" ")[0]}</h1>
-        {dept && <p className="text-sm mt-0.5 text-white/60">{dept}</p>}
-        <div className="flex justify-center gap-3 mt-4 flex-wrap">
-          <span className="text-xs px-3 py-1.5 rounded-full bg-white/15 text-white">{emergLeft} emergency {emergLeft === 1 ? "leave" : "leaves"} left</span>
-          {pendingLeaves.length > 0 && <span className="text-xs px-3 py-1.5 rounded-full bg-yellow-400/30 text-yellow-100">{pendingLeaves.length} leave in progress</span>}
-          {activeTasks.length > 0 && <span className="text-xs px-3 py-1.5 rounded-full bg-cyan-400/20 text-cyan-100">{activeTasks.length} active {activeTasks.length === 1 ? "task" : "tasks"}</span>}
+      <div className="px-6 py-9 text-center relative overflow-hidden" style={{ background: "linear-gradient(135deg, #4F46E5, #7C3AED)" }}>
+        <div aria-hidden className="absolute pointer-events-none" style={{ top: "-80px", right: "10%", width: "280px", height: "280px", borderRadius: "9999px", background: "radial-gradient(circle, rgba(255,255,255,0.08), transparent 70%)" }} />
+        <div className="relative animate-in">
+          <div className="w-16 h-16 rounded-full bg-white/15 flex items-center justify-center text-2xl font-bold text-white mx-auto mb-3" style={{ boxShadow: "0 0 0 4px rgba(255,255,255,0.12)" }}>
+            {employee.name.charAt(0)}
+          </div>
+          <h1 className="text-xl font-bold text-white tracking-tight">Welcome, {employee.name.split(" ")[0]}</h1>
+          {dept && <p className="text-sm mt-0.5 text-white/60">{dept}</p>}
+          <div className="flex justify-center gap-3 mt-4 flex-wrap">
+            <span className="text-xs px-3 py-1.5 rounded-full bg-white/15 text-white">{emergLeft} emergency {emergLeft === 1 ? "leave" : "leaves"} left</span>
+            {pendingLeaves.length > 0 && <span className="text-xs px-3 py-1.5 rounded-full bg-yellow-400/30 text-yellow-100">{pendingLeaves.length} leave in progress</span>}
+            {activeTasks.length > 0 && <span className="text-xs px-3 py-1.5 rounded-full bg-cyan-400/20 text-cyan-100">{activeTasks.length} active {activeTasks.length === 1 ? "task" : "tasks"}</span>}
+          </div>
         </div>
       </div>
 
       {/* Module Cards */}
       <div className="max-w-4xl mx-auto px-4 -mt-4">
-        <div className="grid grid-cols-4 sm:grid-cols-12 gap-2 mb-6">
+        <div className="grid grid-cols-4 sm:grid-cols-12 gap-2 mb-6 animate-in animate-in-delay-1">
           {[
             { href: "/apply",      label: "Apply Leave",   icon: "M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z", color: "#4F46E5", badge: null },
             { href: "#tasks",      label: "My Tasks",      icon: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4", color: "#0891B2", badge: activeTasks.length || null },
@@ -111,7 +132,8 @@ export default async function DashboardPage() {
             { href: "/travel",     label: "Travel & Expenses", icon: "M12 19l9 2-9-18-9 18 9-2zm0 0v-8", color: "#059669", badge: (pendingExpenses + pendingTravel) || null },
             { href: "/profile",    label: "My Profile",    icon: "M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z", color: "#DC2626", badge: null },
           ].map(m => (
-            <Link key={m.label} href={m.href} className="bg-white rounded-2xl p-3 flex flex-col items-center gap-1.5 text-center shadow-sm hover:shadow-md transition relative">
+            <Link key={m.label} href={m.href} className="card-hover bg-white p-3 flex flex-col items-center gap-1.5 text-center relative"
+              style={{ borderRadius: "var(--radius-lg)", boxShadow: "var(--shadow-sm)" }}>
               {m.badge && <span className="absolute top-1.5 right-1.5 w-4 h-4 rounded-full text-white text-xs flex items-center justify-center font-bold" style={{ backgroundColor: m.color, fontSize: "10px" }}>{m.badge}</span>}
               <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ backgroundColor: m.color + "18" }}>
                 <svg width="18" height="18" fill="none" viewBox="0 0 24 24"><path d={m.icon} stroke={m.color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
@@ -122,14 +144,17 @@ export default async function DashboardPage() {
         </div>
 
         {/* Stats Row */}
-        <div className="grid grid-cols-4 gap-3 mb-6">
+        <div className="grid grid-cols-4 gap-3 mb-6 animate-in animate-in-delay-2">
+          <div className="bg-white px-3 py-3 text-center flex flex-col items-center justify-center gap-1" style={{ borderRadius: "var(--radius-lg)", boxShadow: "var(--shadow-sm)" }}>
+            <EmergencyRing remaining={emergLeft} total={7} />
+            <p className="text-xs mt-0.5" style={{ color: "#94A3B8" }}>Emerg. Left</p>
+          </div>
           {[
             { label: "Active Tasks",  value: activeTasks.length,                              color: "#0891B2" },
-            { label: "Emerg. Left",   value: emergLeft,                                        color: "#E11D48" },
             { label: "Approved",      value: leaves.filter(l => l.status === "approved").length, color: "#15803D" },
             { label: "Unread",        value: unreadMura,                                       color: "#7C3AED" },
           ].map(s => (
-            <div key={s.label} className="bg-white rounded-2xl px-4 py-3 text-center shadow-sm">
+            <div key={s.label} className="bg-white px-4 py-3 text-center flex flex-col items-center justify-center" style={{ borderRadius: "var(--radius-lg)", boxShadow: "var(--shadow-sm)" }}>
               <p className="text-xl font-bold" style={{ color: s.color }}>{s.value}</p>
               <p className="text-xs mt-0.5" style={{ color: "#94A3B8" }}>{s.label}</p>
             </div>
@@ -138,7 +163,7 @@ export default async function DashboardPage() {
 
         {/* Murasalat unread */}
         {murasalat.filter(m => !m.is_read).length > 0 && (
-          <div className="mb-5 rounded-2xl overflow-hidden shadow-sm" style={{ border: "1px solid #E9D5FF", backgroundColor: "#FAF5FF" }}>
+          <div className="mb-5 overflow-hidden animate-in animate-in-delay-3" style={{ borderRadius: "var(--radius-lg)", border: "1px solid #E9D5FF", backgroundColor: "#FAF5FF", boxShadow: "var(--shadow-sm)" }}>
             <div className="px-5 py-3 flex items-center justify-between" style={{ borderBottom: "1px solid #E9D5FF" }}>
               <p className="text-sm font-semibold" style={{ color: "#7C3AED" }}>Unread Murasalat</p>
               <Link href="/murasalat" className="text-xs font-medium" style={{ color: "#7C3AED" }}>View all →</Link>
@@ -157,7 +182,7 @@ export default async function DashboardPage() {
 
         {/* Active Tasks */}
         {activeTasks.length > 0 && (
-          <div id="tasks" className="bg-white rounded-2xl overflow-hidden shadow-sm mb-5" style={{ border: "1px solid #E2E8F0" }}>
+          <div id="tasks" className="overflow-hidden mb-5" style={{ borderRadius: "var(--radius-lg)", border: "1px solid #E2E8F0", backgroundColor: "white", boxShadow: "var(--shadow-sm)" }}>
             <div className="px-5 py-3.5 flex items-center justify-between" style={{ borderBottom: "1px solid #F1F5F9" }}>
               <p className="text-sm font-semibold" style={{ color: "#1E293B" }}>Active Tasks</p>
               <span className="text-xs" style={{ color: "#94A3B8" }}>{tasks.filter(t => t.status === "ongoing").length} ongoing · {tasks.filter(t => t.status === "pending").length} pending</span>
@@ -190,13 +215,19 @@ export default async function DashboardPage() {
         )}
 
         {/* Leaves */}
-        <div id="leaves" className="bg-white rounded-2xl overflow-hidden shadow-sm mb-8" style={{ border: "1px solid #E2E8F0" }}>
+        <div id="leaves" className="overflow-hidden mb-8" style={{ borderRadius: "var(--radius-lg)", border: "1px solid #E2E8F0", backgroundColor: "white", boxShadow: "var(--shadow-sm)" }}>
           <div className="px-5 py-3.5 flex items-center justify-between" style={{ borderBottom: "1px solid #F1F5F9" }}>
             <p className="text-sm font-semibold" style={{ color: "#1E293B" }}>Leave Applications</p>
-            <Link href="/apply" className="text-xs font-medium px-3 py-1.5 rounded-lg text-white" style={{ background: "linear-gradient(135deg,#4F46E5,#7C3AED)" }}>+ Apply</Link>
+            <Link href="/apply" className="text-xs font-medium px-3 py-1.5 rounded-lg text-white" style={{ background: "linear-gradient(135deg,#4F46E5,#7C3AED)", boxShadow: "0 2px 8px rgba(79,70,229,0.25)" }}>+ Apply</Link>
           </div>
           {leaves.length === 0 ? (
-            <div className="py-12 text-center"><p className="text-sm" style={{ color: "#94A3B8" }}>No applications yet</p></div>
+            <div className="py-14 text-center">
+              <div className="w-12 h-12 rounded-full mx-auto mb-3 flex items-center justify-center" style={{ backgroundColor: "#EEF2FF" }}>
+                <svg width="22" height="22" fill="none" viewBox="0 0 24 24"><path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" stroke="#4F46E5" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              </div>
+              <p className="text-sm font-medium" style={{ color: "#1E293B" }}>No applications yet</p>
+              <p className="text-xs mt-1" style={{ color: "#94A3B8" }}>Apply for leave whenever you need to</p>
+            </div>
           ) : (
             <div className="divide-y" style={{ borderColor: "#F8FAFC" }}>
               {leaves.map(leave => {

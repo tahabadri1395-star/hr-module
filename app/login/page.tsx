@@ -52,7 +52,7 @@ export default function LoginPage() {
             </svg>
           </div>
           <h1 className="text-2xl font-semibold tracking-tight" style={{ color: "#1E293B" }}>Khidmat Guzar Portal</h1>
-          <p className="text-sm mt-1.5" style={{ color: "#64748B" }}>Sign in to manage your leave applications</p>
+          <p className="text-sm mt-1.5" style={{ color: "#64748B" }}>Sign in to access your HR portal</p>
         </div>
 
         <div className="bg-white p-8 animate-in animate-in-delay-1"

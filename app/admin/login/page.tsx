@@ -42,7 +42,7 @@ export default function AdminLoginPage() {
             </svg>
           </div>
           <h1 className="text-2xl font-semibold" style={{ color: "#1E293B" }}>Admin / HR Login</h1>
-          <p className="text-sm mt-1" style={{ color: "#64748B" }}>Access the leave approval dashboard</p>
+          <p className="text-sm mt-1" style={{ color: "#64748B" }}>Access the HR management dashboard</p>
         </div>
 
         <div className="bg-white rounded-xl border p-8" style={{ borderColor: "#E2E8F0" }}>

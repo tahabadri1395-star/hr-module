@@ -23,7 +23,7 @@ const P_BG    = { high: "#FFF1F2", medium: "#FFFBEB", low: "#F0FDF4" };
 function fmt(d: string) { return new Date(d).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }); }
 
 function EmergencyRing({ remaining, total }: { remaining: number; total: number }) {
-  const size = 56, stroke = 6, r = (size - stroke) / 2, c = 2 * Math.PI * r;
+  const size = 40, stroke = 5, r = (size - stroke) / 2, c = 2 * Math.PI * r;
   const frac = total > 0 ? remaining / total : 0;
   return (
     <div className="relative shrink-0" style={{ width: size, height: size }}>
@@ -150,13 +150,16 @@ export default async function DashboardPage() {
             <p className="text-xs mt-0.5" style={{ color: "#94A3B8" }}>Emerg. Left</p>
           </div>
           {[
-            { label: "Active Tasks",  value: activeTasks.length,                              color: "#0891B2" },
-            { label: "Approved",      value: leaves.filter(l => l.status === "approved").length, color: "#15803D" },
-            { label: "Unread",        value: unreadMura,                                       color: "#7C3AED" },
+            { label: "Active Tasks", value: activeTasks.length, color: "#0891B2", icon: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" },
+            { label: "Approved",     value: leaves.filter(l => l.status === "approved").length, color: "#15803D", icon: "M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" },
+            { label: "Unread",       value: unreadMura, color: "#7C3AED", icon: "M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" },
           ].map(s => (
-            <div key={s.label} className="bg-white px-4 py-3 text-center flex flex-col items-center justify-center" style={{ borderRadius: "var(--radius-lg)", boxShadow: "var(--shadow-sm)" }}>
-              <p className="text-xl font-bold" style={{ color: s.color }}>{s.value}</p>
-              <p className="text-xs mt-0.5" style={{ color: "#94A3B8" }}>{s.label}</p>
+            <div key={s.label} className="bg-white px-3 py-3 text-center flex flex-col items-center justify-center gap-1" style={{ borderRadius: "var(--radius-lg)", boxShadow: "var(--shadow-sm)" }}>
+              <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ backgroundColor: s.color + "18" }}>
+                <svg width="16" height="16" fill="none" viewBox="0 0 24 24"><path d={s.icon} stroke={s.color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              </div>
+              <p className="text-lg font-bold leading-none mt-0.5" style={{ color: s.color }}>{s.value}</p>
+              <p className="text-xs" style={{ color: "#94A3B8" }}>{s.label}</p>
             </div>
           ))}
         </div>

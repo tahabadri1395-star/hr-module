@@ -101,7 +101,7 @@ export default function ProfilePage() {
       <div className="max-w-3xl mx-auto px-6 py-8">
         {/* Header card */}
         {employee && (
-          <div className="bg-white rounded-xl border p-6 mb-6 flex items-center gap-5" style={{ borderColor: "#E2E8F0" }}>
+          <div className="bg-white rounded-xl p-6 mb-6 flex items-center gap-5 animate-in" style={{ boxShadow: "var(--shadow-sm)" }}>
             <div className="w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold text-white shrink-0"
               style={{ background: "linear-gradient(135deg, #4F46E5, #7C3AED)" }}>
               {employee.name.charAt(0)}
@@ -134,7 +134,7 @@ export default function ProfilePage() {
 
         {/* Personal Info */}
         {tab === "personal" && (
-          <div className="bg-white rounded-xl border p-6" style={{ borderColor: "#E2E8F0" }}>
+          <div className="bg-white rounded-xl p-6 animate-in animate-in-delay-1" style={{ boxShadow: "var(--shadow-sm)" }}>
             <div className="flex items-center justify-between mb-5">
               <h2 className="text-sm font-semibold" style={{ color: "#1E293B" }}>Personal Information</h2>
               {!editing ? (
@@ -196,7 +196,7 @@ export default function ProfilePage() {
 
         {/* Education */}
         {tab === "education" && (
-          <div className="bg-white rounded-xl border overflow-hidden" style={{ borderColor: "#E2E8F0" }}>
+          <div className="bg-white rounded-xl overflow-hidden" style={{ boxShadow: "var(--shadow-sm)" }}>
             <div className="px-6 py-4 border-b" style={{ borderColor: "#F1F5F9" }}>
               <h2 className="text-sm font-semibold" style={{ color: "#1E293B" }}>Education History</h2>
               <p className="text-xs mt-0.5" style={{ color: "#94A3B8" }}>Added by admin — contact admin to update</p>
@@ -231,7 +231,7 @@ export default function ProfilePage() {
 
         {/* Test Results */}
         {tab === "test-results" && (
-          <div className="bg-white rounded-xl border overflow-hidden" style={{ borderColor: "#E2E8F0" }}>
+          <div className="bg-white rounded-xl overflow-hidden" style={{ boxShadow: "var(--shadow-sm)" }}>
             <div className="px-6 py-4 border-b" style={{ borderColor: "#F1F5F9" }}>
               <h2 className="text-sm font-semibold" style={{ color: "#1E293B" }}>Test Results</h2>
               <p className="text-xs mt-0.5" style={{ color: "#94A3B8" }}>Added by admin</p>
@@ -264,7 +264,7 @@ export default function ProfilePage() {
 
         {/* Change Password */}
         {tab === "password" && (
-          <div className="bg-white rounded-xl border p-6" style={{ borderColor: "#E2E8F0" }}>
+          <div className="bg-white rounded-xl p-6" style={{ boxShadow: "var(--shadow-sm)" }}>
             <h2 className="text-sm font-semibold mb-5" style={{ color: "#1E293B" }}>Change Password</h2>
             <form onSubmit={changePw} className="space-y-4 max-w-sm">
               {[["Current Password","current_password"],["New Password","new_password"],["Confirm New Password","confirm"]].map(([label, key]) => (

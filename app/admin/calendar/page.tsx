@@ -154,7 +154,7 @@ export default async function CalendarPage({ searchParams }: { searchParams: Pro
         </div>
 
         {/* Calendar grid */}
-        <div className="bg-white rounded-xl border overflow-hidden" style={{ borderColor: "#E2E8F0" }}>
+        <div className="bg-white rounded-xl overflow-hidden" style={{ boxShadow: "var(--shadow-sm)" }}>
           {/* Day headers */}
           <div className="grid grid-cols-7 border-b" style={{ borderColor: "#F1F5F9" }}>
             {DAY_NAMES.map(d => (

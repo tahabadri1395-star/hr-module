@@ -137,7 +137,7 @@ export default function TravelPage() {
             { label: "Pending Claims",  value: pendingExpense, color: "#0891B2" },
             { label: "Total Reimbursed", value: fmtAmount(totalApproved.toString()), color: "#15803D" },
           ].map(s => (
-            <div key={s.label} className="bg-white rounded-xl border px-5 py-4" style={{ borderColor: "#E2E8F0" }}>
+            <div key={s.label} className="bg-white rounded-xl px-5 py-4" style={{ boxShadow: "var(--shadow-sm)" }}>
               <p className="text-2xl font-bold" style={{ color: s.color }}>{s.value}</p>
               <p className="text-xs mt-1" style={{ color: "#94A3B8" }}>{s.label}</p>
             </div>
@@ -274,7 +274,7 @@ export default function TravelPage() {
 
         {/* Travel List */}
         {tab === "travel" && (
-          <div className="bg-white rounded-xl border overflow-hidden" style={{ borderColor: "#E2E8F0" }}>
+          <div className="bg-white rounded-xl overflow-hidden" style={{ boxShadow: "var(--shadow-sm)" }}>
             <div className="px-6 py-4 border-b" style={{ borderColor: "#F1F5F9" }}>
               <h2 className="text-sm font-semibold" style={{ color: "#1E293B" }}>My Travel Requests</h2>
             </div>
@@ -320,7 +320,7 @@ export default function TravelPage() {
 
         {/* Expense Claims List */}
         {tab === "expenses" && (
-          <div className="bg-white rounded-xl border overflow-hidden" style={{ borderColor: "#E2E8F0" }}>
+          <div className="bg-white rounded-xl overflow-hidden" style={{ boxShadow: "var(--shadow-sm)" }}>
             <div className="px-6 py-4 border-b flex items-center justify-between" style={{ borderColor: "#F1F5F9" }}>
               <h2 className="text-sm font-semibold" style={{ color: "#1E293B" }}>My Claims</h2>
               {expenses.length > 0 && (

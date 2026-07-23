@@ -90,7 +90,7 @@ export default function ApplyLeavePage() {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#F8FAFC" }}>
-      <nav className="bg-white border-b px-6 h-14 flex items-center justify-between" style={{ borderColor: "#E2E8F0" }}>
+      <nav className="bg-white border-b px-6 h-14 flex items-center justify-between sticky top-0 z-10" style={{ borderColor: "#E2E8F0" }}>
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-lg flex items-center justify-center"
             style={{ background: "linear-gradient(135deg, #4F46E5, #7C3AED)" }}>
@@ -123,7 +123,7 @@ export default function ApplyLeavePage() {
         )}
 
         {success ? (
-          <div className="bg-white rounded-xl border p-10 text-center" style={{ borderColor: "#E2E8F0" }}>
+          <div className="bg-white rounded-xl p-10 text-center animate-in" style={{ boxShadow: "var(--shadow-md)" }}>
             <div className="w-12 h-12 rounded-full mx-auto mb-4 flex items-center justify-center" style={{ backgroundColor: "#F0FDF4" }}>
               <svg width="22" height="22" fill="none" viewBox="0 0 24 24">
                 <path d="M5 13l4 4L19 7" stroke="#15803D" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -133,7 +133,7 @@ export default function ApplyLeavePage() {
             <p className="text-sm" style={{ color: "#64748B" }}>Your leave request is pending approval. Redirecting...</p>
           </div>
         ) : (
-          <div className="bg-white rounded-xl border p-8" style={{ borderColor: "#E2E8F0" }}>
+          <div className="bg-white rounded-xl p-8 animate-in" style={{ boxShadow: "var(--shadow-sm)" }}>
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Leave Type */}
               <div>

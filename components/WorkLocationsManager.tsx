@@ -53,7 +53,7 @@ export default function WorkLocationsManager() {
 
   return (
     <div>
-      <div className="bg-white rounded-xl border p-6 mb-6" style={{ borderColor: "#E2E8F0" }}>
+      <div className="bg-white rounded-xl p-6 mb-6" style={{ boxShadow: "var(--shadow-sm)" }}>
         <h3 className="text-sm font-semibold mb-1" style={{ color: "#1E293B" }}>Add Work Location</h3>
         <p className="text-xs mb-4" style={{ color: "#94A3B8" }}>
           Employees can only clock in/out from within the radius of a registered site. Find coordinates via
@@ -110,7 +110,7 @@ export default function WorkLocationsManager() {
         {error && <p className="mt-2 text-xs" style={{ color: "#DC2626" }}>{error}</p>}
       </div>
 
-      <div className="bg-white rounded-xl border overflow-hidden" style={{ borderColor: "#E2E8F0" }}>
+      <div className="bg-white rounded-xl overflow-hidden" style={{ boxShadow: "var(--shadow-sm)" }}>
         <div className="px-6 py-4 border-b flex items-center justify-between" style={{ borderColor: "#F1F5F9" }}>
           <h3 className="text-sm font-semibold" style={{ color: "#1E293B" }}>Registered Work Locations</h3>
           <span className="text-xs" style={{ color: "#94A3B8" }}>{locations.length} total</span>

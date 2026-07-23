@@ -129,7 +129,7 @@ export default function AdminTravelPage() {
             { label: "Pending Claims",  value: pendingExpense, color: "#0891B2" },
             { label: "Total Reimbursed", value: fmtAmount(totalApproved), color: "#15803D" },
           ].map(s => (
-            <div key={s.label} className="bg-white rounded-xl border px-5 py-4" style={{ borderColor: "#E2E8F0" }}>
+            <div key={s.label} className="bg-white rounded-xl px-5 py-4" style={{ boxShadow: "var(--shadow-sm)" }}>
               <p className="text-2xl font-bold" style={{ color: s.color }}>{s.value}</p>
               <p className="text-xs mt-1" style={{ color: "#94A3B8" }}>{s.label}</p>
             </div>
@@ -187,7 +187,7 @@ export default function AdminTravelPage() {
 
         {/* Travel List */}
         {tab === "travel" && (
-          <div className="bg-white rounded-xl border overflow-hidden" style={{ borderColor: "#E2E8F0" }}>
+          <div className="bg-white rounded-xl overflow-hidden" style={{ boxShadow: "var(--shadow-sm)" }}>
             {filteredTravel.length === 0 ? (
               <div className="py-14 text-center text-sm" style={{ color: "#94A3B8" }}>No {filterStatus === "all" ? "" : filterStatus} travel requests.</div>
             ) : (
@@ -237,7 +237,7 @@ export default function AdminTravelPage() {
         {tab === "expenses" && (
           <div className="space-y-4">
             {expenses.length === 0 ? (
-              <div className="bg-white rounded-xl border py-14 text-center text-sm" style={{ borderColor: "#E2E8F0", color: "#94A3B8" }}>
+              <div className="bg-white rounded-xl py-14 text-center text-sm" style={{ boxShadow: "var(--shadow-sm)", color: "#94A3B8" }}>
                 No {filterStatus === "all" ? "" : filterStatus} expense claims.
               </div>
             ) : (
@@ -245,7 +245,7 @@ export default function AdminTravelPage() {
                 const cat = CAT_META[exp.category] ?? CAT_META.other;
                 const sm  = STATUS_META[exp.status];
                 return (
-                  <div key={exp.id} className="bg-white rounded-xl border p-5" style={{ borderColor: "#E2E8F0" }}>
+                  <div key={exp.id} className="bg-white rounded-xl p-5" style={{ boxShadow: "var(--shadow-sm)" }}>
                     <div className="flex items-start justify-between gap-4 mb-3">
                       <div className="flex items-start gap-3">
                         <div className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold text-white shrink-0"

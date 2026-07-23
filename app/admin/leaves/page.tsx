@@ -88,7 +88,7 @@ export default async function AdminLeavesPage({ searchParams }: { searchParams: 
             { label: "Emergency",      value: emergencyCount,   color: "#E11D48" },
             { label: "Normal",         value: allLeaves.length - emergencyCount, color: "#4338CA" },
           ].map(s => (
-            <div key={s.label} className="bg-white rounded-xl border px-5 py-4" style={{ borderColor: "#E2E8F0" }}>
+            <div key={s.label} className="bg-white rounded-xl px-5 py-4" style={{ boxShadow: "var(--shadow-sm)" }}>
               <p className="text-2xl font-bold" style={{ color: s.color }}>{s.value}</p>
               <p className="text-xs mt-1" style={{ color: "#94A3B8" }}>{s.label}</p>
             </div>
@@ -133,7 +133,7 @@ export default async function AdminLeavesPage({ searchParams }: { searchParams: 
         </div>
 
         {leaves.length === 0 ? (
-          <div className="bg-white rounded-xl border py-16 text-center" style={{ borderColor: "#E2E8F0" }}>
+          <div className="bg-white rounded-xl py-16 text-center" style={{ boxShadow: "var(--shadow-sm)" }}>
             <p className="font-medium text-sm mb-1" style={{ color: "#1E293B" }}>
               {q || typeFilter !== "all" ? "No results match your filter." : "No pending applications"}
             </p>
@@ -146,7 +146,7 @@ export default async function AdminLeavesPage({ searchParams }: { searchParams: 
             {leaves.map(leave => {
               const lm = LEAVE_META[leave.leave_type] ?? LEAVE_META.normal;
               return (
-                <div key={leave.id} className="bg-white rounded-xl border p-5" style={{ borderColor: "#E2E8F0" }}>
+                <div key={leave.id} className="card-hover bg-white rounded-xl p-5" style={{ boxShadow: "var(--shadow-sm)" }}>
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-2">

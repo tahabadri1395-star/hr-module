@@ -62,11 +62,20 @@ export default async function AdminDashboardPage() {
     { href: "/admin/settings",   label: "Settings",         badge: 0,               color: "#6B7280", desc: `${totalKGs} active KGs` },
   ];
 
+  const stats = [
+    { label: "Pending Leaves",  value: pendingLeaves,  color: "#F59E0B" },
+    { label: "Emergency",       value: emergLeaves,    color: "#EF4444" },
+    { label: "Open Tasks",      value: openTasks,      color: "#3B82F6" },
+    { label: "Travel Pending",  value: pendingTravel,  color: "#10B981" },
+    { label: "Claims Pending",  value: pendingExpenses, color: "#8B5CF6" },
+    { label: "Active KGs",      value: totalKGs,       color: "#94A3B8" },
+  ];
+
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#0F172A" }}>
       {/* Dark top bar */}
       <div style={{ backgroundColor: "#0F172A" }}>
-        <nav className="px-6 h-14 flex items-center justify-between max-w-6xl mx-auto">
+        <nav className="px-6 h-14 flex items-center justify-between max-w-6xl mx-auto sticky top-0 z-20" style={{ backgroundColor: "#0F172A" }}>
           <div className="flex items-center gap-3">
             <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ backgroundColor: "#F59E0B" }}>
               <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path d="M12 2L3 7v10l9 5 9-5V7l-9-5z" stroke="#0F172A" strokeWidth="2.5" strokeLinejoin="round"/></svg>
@@ -75,26 +84,19 @@ export default async function AdminDashboardPage() {
             <span className="text-xs px-2 py-0.5 rounded text-white/50" style={{ backgroundColor: "#1E293B" }}>Admin</span>
           </div>
           <form action="/api/admin/logout" method="POST">
-            <button type="submit" className="text-xs" style={{ color: "#475569" }}>Sign Out</button>
+            <button type="submit" className="text-xs transition-colors hover:text-white/80" style={{ color: "#475569" }}>Sign Out</button>
           </form>
         </nav>
 
         {/* Header stats strip */}
-        <div className="px-6 pb-8 pt-2 max-w-6xl mx-auto">
+        <div className="px-6 pb-8 pt-2 max-w-6xl mx-auto animate-in">
           <p className="text-xs mb-2" style={{ color: "#475569" }}>
             {new Date().toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
           </p>
-          <h1 className="text-3xl font-bold text-white mb-6">Operations Centre</h1>
-          <div className="grid grid-cols-4 sm:grid-cols-11 gap-2">
-            {[
-              { label: "Pending Leaves",  value: pendingLeaves,  color: "#F59E0B" },
-              { label: "Emergency",       value: emergLeaves,    color: "#EF4444" },
-              { label: "Open Tasks",      value: openTasks,      color: "#3B82F6" },
-              { label: "Travel Pending",  value: pendingTravel,  color: "#10B981" },
-              { label: "Claims Pending",  value: pendingExpenses, color: "#8B5CF6" },
-              { label: "Active KGs",      value: totalKGs,       color: "#94A3B8" },
-            ].map(s => (
-              <div key={s.label} className="rounded-xl px-4 py-3" style={{ backgroundColor: "#1E293B" }}>
+          <h1 className="text-3xl font-bold text-white mb-6 tracking-tight">Operations Centre</h1>
+          <div className="flex flex-wrap gap-2">
+            {stats.map(s => (
+              <div key={s.label} className="rounded-xl px-4 py-3 flex-1 min-w-[130px] transition-colors" style={{ backgroundColor: "#1E293B", border: "1px solid rgba(255,255,255,0.04)" }}>
                 <p className="text-2xl font-bold" style={{ color: s.color }}>{s.value}</p>
                 <p className="text-xs mt-0.5" style={{ color: "#64748B" }}>{s.label}</p>
               </div>
@@ -104,14 +106,14 @@ export default async function AdminDashboardPage() {
       </div>
 
       {/* Body */}
-      <div className="rounded-t-3xl min-h-screen px-6 py-6 max-w-6xl mx-auto" style={{ backgroundColor: "#F1F5F9" }}>
+      <div className="rounded-t-3xl min-h-screen px-6 py-6 max-w-6xl mx-auto" style={{ backgroundColor: "#F1F5F9", boxShadow: "0 -8px 24px rgba(0,0,0,0.15)" }}>
         {/* Module Grid */}
         <h2 className="text-xs font-semibold uppercase tracking-widest mb-3" style={{ color: "#94A3B8" }}>Modules</h2>
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6">
+        <div className="flex flex-wrap gap-3 mb-6 animate-in animate-in-delay-1">
           {modules.map(m => (
             <Link key={m.label} href={m.href}
-              className="bg-white rounded-2xl p-4 flex items-center gap-4 hover:shadow-md transition"
-              style={{ border: "1px solid #E2E8F0" }}>
+              className="card-hover bg-white p-4 flex items-center gap-4 flex-1 min-w-[220px]"
+              style={{ borderRadius: "var(--radius-lg)", boxShadow: "var(--shadow-sm)" }}>
               <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: m.color + "18" }}>
                 {m.badge > 0 && (
                   <span className="text-sm font-bold" style={{ color: m.color }}>{m.badge}</span>
@@ -128,9 +130,9 @@ export default async function AdminDashboardPage() {
           ))}
         </div>
 
-        <div className="grid sm:grid-cols-2 gap-4">
+        <div className="grid sm:grid-cols-2 gap-4 animate-in animate-in-delay-2">
           {/* Pending Leaves */}
-          <div className="bg-white rounded-2xl overflow-hidden" style={{ border: "1px solid #E2E8F0" }}>
+          <div className="bg-white overflow-hidden" style={{ borderRadius: "var(--radius-lg)", boxShadow: "var(--shadow-sm)" }}>
             <div className="px-5 py-3.5 flex items-center justify-between" style={{ borderBottom: "1px solid #F1F5F9" }}>
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full" style={{ backgroundColor: "#F59E0B" }}></div>
@@ -139,7 +141,12 @@ export default async function AdminDashboardPage() {
               <Link href="/admin/leaves" className="text-xs font-medium" style={{ color: "#F59E0B" }}>Review all →</Link>
             </div>
             {recentLeaves.length === 0 ? (
-              <p className="px-5 py-8 text-center text-sm" style={{ color: "#94A3B8" }}>All cleared</p>
+              <div className="py-10 text-center">
+                <div className="w-10 h-10 rounded-full mx-auto mb-2 flex items-center justify-center" style={{ backgroundColor: "#F0FDF4" }}>
+                  <svg width="18" height="18" fill="none" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" stroke="#15803D" strokeWidth="2" strokeLinecap="round"/></svg>
+                </div>
+                <p className="text-sm font-medium" style={{ color: "#1E293B" }}>All cleared</p>
+              </div>
             ) : (
               <div className="divide-y" style={{ borderColor: "#F8FAFC" }}>
                 {recentLeaves.map(l => (
@@ -148,7 +155,7 @@ export default async function AdminDashboardPage() {
                       <p className="text-sm font-medium" style={{ color: "#1E293B" }}>{l.employee_name}</p>
                       <p className="text-xs capitalize" style={{ color: "#94A3B8" }}>{l.leave_type} · {fmt(l.start_date)}</p>
                     </div>
-                    <Link href="/admin/leaves" className="text-xs px-3 py-1.5 rounded-lg font-medium" style={{ backgroundColor: "#FFFBEB", color: "#B45309" }}>Review</Link>
+                    <Link href="/admin/leaves" className="text-xs px-3 py-1.5 rounded-lg font-medium transition-transform hover:-translate-y-px" style={{ backgroundColor: "#FFFBEB", color: "#B45309" }}>Review</Link>
                   </div>
                 ))}
               </div>
@@ -156,7 +163,7 @@ export default async function AdminDashboardPage() {
           </div>
 
           {/* Active Tasks */}
-          <div className="bg-white rounded-2xl overflow-hidden" style={{ border: "1px solid #E2E8F0" }}>
+          <div className="bg-white overflow-hidden" style={{ borderRadius: "var(--radius-lg)", boxShadow: "var(--shadow-sm)" }}>
             <div className="px-5 py-3.5 flex items-center justify-between" style={{ borderBottom: "1px solid #F1F5F9" }}>
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full" style={{ backgroundColor: "#3B82F6" }}></div>
@@ -165,7 +172,12 @@ export default async function AdminDashboardPage() {
               <Link href="/admin/tasks" className="text-xs font-medium" style={{ color: "#3B82F6" }}>Manage →</Link>
             </div>
             {recentTasks.length === 0 ? (
-              <p className="px-5 py-8 text-center text-sm" style={{ color: "#94A3B8" }}>No open tasks</p>
+              <div className="py-10 text-center">
+                <div className="w-10 h-10 rounded-full mx-auto mb-2 flex items-center justify-center" style={{ backgroundColor: "#EFF6FF" }}>
+                  <svg width="18" height="18" fill="none" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" stroke="#1D4ED8" strokeWidth="2" strokeLinecap="round"/></svg>
+                </div>
+                <p className="text-sm font-medium" style={{ color: "#1E293B" }}>No open tasks</p>
+              </div>
             ) : (
               <div className="divide-y" style={{ borderColor: "#F8FAFC" }}>
                 {recentTasks.map(t => (
@@ -186,7 +198,7 @@ export default async function AdminDashboardPage() {
 
           {/* Recent Murasalat */}
           {recentMura.length > 0 && (
-            <div className="bg-white rounded-2xl overflow-hidden sm:col-span-2" style={{ border: "1px solid #E2E8F0" }}>
+            <div className="bg-white overflow-hidden sm:col-span-2" style={{ borderRadius: "var(--radius-lg)", boxShadow: "var(--shadow-sm)" }}>
               <div className="px-5 py-3.5 flex items-center justify-between" style={{ borderBottom: "1px solid #F1F5F9" }}>
                 <div className="flex items-center gap-2">
                   <div className="w-2 h-2 rounded-full" style={{ backgroundColor: "#8B5CF6" }}></div>

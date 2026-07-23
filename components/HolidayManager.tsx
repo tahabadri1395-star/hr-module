@@ -57,7 +57,7 @@ export default function HolidayManager() {
   return (
     <div>
       {/* Add form */}
-      <div className="bg-white rounded-xl border p-6 mb-6" style={{ borderColor: "#E2E8F0" }}>
+      <div className="bg-white rounded-xl p-6 mb-6" style={{ boxShadow: "var(--shadow-sm)" }}>
         <h3 className="text-sm font-semibold mb-4" style={{ color: "#1E293B" }}>Add Public Holiday</h3>
         <form onSubmit={handleAdd} className="flex flex-col sm:flex-row gap-3">
           <input
@@ -95,7 +95,7 @@ export default function HolidayManager() {
       </div>
 
       {/* List */}
-      <div className="bg-white rounded-xl border overflow-hidden" style={{ borderColor: "#E2E8F0" }}>
+      <div className="bg-white rounded-xl overflow-hidden" style={{ boxShadow: "var(--shadow-sm)" }}>
         <div className="px-6 py-4 border-b flex items-center justify-between" style={{ borderColor: "#F1F5F9" }}>
           <h3 className="text-sm font-semibold" style={{ color: "#1E293B" }}>Public Holidays</h3>
           <span className="text-xs" style={{ color: "#94A3B8" }}>{holidays.length} total</span>

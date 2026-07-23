@@ -208,7 +208,7 @@ export default function AdminTasksPage() {
         )}
 
         {/* Task List */}
-        <div className="bg-white rounded-xl border overflow-hidden" style={{ borderColor: "#E2E8F0" }}>
+        <div className="bg-white rounded-xl overflow-hidden" style={{ boxShadow: "var(--shadow-sm)" }}>
           <div className="px-6 py-4 border-b flex items-center justify-between" style={{ borderColor: "#F1F5F9" }}>
             <h2 className="text-sm font-semibold" style={{ color: "#1E293B" }}>Tasks</h2>
             <span className="text-xs" style={{ color: "#94A3B8" }}>{tasks.length} total</span>

@@ -56,7 +56,7 @@ export default function ArzPage() {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#F0F4FF" }}>
-      <nav className="px-6 h-14 flex items-center justify-between" style={{ background: "linear-gradient(135deg, #4F46E5, #7C3AED)" }}>
+      <nav className="px-6 h-14 flex items-center justify-between sticky top-0 z-10" style={{ background: "linear-gradient(135deg, #4F46E5, #7C3AED)" }}>
         <div className="flex items-center gap-3">
           <div className="w-7 h-7 rounded-lg bg-white/20 flex items-center justify-center">
             <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path d="M12 2L3 7v10l9 5 9-5V7l-9-5z" stroke="white" strokeWidth="2" strokeLinejoin="round"/></svg>
@@ -135,7 +135,7 @@ export default function ArzPage() {
         )}
 
         {/* Filter tabs */}
-        <div className="flex gap-1 mb-5 p-1 rounded-xl bg-white shadow-sm" style={{ border: "1px solid #E2E8F0" }}>
+        <div className="flex gap-1 mb-5 p-1 rounded-xl bg-white shadow-sm" style={{ boxShadow: "var(--shadow-sm)" }}>
           {([["all", "All"], ["open", `Active${openCount > 0 ? ` (${openCount})` : ""}`], ["resolved", "Resolved"]] as [string, string][]).map(([f, label]) => (
             <button key={f} onClick={() => setFilter(f as typeof filter)}
               className="flex-1 text-sm py-2 rounded-lg font-medium"
@@ -146,7 +146,7 @@ export default function ArzPage() {
         </div>
 
         {filtered.length === 0 ? (
-          <div className="bg-white rounded-2xl py-16 text-center" style={{ border: "1px solid #E2E8F0" }}>
+          <div className="bg-white rounded-2xl py-16 text-center" style={{ boxShadow: "var(--shadow-sm)" }}>
             <p className="text-sm font-medium" style={{ color: "#1E293B" }}>No submissions yet</p>
             <p className="text-xs mt-1" style={{ color: "#94A3B8" }}>Use the button above to submit your first arz</p>
           </div>
@@ -158,7 +158,7 @@ export default function ArzPage() {
               const isOpen = expanded === item.id;
               return (
                 <div key={item.id} className="bg-white rounded-2xl overflow-hidden cursor-pointer"
-                  style={{ border: "1px solid #E2E8F0" }}
+                  style={{ boxShadow: "var(--shadow-sm)" }}
                   onClick={() => setExpanded(isOpen ? null : item.id)}>
                   <div className="px-5 py-4 flex items-start gap-3">
                     <div className="flex-1 min-w-0">

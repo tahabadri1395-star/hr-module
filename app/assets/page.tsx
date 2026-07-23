@@ -37,7 +37,7 @@ export default function AssetsPage() {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#F0F4FF" }}>
-      <nav className="px-6 h-14 flex items-center justify-between" style={{ background: "linear-gradient(135deg, #4F46E5, #7C3AED)" }}>
+      <nav className="px-6 h-14 flex items-center justify-between sticky top-0 z-10" style={{ background: "linear-gradient(135deg, #4F46E5, #7C3AED)" }}>
         <div className="flex items-center gap-3">
           <div className="w-7 h-7 rounded-lg bg-white/20 flex items-center justify-center">
             <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path d="M12 2L3 7v10l9 5 9-5V7l-9-5z" stroke="white" strokeWidth="2" strokeLinejoin="round"/></svg>
@@ -54,11 +54,11 @@ export default function AssetsPage() {
         </div>
 
         {loading ? (
-          <div className="bg-white rounded-2xl py-12 text-center" style={{ border: "1px solid #E2E8F0" }}>
+          <div className="bg-white rounded-2xl py-12 text-center" style={{ boxShadow: "var(--shadow-sm)" }}>
             <p className="text-sm" style={{ color: "#94A3B8" }}>Loading…</p>
           </div>
         ) : assets.length === 0 ? (
-          <div className="bg-white rounded-2xl py-16 text-center" style={{ border: "1px solid #E2E8F0" }}>
+          <div className="bg-white rounded-2xl py-16 text-center" style={{ boxShadow: "var(--shadow-sm)" }}>
             <div className="w-12 h-12 rounded-2xl mx-auto mb-3 flex items-center justify-center" style={{ backgroundColor: "#F1F5F9" }}>
               <svg width="24" height="24" fill="none" viewBox="0 0 24 24"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" stroke="#94A3B8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
             </div>
@@ -80,7 +80,7 @@ export default function AssetsPage() {
                   </div>
                   <div className="space-y-2.5">
                     {items.map(asset => (
-                      <div key={asset.id} className="bg-white rounded-2xl px-5 py-4" style={{ border: "1px solid #E2E8F0" }}>
+                      <div key={asset.id} className="bg-white rounded-2xl px-5 py-4" style={{ boxShadow: "var(--shadow-sm)" }}>
                         <div className="flex items-start justify-between gap-3">
                           <div className="flex-1 min-w-0">
                             <p className="text-sm font-bold" style={{ color: "#1E293B" }}>{asset.name}</p>

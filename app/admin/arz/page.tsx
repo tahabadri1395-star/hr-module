@@ -65,7 +65,7 @@ export default function AdminArzPage() {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#0F172A" }}>
-      <nav className="px-6 h-14 flex items-center justify-between max-w-5xl mx-auto">
+      <nav className="px-6 h-14 flex items-center justify-between max-w-5xl mx-auto sticky top-0 z-20" style={{ backgroundColor: "#0F172A" }}>
         <div className="flex items-center gap-3">
           <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ backgroundColor: "#F59E0B" }}>
             <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path d="M12 2L3 7v10l9 5 9-5V7l-9-5z" stroke="#0F172A" strokeWidth="2.5" strokeLinejoin="round"/></svg>
@@ -96,7 +96,7 @@ export default function AdminArzPage() {
 
       <div className="rounded-t-3xl min-h-screen px-6 py-6 max-w-5xl mx-auto" style={{ backgroundColor: "#F1F5F9" }}>
         {/* Filter tabs */}
-        <div className="flex gap-1 mb-5 p-1 rounded-xl bg-white shadow-sm" style={{ border: "1px solid #E2E8F0" }}>
+        <div className="flex gap-1 mb-5 p-1 rounded-xl bg-white shadow-sm" style={{ boxShadow: "var(--shadow-sm)" }}>
           {([["open", `Active${openCount > 0 ? ` (${openCount})` : ""}`], ["resolved", "Resolved"], ["all", "All"]] as [string, string][]).map(([f, label]) => (
             <button key={f} onClick={() => setFilter(f as typeof filter)}
               className="flex-1 text-sm py-2 rounded-lg font-medium"
@@ -107,7 +107,7 @@ export default function AdminArzPage() {
         </div>
 
         {filtered.length === 0 ? (
-          <div className="bg-white rounded-2xl py-16 text-center" style={{ border: "1px solid #E2E8F0" }}>
+          <div className="bg-white rounded-2xl py-16 text-center" style={{ boxShadow: "var(--shadow-sm)" }}>
             <p className="text-sm font-medium" style={{ color: "#1E293B" }}>No {filter !== "all" ? filter : ""} submissions</p>
             <p className="text-xs mt-1" style={{ color: "#94A3B8" }}>All clear</p>
           </div>
@@ -119,7 +119,7 @@ export default function AdminArzPage() {
               const isOpen = expanded === item.id;
               const isResponding = responding === item.id;
               return (
-                <div key={item.id} className="bg-white rounded-2xl overflow-hidden" style={{ border: "1px solid #E2E8F0" }}>
+                <div key={item.id} className="bg-white rounded-2xl overflow-hidden" style={{ boxShadow: "var(--shadow-sm)" }}>
                   <div className="px-5 py-4 flex items-start gap-3 cursor-pointer" onClick={() => { setExpanded(isOpen ? null : item.id); setResponding(null); }}>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1 flex-wrap">

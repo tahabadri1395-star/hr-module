@@ -107,7 +107,7 @@ export default function AttendancePage() {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#F0F4FF" }}>
-      <nav className="px-6 h-14 flex items-center justify-between" style={{ background: "linear-gradient(135deg, #4F46E5, #7C3AED)" }}>
+      <nav className="px-6 h-14 flex items-center justify-between sticky top-0 z-10" style={{ background: "linear-gradient(135deg, #4F46E5, #7C3AED)" }}>
         <div className="flex items-center gap-3">
           <div className="w-7 h-7 rounded-lg bg-white/20 flex items-center justify-center">
             <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path d="M12 2L3 7v10l9 5 9-5V7l-9-5z" stroke="white" strokeWidth="2" strokeLinejoin="round"/></svg>
@@ -122,7 +122,7 @@ export default function AttendancePage() {
         <p className="text-sm mb-6" style={{ color: "#64748B" }}>Track your daily attendance</p>
 
         {/* Clock In/Out Card */}
-        <div className="bg-white rounded-2xl p-5 mb-5 shadow-sm" style={{ border: "1px solid #E2E8F0" }}>
+        <div className="bg-white rounded-2xl p-5 mb-5 shadow-sm" style={{ boxShadow: "var(--shadow-sm)" }}>
           <div className="flex items-center justify-between mb-3">
             <div>
               <p className="text-xs font-medium" style={{ color: "#94A3B8" }}>Today</p>
@@ -198,7 +198,7 @@ export default function AttendancePage() {
         </div>
 
         {/* Calendar */}
-        <div className="bg-white rounded-2xl p-5 shadow-sm" style={{ border: "1px solid #E2E8F0" }}>
+        <div className="bg-white rounded-2xl p-5 shadow-sm" style={{ boxShadow: "var(--shadow-sm)" }}>
           <div className="flex items-center justify-between mb-4">
             <button onClick={prevMonth} className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: "#F1F5F9" }}>
               <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7" stroke="#64748B" strokeWidth="2" strokeLinecap="round"/></svg>
@@ -255,7 +255,7 @@ export default function AttendancePage() {
 
         {/* Recent records */}
         {records.length > 0 && (
-          <div className="mt-5 bg-white rounded-2xl overflow-hidden shadow-sm" style={{ border: "1px solid #E2E8F0" }}>
+          <div className="mt-5 bg-white rounded-2xl overflow-hidden shadow-sm" style={{ boxShadow: "var(--shadow-sm)" }}>
             <div className="px-5 py-3.5" style={{ borderBottom: "1px solid #F1F5F9" }}>
               <p className="text-sm font-semibold" style={{ color: "#1E293B" }}>This month</p>
             </div>

@@ -197,7 +197,7 @@ export default function KhidmatGuzarManager() {
 
         {/* Add form */}
         {showAdd && (
-          <div className="bg-white rounded-xl border p-6 mb-6" style={{ borderColor: "#E2E8F0" }}>
+          <div className="bg-white rounded-xl p-6 mb-6" style={{ boxShadow: "var(--shadow-sm)" }}>
             <h2 className="text-sm font-semibold mb-5" style={{ color: "#1E293B" }}>Add New Khidmat Guzar</h2>
             <form onSubmit={handleAdd}>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
@@ -311,7 +311,7 @@ export default function KhidmatGuzarManager() {
             { label: "Active",   value: list.filter(k => k.active).length,  color: "#15803D", bg: "#F0FDF4" },
             { label: "Inactive", value: list.filter(k => !k.active).length, color: "#DC2626", bg: "#FEF2F2" },
           ].map(s => (
-            <div key={s.label} className="bg-white rounded-xl border px-5 py-3.5" style={{ borderColor: "#E2E8F0" }}>
+            <div key={s.label} className="bg-white rounded-xl px-5 py-3.5" style={{ boxShadow: "var(--shadow-sm)" }}>
               <p className="text-xl font-bold" style={{ color: s.color }}>{s.value}</p>
               <p className="text-xs mt-0.5" style={{ color: "#94A3B8" }}>{s.label} Khidmat Guzars</p>
             </div>
@@ -320,11 +320,11 @@ export default function KhidmatGuzarManager() {
 
         {/* List */}
         {loading ? (
-          <div className="bg-white rounded-xl border py-16 text-center" style={{ borderColor: "#E2E8F0" }}>
+          <div className="bg-white rounded-xl py-16 text-center" style={{ boxShadow: "var(--shadow-sm)" }}>
             <p className="text-sm" style={{ color: "#94A3B8" }}>Loading…</p>
           </div>
         ) : filtered.length === 0 ? (
-          <div className="bg-white rounded-xl border py-16 text-center" style={{ borderColor: "#E2E8F0" }}>
+          <div className="bg-white rounded-xl py-16 text-center" style={{ boxShadow: "var(--shadow-sm)" }}>
             <p className="font-medium text-sm mb-1" style={{ color: "#1E293B" }}>
               {search ? "No matches found" : "No Khidmat Guzars yet"}
             </p>
@@ -333,7 +333,7 @@ export default function KhidmatGuzarManager() {
             </p>
           </div>
         ) : (
-          <div className="bg-white rounded-xl border overflow-hidden" style={{ borderColor: "#E2E8F0" }}>
+          <div className="bg-white rounded-xl overflow-hidden" style={{ boxShadow: "var(--shadow-sm)" }}>
             <div className="px-5 py-3 border-b flex items-center justify-between" style={{ borderColor: "#F1F5F9" }}>
               <p className="text-xs font-medium" style={{ color: "#64748B" }}>
                 Showing {filtered.length} of {list.length}

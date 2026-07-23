@@ -123,7 +123,7 @@ export default function AdminEmployeeProfilePage() {
 
       <div className="max-w-4xl mx-auto px-6 py-8">
         {employee && (
-          <div className="bg-white rounded-xl border p-6 mb-6 flex items-center gap-5" style={{ borderColor: "#E2E8F0" }}>
+          <div className="bg-white rounded-xl p-6 mb-6 flex items-center gap-5" style={{ boxShadow: "var(--shadow-sm)" }}>
             <div className="w-14 h-14 rounded-full flex items-center justify-center text-xl font-bold text-white shrink-0"
               style={{ background: "linear-gradient(135deg, #4F46E5, #7C3AED)" }}>
               {employee.name.charAt(0)}
@@ -161,7 +161,7 @@ export default function AdminEmployeeProfilePage() {
 
         {/* Personal Tab */}
         {tab === "personal" && (
-          <div className="bg-white rounded-xl border p-6" style={{ borderColor: "#E2E8F0" }}>
+          <div className="bg-white rounded-xl p-6" style={{ boxShadow: "var(--shadow-sm)" }}>
             <div className="flex items-center justify-between mb-5">
               <h2 className="text-sm font-semibold" style={{ color: "#1E293B" }}>Personal Information</h2>
               {editSection !== "personal" ? (
@@ -213,7 +213,7 @@ export default function AdminEmployeeProfilePage() {
 
         {/* Documents Tab */}
         {tab === "documents" && (
-          <div className="bg-white rounded-xl border p-6" style={{ borderColor: "#E2E8F0" }}>
+          <div className="bg-white rounded-xl p-6" style={{ boxShadow: "var(--shadow-sm)" }}>
             <div className="flex items-center justify-between mb-5">
               <h2 className="text-sm font-semibold" style={{ color: "#1E293B" }}>Documents & ITS</h2>
               {editSection !== "docs" ? (
@@ -265,7 +265,7 @@ export default function AdminEmployeeProfilePage() {
 
         {/* Bank Tab */}
         {tab === "bank" && (
-          <div className="bg-white rounded-xl border p-6" style={{ borderColor: "#E2E8F0" }}>
+          <div className="bg-white rounded-xl p-6" style={{ boxShadow: "var(--shadow-sm)" }}>
             <div className="flex items-center justify-between mb-5">
               <h2 className="text-sm font-semibold" style={{ color: "#1E293B" }}>Bank Details</h2>
               {editSection !== "bank" ? (
@@ -311,7 +311,7 @@ export default function AdminEmployeeProfilePage() {
         {/* Education Tab */}
         {tab === "education" && (
           <div className="space-y-4">
-            <div className="bg-white rounded-xl border overflow-hidden" style={{ borderColor: "#E2E8F0" }}>
+            <div className="bg-white rounded-xl overflow-hidden" style={{ boxShadow: "var(--shadow-sm)" }}>
               <div className="px-6 py-4 border-b flex items-center justify-between" style={{ borderColor: "#F1F5F9" }}>
                 <h2 className="text-sm font-semibold" style={{ color: "#1E293B" }}>Education History</h2>
                 <button onClick={() => setAddingEdu(true)}
@@ -370,7 +370,7 @@ export default function AdminEmployeeProfilePage() {
 
         {/* Test Results Tab */}
         {tab === "test-results" && (
-          <div className="bg-white rounded-xl border overflow-hidden" style={{ borderColor: "#E2E8F0" }}>
+          <div className="bg-white rounded-xl overflow-hidden" style={{ boxShadow: "var(--shadow-sm)" }}>
             <div className="px-6 py-4 border-b flex items-center justify-between" style={{ borderColor: "#F1F5F9" }}>
               <h2 className="text-sm font-semibold" style={{ color: "#1E293B" }}>Test Results</h2>
               <button onClick={() => setAddingTest(true)}

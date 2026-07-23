@@ -51,7 +51,7 @@ export default function DocumentsPage() {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#F0F4FF" }}>
-      <nav className="px-6 h-14 flex items-center justify-between" style={{ background: "linear-gradient(135deg, #4F46E5, #7C3AED)" }}>
+      <nav className="px-6 h-14 flex items-center justify-between sticky top-0 z-10" style={{ background: "linear-gradient(135deg, #4F46E5, #7C3AED)" }}>
         <div className="flex items-center gap-3">
           <div className="w-7 h-7 rounded-lg bg-white/20 flex items-center justify-center">
             <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path d="M12 2L3 7v10l9 5 9-5V7l-9-5z" stroke="white" strokeWidth="2" strokeLinejoin="round"/></svg>
@@ -99,11 +99,11 @@ export default function DocumentsPage() {
         </div>
 
         {loading ? (
-          <div className="bg-white rounded-2xl py-12 text-center" style={{ border: "1px solid #E2E8F0" }}>
+          <div className="bg-white rounded-2xl py-12 text-center" style={{ boxShadow: "var(--shadow-sm)" }}>
             <p className="text-sm" style={{ color: "#94A3B8" }}>Loading…</p>
           </div>
         ) : filtered.length === 0 ? (
-          <div className="bg-white rounded-2xl py-16 text-center" style={{ border: "1px solid #E2E8F0" }}>
+          <div className="bg-white rounded-2xl py-16 text-center" style={{ boxShadow: "var(--shadow-sm)" }}>
             <div className="w-12 h-12 rounded-2xl mx-auto mb-3 flex items-center justify-center" style={{ backgroundColor: "#F1F5F9" }}>
               <svg width="24" height="24" fill="none" viewBox="0 0 24 24"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke="#94A3B8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
             </div>
@@ -127,7 +127,7 @@ export default function DocumentsPage() {
                     {items.map(doc => (
                       <a key={doc.id} href={doc.file_url} target="_blank" rel="noopener noreferrer"
                         className="block bg-white rounded-2xl px-5 py-4 transition hover:shadow-md"
-                        style={{ border: "1px solid #E2E8F0" }}>
+                        style={{ boxShadow: "var(--shadow-sm)" }}>
                         <div className="flex items-start justify-between gap-3">
                           <div className="flex-1 min-w-0">
                             <p className="text-sm font-semibold" style={{ color: "#1E293B" }}>{doc.title}</p>

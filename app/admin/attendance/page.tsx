@@ -80,7 +80,7 @@ export default function AdminAttendancePage() {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#0F172A" }}>
-      <nav className="px-6 h-14 flex items-center justify-between max-w-6xl mx-auto">
+      <nav className="px-6 h-14 flex items-center justify-between max-w-6xl mx-auto sticky top-0 z-20" style={{ backgroundColor: "#0F172A" }}>
         <div className="flex items-center gap-3">
           <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ backgroundColor: "#F59E0B" }}>
             <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path d="M12 2L3 7v10l9 5 9-5V7l-9-5z" stroke="#0F172A" strokeWidth="2.5" strokeLinejoin="round"/></svg>
@@ -187,7 +187,7 @@ export default function AdminAttendancePage() {
             <option value="">All KGs</option>
             {employees.map(e => <option key={e.id} value={e.id}>{e.name}</option>)}
           </select>
-          <div className="flex gap-1 p-1 rounded-xl bg-white shadow-sm" style={{ border: "1px solid #E2E8F0" }}>
+          <div className="flex gap-1 p-1 rounded-xl bg-white shadow-sm" style={{ boxShadow: "var(--shadow-sm)" }}>
             {(["summary", "records"] as const).map(v => (
               <button key={v} onClick={() => setView(v)}
                 className="text-xs px-3 py-1.5 rounded-lg font-medium capitalize"
@@ -200,7 +200,7 @@ export default function AdminAttendancePage() {
 
         {/* Summary view */}
         {view === "summary" && (
-          <div className="bg-white rounded-2xl overflow-hidden shadow-sm" style={{ border: "1px solid #E2E8F0" }}>
+          <div className="bg-white rounded-2xl overflow-hidden shadow-sm" style={{ boxShadow: "var(--shadow-sm)" }}>
             <div className="grid grid-cols-7 px-5 py-3 text-xs font-semibold" style={{ backgroundColor: "#F8FAFC", borderBottom: "1px solid #F1F5F9", color: "#64748B" }}>
               <div className="col-span-2">Khidmat Guzar</div>
               <div className="text-center" style={{ color: "#16A34A" }}>Present</div>
@@ -235,13 +235,13 @@ export default function AdminAttendancePage() {
         {view === "records" && (
           <div className="space-y-2">
             {records.length === 0 ? (
-              <div className="bg-white rounded-2xl py-12 text-center" style={{ border: "1px solid #E2E8F0" }}>
+              <div className="bg-white rounded-2xl py-12 text-center" style={{ boxShadow: "var(--shadow-sm)" }}>
                 <p className="text-sm" style={{ color: "#94A3B8" }}>No records for this period</p>
               </div>
             ) : records.map(rec => {
               const meta = STATUS_META[rec.status];
               return (
-                <div key={rec.id} className="bg-white rounded-2xl px-5 py-3.5 flex items-center gap-3" style={{ border: "1px solid #E2E8F0" }}>
+                <div key={rec.id} className="bg-white rounded-2xl px-5 py-3.5 flex items-center gap-3" style={{ boxShadow: "var(--shadow-sm)" }}>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-0.5">
                       <p className="text-sm font-semibold" style={{ color: "#1E293B" }}>{rec.employee_name}</p>

@@ -50,7 +50,7 @@ export default async function SuperAdminPage() {
     <div className="min-h-screen" style={{ backgroundColor: "#F8FAFC" }}>
       {/* Emerald top header - distinct from both KG (purple) and Admin (dark navy) */}
       <div style={{ background: "linear-gradient(135deg, #064E3B 0%, #065F46 50%, #047857 100%)" }}>
-        <nav className="px-6 h-14 flex items-center justify-between max-w-6xl mx-auto">
+        <nav className="px-6 h-14 flex items-center justify-between max-w-6xl mx-auto sticky top-0 z-20" style={{ background: "linear-gradient(135deg, #064E3B 0%, #065F46 50%, #047857 100%)" }}>
           <div className="flex items-center gap-3">
             <div className="w-7 h-7 rounded-lg bg-white/20 flex items-center justify-center">
               <svg width="14" height="14" fill="none" viewBox="0 0 24 24">
@@ -87,7 +87,7 @@ export default async function SuperAdminPage() {
           <p className="text-sm" style={{ color: "rgba(255,255,255,0.5)" }}>Final authority — HR Management System</p>
 
           {/* Wide stat strip */}
-          <div className="grid grid-cols-4 sm:grid-cols-7 gap-2 mt-6">
+          <div className="flex flex-wrap gap-2 mt-6 animate-in">
             {[
               { label: "Awaiting You",    value: parseInt(s.awaiting, 10),       color: "#34D399", highlight: true },
               { label: "Pending Admin",   value: parseInt(s.pending_admin, 10),  color: "#FCD34D", highlight: false },
@@ -97,8 +97,8 @@ export default async function SuperAdminPage() {
               { label: "Open Tasks",      value: parseInt(s.open_tasks, 10),     color: "rgba(255,255,255,0.7)", highlight: false },
               { label: "Travel & Claims", value: parseInt(s.pending_travel, 10) + parseInt(s.pending_expenses, 10), color: "rgba(255,255,255,0.7)", highlight: false },
             ].map(stat => (
-              <div key={stat.label} className="rounded-xl px-3 py-3 text-center"
-                style={{ backgroundColor: stat.highlight ? "rgba(52,211,153,0.2)" : "rgba(255,255,255,0.08)", border: stat.highlight ? "1px solid rgba(52,211,153,0.4)" : "none" }}>
+              <div key={stat.label} className="rounded-xl px-3 py-3 text-center flex-1 min-w-[110px] transition-transform hover:-translate-y-0.5"
+                style={{ backgroundColor: stat.highlight ? "rgba(52,211,153,0.2)" : "rgba(255,255,255,0.08)", border: stat.highlight ? "1px solid rgba(52,211,153,0.4)" : "1px solid rgba(255,255,255,0.04)" }}>
                 <p className="text-xl font-bold" style={{ color: stat.color }}>{stat.value}</p>
                 <p className="text-xs mt-0.5" style={{ color: "rgba(255,255,255,0.4)", fontSize: "10px" }}>{stat.label}</p>
               </div>
@@ -111,7 +111,7 @@ export default async function SuperAdminPage() {
       <div className="max-w-6xl mx-auto px-6 py-8">
 
         {/* All modules grid */}
-        <div className="grid grid-cols-4 sm:grid-cols-12 gap-2 mb-8">
+        <div className="flex flex-wrap justify-center gap-2 mb-8 animate-in">
           {[
             { href: "/admin/leaves",     label: "Leaves",      badge: parseInt(s.awaiting,10) + parseInt(s.pending_admin,10), color: "#F59E0B" },
             { href: "/admin/tasks",      label: "Tasks",       badge: parseInt(s.open_tasks,10),       color: "#3B82F6" },
@@ -125,8 +125,8 @@ export default async function SuperAdminPage() {
             { href: "/admin/settings",   label: "Settings",    badge: parseInt(s.total_kgs,10),         color: "#6B7280" },
           ].map(m => (
             <Link key={m.label} href={m.href}
-              className="bg-white rounded-2xl py-3 px-2 flex flex-col items-center gap-1.5 text-center hover:shadow-md transition relative"
-              style={{ border: "1px solid #E2E8F0" }}>
+              className="card-hover bg-white py-3 px-2 flex flex-col items-center gap-1.5 text-center relative w-[calc(25%-6px)] sm:w-[92px]"
+              style={{ borderRadius: "var(--radius-lg)", boxShadow: "var(--shadow-sm)" }}>
               {m.badge > 0 && (
                 <span className="absolute top-1.5 right-1.5 min-w-4 h-4 rounded-full text-white text-xs flex items-center justify-center font-bold px-1"
                   style={{ backgroundColor: m.color, fontSize: "10px" }}>{m.badge}</span>
@@ -156,7 +156,7 @@ export default async function SuperAdminPage() {
         </div>
 
         {pendingLeaves.length === 0 ? (
-          <div className="bg-white rounded-2xl py-16 text-center mb-8" style={{ border: "1px solid #E2E8F0" }}>
+          <div className="bg-white rounded-2xl py-16 text-center mb-8" style={{ boxShadow: "var(--shadow-sm)" }}>
             <div className="w-12 h-12 rounded-full mx-auto mb-3 flex items-center justify-center" style={{ backgroundColor: "#ECFDF5" }}>
               <svg width="24" height="24" fill="none" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" stroke="#065F46" strokeWidth="2" strokeLinecap="round"/></svg>
             </div>
@@ -169,7 +169,7 @@ export default async function SuperAdminPage() {
               const lm = LEAVE_META[leave.leave_type] ?? LEAVE_META.normal;
               const d = days(leave.start_date, leave.end_date);
               return (
-                <div key={leave.id} className="bg-white rounded-2xl p-5" style={{ border: "1px solid #E2E8F0" }}>
+                <div key={leave.id} className="bg-white rounded-2xl p-5" style={{ boxShadow: "var(--shadow-sm)" }}>
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-3 mb-3">

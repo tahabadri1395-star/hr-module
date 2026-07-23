@@ -58,7 +58,7 @@ export default async function LeaveSlipPage({ params }: { params: Promise<{ id: 
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#F8FAFC" }}>
       {/* Nav — hidden on print */}
-      <nav className="bg-white border-b px-6 h-14 flex items-center justify-between print:hidden" style={{ borderColor: "#E2E8F0" }}>
+      <nav className="bg-white border-b px-6 h-14 flex items-center justify-between print:hidden sticky top-0 z-10" style={{ borderColor: "#E2E8F0" }}>
         <span className="font-semibold text-sm" style={{ color: "#1E293B" }}>HR Module</span>
         <div className="flex items-center gap-4">
           <button
@@ -74,7 +74,7 @@ export default async function LeaveSlipPage({ params }: { params: Promise<{ id: 
 
       <div className="max-w-2xl mx-auto px-6 py-10">
         {/* Slip */}
-        <div className="bg-white rounded-xl border p-10" style={{ borderColor: "#E2E8F0" }}>
+        <div className="bg-white rounded-xl p-10 animate-in" style={{ boxShadow: "var(--shadow-lg)" }}>
           {/* Header */}
           <div className="text-center border-b pb-6 mb-6" style={{ borderColor: "#F1F5F9" }}>
             <div className="w-12 h-12 rounded-xl mx-auto mb-3 flex items-center justify-center"

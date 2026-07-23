@@ -80,7 +80,7 @@ export default async function EmployeeLeavesPage({ params }: { params: Promise<{
 
       <div className="max-w-4xl mx-auto px-6 py-8">
         {/* Employee header */}
-        <div className="bg-white rounded-xl border p-6 mb-6" style={{ borderColor: "#E2E8F0" }}>
+        <div className="bg-white rounded-xl p-6 mb-6" style={{ boxShadow: "var(--shadow-sm)" }}>
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold text-white"
               style={{ background: "linear-gradient(135deg, #4F46E5, #7C3AED)" }}>
@@ -124,7 +124,7 @@ export default async function EmployeeLeavesPage({ params }: { params: Promise<{
         </div>
 
         {/* Leave history table */}
-        <div className="bg-white rounded-xl border overflow-hidden" style={{ borderColor: "#E2E8F0" }}>
+        <div className="bg-white rounded-xl overflow-hidden" style={{ boxShadow: "var(--shadow-sm)" }}>
           <div className="px-6 py-4 border-b" style={{ borderColor: "#F1F5F9" }}>
             <h2 className="text-sm font-semibold" style={{ color: "#1E293B" }}>All Leave Applications</h2>
           </div>

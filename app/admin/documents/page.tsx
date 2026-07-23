@@ -83,7 +83,7 @@ export default function AdminDocumentsPage() {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#0F172A" }}>
-      <nav className="px-6 h-14 flex items-center justify-between max-w-5xl mx-auto">
+      <nav className="px-6 h-14 flex items-center justify-between max-w-5xl mx-auto sticky top-0 z-20" style={{ backgroundColor: "#0F172A" }}>
         <div className="flex items-center gap-3">
           <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ backgroundColor: "#F59E0B" }}>
             <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path d="M12 2L3 7v10l9 5 9-5V7l-9-5z" stroke="#0F172A" strokeWidth="2.5" strokeLinejoin="round"/></svg>
@@ -195,7 +195,7 @@ export default function AdminDocumentsPage() {
               className="pl-8 pr-3 py-1.5 rounded-xl text-xs border bg-white outline-none"
               style={{ borderColor: "#E2E8F0", color: "#1E293B" }} />
           </div>
-          <div className="flex gap-1 p-1 rounded-xl bg-white shadow-sm" style={{ border: "1px solid #E2E8F0" }}>
+          <div className="flex gap-1 p-1 rounded-xl bg-white shadow-sm" style={{ boxShadow: "var(--shadow-sm)" }}>
             {["all", "policy", "form", "certificate", "circular", "sop", "other"].map(c => (
               <button key={c} onClick={() => setCatFilter(c)}
                 className="text-xs px-3 py-1.5 rounded-lg font-medium"
@@ -208,7 +208,7 @@ export default function AdminDocumentsPage() {
 
         {/* Document list */}
         {filtered.length === 0 ? (
-          <div className="bg-white rounded-2xl py-16 text-center" style={{ border: "1px solid #E2E8F0" }}>
+          <div className="bg-white rounded-2xl py-16 text-center" style={{ boxShadow: "var(--shadow-sm)" }}>
             <p className="text-sm font-medium" style={{ color: "#1E293B" }}>No documents</p>
             <p className="text-xs mt-1" style={{ color: "#94A3B8" }}>Add documents using the button above</p>
           </div>
@@ -217,7 +217,7 @@ export default function AdminDocumentsPage() {
             {filtered.map(doc => {
               const meta = CAT_META[doc.category] || CAT_META.other;
               return (
-                <div key={doc.id} className="bg-white rounded-2xl px-5 py-4 flex items-start gap-3" style={{ border: "1px solid #E2E8F0" }}>
+                <div key={doc.id} className="bg-white rounded-2xl px-5 py-4 flex items-start gap-3" style={{ boxShadow: "var(--shadow-sm)" }}>
                   <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 mt-0.5" style={{ backgroundColor: meta.bg }}>
                     <svg width="16" height="16" fill="none" viewBox="0 0 24 24"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke={meta.color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
                   </div>

@@ -1,10 +1,8 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import Link from "next/link";
 import { useParams } from "next/navigation";
 
-interface Employee { id: number; name: string; email: string; department: string | null; employee_code: string | null; active: number; }
 interface Profile {
   phone?: string; whatsapp?: string; address?: string; city?: string; date_of_birth?: string;
   waris_name?: string; waris_contact?: string; waris_relation?: string;
@@ -31,7 +29,6 @@ export default function AdminEmployeeProfilePage() {
   const empId = params.id;
 
   const [tab, setTab] = useState<Tab>("personal");
-  const [employee, setEmployee] = useState<Employee | null>(null);
   const [profile, setProfile] = useState<Profile>({});
   const [education, setEducation] = useState<Education[]>([]);
   const [testResults, setTestResults] = useState<TestResult[]>([]);
@@ -49,7 +46,6 @@ export default function AdminEmployeeProfilePage() {
     const res = await fetch(`/api/admin/employees/${empId}/profile`);
     if (!res.ok) return;
     const data = await res.json();
-    setEmployee(data.employee);
     setProfile(data.profile ?? {});
     setForm(data.profile ?? {});
     setEducation(data.education ?? []);
@@ -105,44 +101,8 @@ export default function AdminEmployeeProfilePage() {
   ];
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: "#F8FAFC" }}>
-      <nav className="bg-white border-b px-6 h-14 flex items-center justify-between sticky top-0 z-10" style={{ borderColor: "#E2E8F0" }}>
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "linear-gradient(135deg, #0F172A, #1E293B)" }}>
-            <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
-              <path d="M12 2L3 7v10l9 5 9-5V7l-9-5z" stroke="white" strokeWidth="2" strokeLinejoin="round"/>
-            </svg>
-          </div>
-          <span className="font-semibold text-sm" style={{ color: "#1E293B" }}>HR Module</span>
-        </div>
-        <div className="flex items-center gap-4">
-          <Link href={`/admin/employees/${empId}/leaves`} className="text-xs" style={{ color: "#64748B" }}>Leave History</Link>
-          <Link href="/admin/settings" className="text-xs" style={{ color: "#64748B" }}>← Settings</Link>
-        </div>
-      </nav>
-
-      <div className="max-w-4xl mx-auto px-6 py-8">
-        {employee && (
-          <div className="bg-white rounded-xl p-6 mb-6 flex items-center gap-5" style={{ boxShadow: "var(--shadow-sm)" }}>
-            <div className="w-14 h-14 rounded-full flex items-center justify-center text-xl font-bold text-white shrink-0"
-              style={{ background: "linear-gradient(135deg, #4F46E5, #7C3AED)" }}>
-              {employee.name.charAt(0)}
-            </div>
-            <div className="flex-1">
-              <div className="flex items-center gap-2">
-                <h1 className="text-xl font-semibold" style={{ color: "#1E293B" }}>{employee.name}</h1>
-                {!employee.active && <span className="text-xs px-2 py-0.5 rounded-full" style={{ backgroundColor: "#FEF2F2", color: "#DC2626" }}>Inactive</span>}
-              </div>
-              <p className="text-sm mt-0.5" style={{ color: "#64748B" }}>{employee.email}</p>
-              <div className="flex gap-2 mt-1">
-                {employee.department && <span className="text-xs px-2 py-0.5 rounded-full" style={{ backgroundColor: "#EEF2FF", color: "#4338CA" }}>{employee.department}</span>}
-                {employee.employee_code && <span className="text-xs px-2 py-0.5 rounded-full" style={{ backgroundColor: "#F1F5F9", color: "#475569" }}>{employee.employee_code}</span>}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Tabs */}
+    <div>
+        {/* Sub-tabs */}
         <div className="flex gap-1 mb-6 p-1 rounded-xl overflow-x-auto" style={{ backgroundColor: "#F1F5F9" }}>
           {TABS.map(t => (
             <button key={t.key} onClick={() => { setTab(t.key); setEditSection(null); setMsg(""); }}
@@ -421,7 +381,6 @@ export default function AdminEmployeeProfilePage() {
             )}
           </div>
         )}
-      </div>
     </div>
   );
 }

@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getEmployeeFromCookies } from "@/lib/auth";
 import { query } from "@/lib/db";
+import { getISTDateTime } from "@/lib/time";
 import CancelLeaveButton from "@/components/CancelLeaveButton";
 import TaskStatusButton from "@/components/TaskStatusButton";
 
@@ -48,7 +49,7 @@ export default async function DashboardPage() {
   const empRes = await query(`SELECT department FROM hr_employees WHERE id=$1`, [employee.id]);
   const dept: string | null = empRes.rows[0]?.department ?? null;
 
-  const todayStr = new Date().toISOString().slice(0, 10);
+  const todayStr = getISTDateTime().date;
   const [leavesRes, tasksRes, emergRes, muraRes, arzRes, assetsRes, docsRes, lmsRes, attendRes, expensesRes, travelRes] = await Promise.all([
     query(`SELECT * FROM hr_leave_applications WHERE employee_id=$1 ORDER BY created_at DESC`, [employee.id]),
     query(`SELECT * FROM hr_tasks WHERE assigned_to=$1 ORDER BY CASE status WHEN 'ongoing' THEN 1 WHEN 'pending' THEN 2 ELSE 3 END, created_at DESC`, [employee.id]),

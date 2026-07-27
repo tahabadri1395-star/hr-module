@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { query } from "@/lib/db";
 import { getEmployeeTokenFromRequest, verifyEmployeeToken } from "@/lib/auth";
 import { checkGeofence } from "@/lib/geo";
+import { getISTDateTime } from "@/lib/time";
 
 const LATE_HOUR = 9;
 const LATE_MIN  = 30;
@@ -18,11 +19,11 @@ export async function GET(request: NextRequest) {
   if (!employee) return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
 
   const { searchParams } = new URL(request.url);
-  const month = searchParams.get("month") || new Date().toISOString().slice(0, 7); // YYYY-MM
+  const month = searchParams.get("month") || getISTDateTime().month; // YYYY-MM
 
   const [todayRes, monthRes] = await Promise.all([
     query(`SELECT * FROM hr_attendance WHERE employee_id=$1 AND date=$2`,
-      [employee.id, new Date().toISOString().slice(0, 10)]),
+      [employee.id, getISTDateTime().date]),
     query(`SELECT * FROM hr_attendance WHERE employee_id=$1 AND date LIKE $2 ORDER BY date ASC`,
       [employee.id, `${month}%`]),
   ]);
@@ -37,8 +38,7 @@ export async function POST(request: NextRequest) {
   if (!employee) return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
 
   const { action, lat, lng } = await request.json(); // "clock_in" | "clock_out"
-  const today = new Date().toISOString().slice(0, 10);
-  const timeNow = new Date().toTimeString().slice(0, 5); // HH:MM
+  const { date: today, time: timeNow } = getISTDateTime(); // IST wall-clock, regardless of server TZ
 
   if (typeof lat !== "number" || typeof lng !== "number") {
     return NextResponse.json({ error: "Location is required to clock in/out. Please enable location access and try again." }, { status: 400 });

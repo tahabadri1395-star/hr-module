@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import { getISTDateTime } from "@/lib/time";
 
 interface Record {
   id: number; employee_id: number; employee_name: string; department: string | null;
@@ -27,7 +28,7 @@ function fmtTime(t: string | null) { if (!t) return "—"; return new Date(`2000
 function fmtDate(d: string) { return new Date(d + "T00:00:00").toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" }); }
 
 export default function AdminAttendancePage() {
-  const today = new Date().toISOString().slice(0, 10);
+  const today = getISTDateTime().date;
   const monthStart = today.slice(0, 7) + "-01";
 
   const [records, setRecords]   = useState<Record[]>([]);

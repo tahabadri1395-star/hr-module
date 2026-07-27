@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import { getISTDateTime } from "@/lib/time";
 
 interface AttendanceRecord {
   id: number; date: string; clock_in: string | null; clock_out: string | null;
@@ -23,7 +24,7 @@ function getFirstDayOfMonth(year: number, month: number) { return new Date(year,
 
 export default function AttendancePage() {
   const today = new Date();
-  const todayStr = today.toISOString().slice(0, 10);
+  const todayStr = getISTDateTime(today).date;
 
   const [currentMonth, setCurrentMonth] = useState({ year: today.getFullYear(), month: today.getMonth() });
   const [todayRecord, setTodayRecord] = useState<AttendanceRecord | null>(null);

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { query } from "@/lib/db";
 import { getAdminTokenFromRequest, verifyAdminToken } from "@/lib/admin-auth";
+import { notifyEmployee } from "@/lib/notifications";
 
 export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const token = getAdminTokenFromRequest(request);
@@ -40,6 +41,12 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
           WHERE hr_attendance.marked_by <> 'self'
       `, [travel.employee_id, date, `Auto-marked: approved ${travel.travel_type.replace("_", " ")} — ${travel.destination}`]);
     }
+    await notifyEmployee(travel.employee_id, {
+      type: "travel",
+      title: "Travel request approved",
+      body: `Your ${travel.travel_type.replace("_", " ")} request to ${travel.destination} was approved.`,
+      link: "/travel",
+    });
   } else {
     for (const date of dates) {
       await query(`DELETE FROM hr_attendance WHERE employee_id=$1 AND date=$2 AND marked_by='site_visit'`, [travel.employee_id, date]);

@@ -368,6 +368,32 @@ async function initDb(): Promise<void> {
       ON CONFLICT (legacy_reimbursement_id) DO NOTHING
     `);
 
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS hr_notifications (
+        id SERIAL PRIMARY KEY,
+        employee_id INTEGER NOT NULL REFERENCES hr_employees(id),
+        type TEXT NOT NULL CHECK(type IN ('leave','attendance','murasalat','expense','travel')),
+        title TEXT NOT NULL,
+        body TEXT NOT NULL,
+        link TEXT,
+        read_at TIMESTAMPTZ,
+        created_at TIMESTAMPTZ DEFAULT NOW()
+      )
+    `);
+    await client.query(`CREATE INDEX IF NOT EXISTS idx_hr_notifications_employee ON hr_notifications(employee_id, read_at, created_at DESC)`);
+
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS hr_push_subscriptions (
+        id SERIAL PRIMARY KEY,
+        employee_id INTEGER NOT NULL REFERENCES hr_employees(id),
+        endpoint TEXT NOT NULL UNIQUE,
+        p256dh TEXT NOT NULL,
+        auth TEXT NOT NULL,
+        user_agent TEXT,
+        created_at TIMESTAMPTZ DEFAULT NOW()
+      )
+    `);
+
     // Seed admin accounts (no-op if already exist)
     // Abbas Qamari's admin login uses his ITS number as the username instead of a name-based one.
     // Migrate any pre-existing "AbbasQamari" account in place so his password/history carry over.

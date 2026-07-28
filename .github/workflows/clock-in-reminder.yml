@@ -1,0 +1,16 @@
+name: Clock-in reminder
+
+on:
+  schedule:
+    - cron: "15 4 * * *"
+  workflow_dispatch:
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger clock-in reminder
+        run: |
+          curl -f -X GET \
+            -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
+            https://hr-module-gpqf.onrender.com/api/cron/clock-in-reminder

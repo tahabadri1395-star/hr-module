@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { query } from "@/lib/db";
 import { getAdminTokenFromRequest, verifyAdminToken } from "@/lib/admin-auth";
+import { notifyEmployee } from "@/lib/notifications";
 
 interface LeaveApp {
   id: number;
   status: string;
+  employee_id: number;
 }
 
 export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -23,7 +25,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     return NextResponse.json({ error: "Action must be approve or reject." }, { status: 400 });
   }
 
-  const leaveResult = await query("SELECT id, status FROM hr_leave_applications WHERE id = $1", [leaveId]);
+  const leaveResult = await query("SELECT id, status, employee_id FROM hr_leave_applications WHERE id = $1", [leaveId]);
   const leave = leaveResult.rows[0] as LeaveApp | undefined;
   if (!leave) return NextResponse.json({ error: "Leave application not found." }, { status: 404 });
 
@@ -40,6 +42,15 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       WHERE id = $5
     `, [newStatus, admin.id, note ?? null, now, leaveId]);
 
+    if (newStatus === "admin_rejected") {
+      await notifyEmployee(leave.employee_id, {
+        type: "leave",
+        title: "Leave request rejected",
+        body: "Your leave application was rejected.",
+        link: `/leave/${leaveId}`,
+      });
+    }
+
     return NextResponse.json({ success: true, status: newStatus });
   }
 
@@ -53,6 +64,13 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       SET status = $1, super_admin_id = $2, super_admin_note = $3, super_admin_action_at = $4
       WHERE id = $5
     `, [newStatus, admin.id, note ?? null, now, leaveId]);
+
+    await notifyEmployee(leave.employee_id, {
+      type: "leave",
+      title: newStatus === "approved" ? "Leave request approved" : "Leave request rejected",
+      body: newStatus === "approved" ? "Your leave application has been approved." : "Your leave application was rejected.",
+      link: `/leave/${leaveId}`,
+    });
 
     return NextResponse.json({ success: true, status: newStatus });
   }

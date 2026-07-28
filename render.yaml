@@ -13,6 +13,16 @@ services:
         generateValue: true
       - key: ADMIN_JWT_SECRET
         generateValue: true
+      - key: VAPID_PUBLIC_KEY
+        value: BEdWN62AA3dHXoYr9cMgqIR4hUXjGJjA9v90R-IYAGTz5HxPOxCG69fHCrS4lXXu9jr1VTSS17oURXgqbmYLy-s
+      - key: VAPID_PRIVATE_KEY
+        value: Fi0J2rY54a_KTTYxPn3bEd6BfOMpdjByRtmB6WrPZcE
+      - key: VAPID_SUBJECT
+        value: mailto:26328@jameasaifiyah.edu
+      - key: NEXT_PUBLIC_VAPID_PUBLIC_KEY
+        value: BEdWN62AA3dHXoYr9cMgqIR4hUXjGJjA9v90R-IYAGTz5HxPOxCG69fHCrS4lXXu9jr1VTSS17oURXgqbmYLy-s
+      - key: CRON_SECRET
+        value: 2e6f274744600abe99ff467b8fcf26bef3ff43a9bdfbdfea
     disk:
       name: hr-data
       mountPath: /data

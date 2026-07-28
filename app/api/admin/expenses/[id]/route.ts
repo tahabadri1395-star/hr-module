@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { query } from "@/lib/db";
 import { getAdminTokenFromRequest, verifyAdminToken } from "@/lib/admin-auth";
+import { notifyEmployee } from "@/lib/notifications";
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const token = getAdminTokenFromRequest(req);
@@ -19,7 +20,18 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     [status, admin_note?.trim() || null, admin.username, id]
   );
   if (res.rowCount === 0) return NextResponse.json({ error: "Not found" }, { status: 404 });
-  return NextResponse.json(res.rows[0]);
+
+  const expense = res.rows[0];
+  if (status === "approved") {
+    await notifyEmployee(expense.employee_id, {
+      type: "expense",
+      title: "Expense reimbursement approved",
+      body: `Your expense claim of ₹${parseFloat(expense.amount).toLocaleString("en-IN", { minimumFractionDigits: 2 })} has been approved.`,
+      link: "/travel",
+    });
+  }
+
+  return NextResponse.json(expense);
 }
 
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {

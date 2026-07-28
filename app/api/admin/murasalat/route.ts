@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { query } from "@/lib/db";
 import { getAdminTokenFromRequest, verifyAdminToken } from "@/lib/admin-auth";
+import { notifyDepartment } from "@/lib/notifications";
 
 export async function GET(request: NextRequest) {
   const token = getAdminTokenFromRequest(request);
@@ -33,5 +34,13 @@ export async function POST(request: NextRequest) {
     VALUES ($1,$2,$3,$4,$5) RETURNING *
   `, [title.trim(), body.trim(), department || null, priority || "normal", admin.username]);
 
-  return NextResponse.json({ success: true, murasalat: result.rows[0] }, { status: 201 });
+  const murasalat = result.rows[0];
+  await notifyDepartment(department || null, {
+    type: "murasalat",
+    title: murasalat.priority === "urgent" ? `Urgent: ${murasalat.title}` : murasalat.title,
+    body: body.trim().slice(0, 200),
+    link: `/murasalat`,
+  });
+
+  return NextResponse.json({ success: true, murasalat }, { status: 201 });
 }

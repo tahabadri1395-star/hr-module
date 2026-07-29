@@ -18,10 +18,10 @@ export default function StatStrip({ items }: { items: Stat[] }) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: i * 0.05, ease: [0.16, 1, 0.3, 1] }}
           className="rounded-2xl bg-white px-4 py-3.5"
-          style={{ boxShadow: "var(--shadow-sm)" }}
+          style={{ boxShadow: "0 1px 2px rgba(15,23,42,0.04), 0 2px 8px rgba(15,23,42,0.06)" }}
         >
-          <p className="text-xl font-bold" style={{ color: s.color }}>{s.value}</p>
-          <p className="text-xs mt-0.5" style={{ color: "#94A3B8" }}>{s.label}</p>
+          <p className="text-2xl font-bold tracking-tight" style={{ color: s.color }}>{s.value}</p>
+          <p className="text-xs mt-1 font-medium" style={{ color: "#94A3B8" }}>{s.label}</p>
         </motion.div>
       ))}
     </div>

@@ -7,7 +7,7 @@ const MODULES = [
   { key: "leave", label: "Leave", color: "#4F46E5", bg: "#EEF2FF", icon: (
     <svg width="22" height="22" fill="none" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2" stroke="#4F46E5" strokeWidth="2"/><path d="M3 10h18M8 3v4M16 3v4" stroke="#4F46E5" strokeWidth="2" strokeLinecap="round"/></svg>
   ) },
-  { key: "travel", label: "Travel & Expenses", color: "#0891B2", bg: "#ECFEFF", icon: (
+  { key: "travel", label: "Travel", color: "#0891B2", bg: "#ECFEFF", icon: (
     <svg width="22" height="22" fill="none" viewBox="0 0 24 24"><rect x="4" y="7" width="16" height="12" rx="2" stroke="#0891B2" strokeWidth="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2" stroke="#0891B2" strokeWidth="2"/></svg>
   ) },
   { key: "murasalat", label: "Murasalat", color: "#7C3AED", bg: "#F5F3FF", icon: (
@@ -38,12 +38,15 @@ export default function ModuleGrid() {
             <motion.div
               whileTap={{ scale: 0.94 }}
               className="rounded-2xl bg-white flex flex-col items-center justify-center gap-2 py-4 text-center"
-              style={{ boxShadow: "var(--shadow-sm)" }}
+              style={{ boxShadow: "0 1px 2px rgba(15,23,42,0.04), 0 2px 8px rgba(15,23,42,0.06)" }}
             >
-              <div className="w-11 h-11 rounded-xl flex items-center justify-center" style={{ backgroundColor: m.bg }}>
+              <div
+                className="w-11 h-11 rounded-xl flex items-center justify-center"
+                style={{ backgroundColor: m.bg, boxShadow: `inset 0 1px 0 rgba(255,255,255,0.6), 0 2px 6px ${m.color}22` }}
+              >
                 {m.icon}
               </div>
-              <span className="text-[11px] font-medium leading-tight px-1" style={{ color: "#475569" }}>{m.label}</span>
+              <span className="text-[11px] font-semibold leading-tight px-1" style={{ color: "#475569" }}>{m.label}</span>
             </motion.div>
           </Link>
         </motion.div>

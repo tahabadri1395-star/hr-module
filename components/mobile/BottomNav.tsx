@@ -32,6 +32,7 @@ export default function BottomNav() {
         backgroundColor: "rgba(255,255,255,0.92)",
         backdropFilter: "blur(20px)",
         borderTop: "1px solid #EEF0F4",
+        boxShadow: "0 -4px 16px rgba(15,23,42,0.05)",
         paddingBottom: "env(safe-area-inset-bottom)",
       }}
     >
@@ -49,7 +50,12 @@ export default function BottomNav() {
                 transition={{ type: "spring", stiffness: 500, damping: 35 }}
               />
             )}
-            <motion.div animate={{ scale: active ? 1.08 : 1, y: active ? -1 : 0 }} transition={{ type: "spring", stiffness: 400, damping: 20 }}>
+            <motion.div
+              animate={{ scale: active ? 1.08 : 1, y: active ? -1 : 0 }}
+              transition={{ type: "spring", stiffness: 400, damping: 20 }}
+              className="w-9 h-9 rounded-xl flex items-center justify-center"
+              style={{ backgroundColor: active ? "#EEF2FF" : "transparent" }}
+            >
               {tab.icon(color)}
             </motion.div>
             <span className="text-[10px] font-medium" style={{ color }}>{tab.label}</span>

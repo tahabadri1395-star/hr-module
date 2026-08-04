@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
+import { bg, ink, muted, accent, neuRaisedSm, neuRaised } from "@/lib/mobile-theme";
 
 interface Notification {
   id: number;
@@ -77,12 +78,13 @@ export default function NotificationBell() {
     <div className="relative" ref={containerRef}>
       <button
         onClick={() => setOpen(o => !o)}
-        className="relative w-9 h-9 rounded-lg flex items-center justify-center transition-colors hover:bg-slate-100"
+        className="relative w-10 h-10 rounded-full flex items-center justify-center"
+        style={{ backgroundColor: bg, boxShadow: neuRaisedSm }}
         aria-label="Notifications"
       >
-        <svg width="18" height="18" fill="none" viewBox="0 0 24 24">
-          <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" stroke="#475569" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-          <path d="M13.73 21a2 2 0 0 1-3.46 0" stroke="#475569" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        <svg width="17" height="17" fill="none" viewBox="0 0 24 24">
+          <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" stroke="#5B6371" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M13.73 21a2 2 0 0 1-3.46 0" stroke="#5B6371" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
         {unreadCount > 0 && (
           <span
@@ -96,35 +98,35 @@ export default function NotificationBell() {
 
       {open && (
         <div
-          className="absolute right-0 mt-2 w-80 max-w-[90vw] rounded-xl bg-white overflow-hidden z-50"
-          style={{ boxShadow: "var(--shadow-lg, 0 10px 30px rgba(0,0,0,0.12))" }}
+          className="absolute right-0 mt-2 w-80 max-w-[90vw] rounded-2xl overflow-hidden z-50"
+          style={{ backgroundColor: bg, boxShadow: neuRaised }}
         >
-          <div className="px-4 py-3 flex items-center justify-between border-b" style={{ borderColor: "#F1F5F9" }}>
-            <h3 className="text-sm font-semibold" style={{ color: "#1E293B" }}>Notifications</h3>
+          <div className="px-4 py-3 flex items-center justify-between">
+            <h3 className="text-sm font-bold" style={{ color: ink }}>Notifications</h3>
             {unreadCount > 0 && (
-              <button onClick={markAllRead} className="text-xs font-medium" style={{ color: "#4F46E5" }}>
+              <button onClick={markAllRead} className="text-xs font-semibold" style={{ color: accent }}>
                 Mark all read
               </button>
             )}
           </div>
           <div className="max-h-96 overflow-y-auto">
             {notifications.length === 0 ? (
-              <div className="py-10 text-center text-sm" style={{ color: "#94A3B8" }}>No notifications yet.</div>
+              <div className="py-10 text-center text-sm" style={{ color: muted }}>No notifications yet.</div>
             ) : (
-              <div className="divide-y" style={{ borderColor: "#F8FAFC" }}>
+              <div className="px-2 pb-2 space-y-1.5">
                 {notifications.map(n => {
                   const content = (
                     <div
-                      className="px-4 py-3 flex items-start gap-3 transition-colors hover:bg-slate-50"
-                      style={{ backgroundColor: n.read_at ? "transparent" : "#F5F3FF" }}
+                      className="px-3 py-2.5 rounded-xl flex items-start gap-3"
+                      style={n.read_at ? {} : { boxShadow: "inset 2px 2px 4px rgba(0,0,0,0.05), inset -2px -2px 4px rgba(255,255,255,0.7)" }}
                     >
                       <span className="text-base shrink-0">{TYPE_ICON[n.type]}</span>
                       <div className="min-w-0 flex-1">
-                        <p className="text-sm font-medium" style={{ color: "#1E293B" }}>{n.title}</p>
-                        <p className="text-xs mt-0.5 line-clamp-2" style={{ color: "#64748B" }}>{n.body}</p>
-                        <p className="text-xs mt-1" style={{ color: "#94A3B8" }}>{timeAgo(n.created_at)}</p>
+                        <p className="text-sm font-semibold" style={{ color: ink }}>{n.title}</p>
+                        <p className="text-xs mt-0.5 line-clamp-2" style={{ color: "#6B7280" }}>{n.body}</p>
+                        <p className="text-xs mt-1" style={{ color: muted }}>{timeAgo(n.created_at)}</p>
                       </div>
-                      {!n.read_at && <span className="w-2 h-2 rounded-full shrink-0 mt-1.5" style={{ backgroundColor: "#4F46E5" }} />}
+                      {!n.read_at && <span className="w-2 h-2 rounded-full shrink-0 mt-1.5" style={{ backgroundColor: accent }} />}
                     </div>
                   );
                   return n.link ? (

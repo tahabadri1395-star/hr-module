@@ -27,10 +27,10 @@ export default async function MobileDashboardPage() {
       <ClockInOutCard />
       <StatStrip
         items={[
-          { label: "Pending Leave", value: pendingLeaves, color: "#B45309" },
-          { label: "Emergency Left", value: emergLeft, color: "#4F46E5" },
-          { label: "Unread Circulars", value: unreadMura, color: "#DC2626" },
-          { label: "Open Arz", value: openArz, color: "#7C3AED" },
+          { label: "Pending Leave", value: pendingLeaves },
+          { label: "Emergency Left", value: emergLeft },
+          { label: "Unread Circulars", value: unreadMura },
+          { label: "Open Arz", value: openArz },
         ]}
       />
       <ModuleGrid />

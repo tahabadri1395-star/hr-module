@@ -1,6 +1,7 @@
 import { getEmployeeFromCookies } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { query } from "@/lib/db";
+import { bg, ink, muted, accent, neuRaised, neuInset } from "@/lib/mobile-theme";
 
 const CATEGORY_LABEL: Record<string, string> = {
   policy: "Policy", form: "Form", certificate: "Certificate", circular: "Circular", sop: "SOP", other: "Other",
@@ -24,14 +25,14 @@ export default async function MobileDocumentsPage() {
   return (
     <div className="space-y-2.5 pb-2">
       {docs.length === 0 ? (
-        <div className="rounded-2xl bg-white py-12 text-center text-sm" style={{ color: "#94A3B8", boxShadow: "var(--shadow-sm)" }}>No documents available.</div>
+        <div className="rounded-3xl py-12 text-center text-sm" style={{ backgroundColor: bg, boxShadow: neuRaised, color: muted }}>No documents available.</div>
       ) : (
         docs.map(d => (
-          <a key={d.id} href={d.file_url} target="_blank" rel="noopener noreferrer" className="block rounded-2xl bg-white p-4" style={{ boxShadow: "var(--shadow-sm)" }}>
-            <span className="text-xs font-medium px-2 py-0.5 rounded-full" style={{ backgroundColor: "#EEF2FF", color: "#4338CA" }}>{CATEGORY_LABEL[d.category] ?? d.category}</span>
-            <p className="text-sm font-semibold mt-1.5" style={{ color: "#1E293B" }}>{d.title}</p>
-            {d.description && <p className="text-xs mt-0.5" style={{ color: "#64748B" }}>{d.description}</p>}
-            <p className="text-xs mt-1.5" style={{ color: "#94A3B8" }}>{fmt(d.created_at)}</p>
+          <a key={d.id} href={d.file_url} target="_blank" rel="noopener noreferrer" className="block rounded-3xl p-4" style={{ backgroundColor: bg, boxShadow: neuRaised }}>
+            <span className="text-xs font-bold px-2.5 py-1 rounded-full" style={{ backgroundColor: bg, boxShadow: neuInset, color: accent }}>{CATEGORY_LABEL[d.category] ?? d.category}</span>
+            <p className="text-sm font-bold mt-2" style={{ color: ink }}>{d.title}</p>
+            {d.description && <p className="text-xs mt-0.5" style={{ color: muted }}>{d.description}</p>}
+            <p className="text-xs mt-1.5" style={{ color: muted }}>{fmt(d.created_at)}</p>
           </a>
         ))
       )}

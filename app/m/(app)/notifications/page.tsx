@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { motion } from "framer-motion";
+import { bg, ink, muted, accent, neuRaised, neuInset } from "@/lib/mobile-theme";
 
 interface Notification {
   id: number;
@@ -39,28 +41,29 @@ export default function MobileNotificationsPage() {
     await fetch(`/api/notifications/${id}/read`, { method: "POST" });
   }
 
-  if (loading) return <div className="rounded-2xl h-40 animate-pulse" style={{ backgroundColor: "#F1F5F9" }} />;
+  if (loading) return <div className="rounded-3xl h-40" style={{ backgroundColor: bg, boxShadow: neuInset }} />;
 
   return (
     <div className="space-y-2.5 pb-2">
       {items.length === 0 ? (
-        <div className="rounded-2xl bg-white py-12 text-center text-sm" style={{ color: "#94A3B8", boxShadow: "var(--shadow-sm)" }}>No notifications yet.</div>
+        <div className="rounded-3xl py-12 text-center text-sm" style={{ backgroundColor: bg, boxShadow: neuRaised, color: muted }}>No notifications yet.</div>
       ) : (
         items.map(n => (
-          <div
+          <motion.div
             key={n.id}
+            whileTap={{ scale: 0.98 }}
             onClick={() => !n.read_at && markRead(n.id)}
-            className="rounded-2xl bg-white p-4 flex items-start gap-3"
-            style={{ boxShadow: "var(--shadow-sm)", backgroundColor: n.read_at ? "white" : "#FAFAFF" }}
+            className="rounded-3xl p-4 flex items-start gap-3"
+            style={{ backgroundColor: bg, boxShadow: n.read_at ? neuRaised : neuInset }}
           >
             <span className="text-lg shrink-0">{TYPE_ICON[n.type]}</span>
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-medium" style={{ color: "#1E293B" }}>{n.title}</p>
-              <p className="text-xs mt-0.5" style={{ color: "#64748B" }}>{n.body}</p>
-              <p className="text-xs mt-1.5" style={{ color: "#94A3B8" }}>{fmt(n.created_at)}</p>
+              <p className="text-sm font-bold" style={{ color: ink }}>{n.title}</p>
+              <p className="text-xs mt-0.5" style={{ color: muted }}>{n.body}</p>
+              <p className="text-xs mt-1.5" style={{ color: muted }}>{fmt(n.created_at)}</p>
             </div>
-            {!n.read_at && <span className="w-2 h-2 rounded-full shrink-0 mt-1.5" style={{ backgroundColor: "#4F46E5" }} />}
-          </div>
+            {!n.read_at && <span className="w-2 h-2 rounded-full shrink-0 mt-1.5" style={{ backgroundColor: accent }} />}
+          </motion.div>
         ))
       )}
     </div>

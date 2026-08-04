@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { bg, ink, muted, accentGradient, accentShadow } from "@/lib/mobile-theme";
 
 const SESSION_KEY = "push-prompt-dismissed";
 
@@ -91,8 +92,9 @@ export default function PushRegistration() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 18 }}
             transition={{ duration: 0.3, ease: [0.32, 0.72, 0, 1] }}
-            className="fixed z-50 left-1/2 -translate-x-1/2 rounded-3xl bg-white"
+            className="fixed z-50 left-1/2 -translate-x-1/2 rounded-3xl"
             style={{
+              backgroundColor: bg,
               bottom: "max(calc(env(safe-area-inset-bottom) + 80px), 80px)",
               width: "min(92vw, 380px)",
               padding: "28px 24px 24px",
@@ -101,7 +103,7 @@ export default function PushRegistration() {
           >
             <div
               className="w-[60px] h-[60px] rounded-2xl mx-auto mb-4 flex items-center justify-center"
-              style={{ background: "linear-gradient(145deg, #4F46E5, #7C3AED)", boxShadow: "0 6px 20px rgba(124,58,237,0.35)" }}
+              style={{ background: accentGradient, boxShadow: accentShadow }}
             >
               {done ? (
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="white"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke="white" strokeWidth="0.5"/></svg>
@@ -110,10 +112,10 @@ export default function PushRegistration() {
               )}
             </div>
 
-            <p className="text-center font-bold text-[17px] mb-1.5" style={{ color: "#0F172A" }}>
+            <p className="text-center font-bold text-[17px] mb-1.5" style={{ color: ink }}>
               {done ? "Notifications enabled!" : "Stay in the loop"}
             </p>
-            <p className="text-center text-[13.5px] leading-relaxed mb-6" style={{ color: "#64748B" }}>
+            <p className="text-center text-[13.5px] leading-relaxed mb-6" style={{ color: "#6B7280" }}>
               {done
                 ? "You'll get instant alerts for leave, tasks, and circulars."
                 : "Get instant alerts for leave approvals, new circulars, and clock-in reminders."}
@@ -127,8 +129,9 @@ export default function PushRegistration() {
                   disabled={loading}
                   className="w-full py-3.5 rounded-2xl text-white font-bold text-[15px] flex items-center justify-center gap-2"
                   style={{
-                    background: loading ? "rgba(79,70,229,0.6)" : "linear-gradient(145deg, #4F46E5, #7C3AED)",
-                    boxShadow: "0 4px 14px rgba(79,70,229,0.35)",
+                    background: accentGradient,
+                    boxShadow: accentShadow,
+                    opacity: loading ? 0.7 : 1,
                   }}
                 >
                   {loading ? (
@@ -138,7 +141,7 @@ export default function PushRegistration() {
                     </>
                   ) : "Enable Notifications"}
                 </motion.button>
-                <button onClick={dismiss} className="w-full mt-2.5 py-2.5 text-[13.5px] font-semibold" style={{ color: "#94A3B8" }}>
+                <button onClick={dismiss} className="w-full mt-2.5 py-2.5 text-[13.5px] font-semibold" style={{ color: muted }}>
                   Not now
                 </button>
               </>

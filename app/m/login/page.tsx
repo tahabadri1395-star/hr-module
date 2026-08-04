@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { bg, ink, muted, neuRaised, neuInset, accentGradient, accentShadow } from "@/lib/mobile-theme";
 
 export default function MobileLoginPage() {
   const [form, setForm] = useState({ its_number: "", password: "" });
@@ -28,21 +29,11 @@ export default function MobileLoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col justify-center px-6 relative overflow-hidden" style={{ backgroundColor: "#0F172A" }}>
-      <div aria-hidden className="absolute pointer-events-none" style={{
-        top: "-140px", right: "-100px", width: "380px", height: "380px", borderRadius: "9999px",
-        background: "radial-gradient(circle, rgba(124,58,237,0.35), transparent 70%)",
-      }} />
-      <div aria-hidden className="absolute pointer-events-none" style={{
-        bottom: "-160px", left: "-120px", width: "420px", height: "420px", borderRadius: "9999px",
-        background: "radial-gradient(circle, rgba(79,70,229,0.25), transparent 70%)",
-      }} />
-
+    <div className="min-h-screen flex flex-col justify-center px-6" style={{ backgroundColor: bg }}>
       <motion.div
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-        className="relative"
       >
         <div className="mb-10 text-center">
           <motion.div
@@ -50,14 +41,14 @@ export default function MobileLoginPage() {
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
             className="inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-5"
-            style={{ background: "linear-gradient(135deg, #4F46E5, #7C3AED)", boxShadow: "0 8px 30px rgba(124,58,237,0.4)" }}
+            style={{ background: accentGradient, boxShadow: accentShadow }}
           >
             <svg width="30" height="30" fill="none" viewBox="0 0 24 24">
               <path d="M12 2L3 7v10l9 5 9-5V7l-9-5z" stroke="white" strokeWidth="1.6" strokeLinejoin="round" fill="rgba(255,255,255,0.15)" />
             </svg>
           </motion.div>
-          <h1 className="text-2xl font-semibold text-white tracking-tight">HR Module</h1>
-          <p className="text-sm mt-1.5" style={{ color: "rgba(255,255,255,0.55)" }}>Sign in to your Khidmat Guzar account</p>
+          <h1 className="text-2xl font-bold tracking-tight" style={{ color: ink }}>HR Module</h1>
+          <p className="text-sm mt-1.5" style={{ color: muted }}>Sign in to your Khidmat Guzar account</p>
         </div>
 
         <motion.form
@@ -68,7 +59,7 @@ export default function MobileLoginPage() {
           className="space-y-4"
         >
           <div>
-            <label className="block text-xs font-semibold mb-1.5 tracking-wide" style={{ color: "rgba(255,255,255,0.5)" }}>ITS NUMBER</label>
+            <label className="block text-xs font-semibold mb-1.5 tracking-wide" style={{ color: muted }}>ITS NUMBER</label>
             <input
               type="text"
               inputMode="numeric"
@@ -77,25 +68,25 @@ export default function MobileLoginPage() {
               onChange={e => setForm({ ...form, its_number: e.target.value })}
               placeholder="e.g. 30303943"
               className="w-full px-4 py-3.5 rounded-2xl text-base outline-none"
-              style={{ backgroundColor: "rgba(255,255,255,0.08)", color: "white", border: "1px solid rgba(255,255,255,0.12)" }}
+              style={{ backgroundColor: bg, color: ink, boxShadow: neuInset }}
               required
             />
           </div>
           <div>
-            <label className="block text-xs font-semibold mb-1.5 tracking-wide" style={{ color: "rgba(255,255,255,0.5)" }}>PASSWORD</label>
+            <label className="block text-xs font-semibold mb-1.5 tracking-wide" style={{ color: muted }}>PASSWORD</label>
             <input
               type="password"
               value={form.password}
               onChange={e => setForm({ ...form, password: e.target.value })}
               placeholder="••••••••"
               className="w-full px-4 py-3.5 rounded-2xl text-base outline-none"
-              style={{ backgroundColor: "rgba(255,255,255,0.08)", color: "white", border: "1px solid rgba(255,255,255,0.12)" }}
+              style={{ backgroundColor: bg, color: ink, boxShadow: neuInset }}
               required
             />
           </div>
 
           {error && (
-            <div className="px-4 py-3 rounded-xl text-sm" style={{ backgroundColor: "rgba(220,38,38,0.15)", color: "#FCA5A5" }}>
+            <div className="px-4 py-3 rounded-xl text-sm font-medium" style={{ backgroundColor: bg, boxShadow: neuInset, color: "#DC2626" }}>
               {error}
             </div>
           )}
@@ -104,12 +95,8 @@ export default function MobileLoginPage() {
             type="submit"
             disabled={loading}
             whileTap={{ scale: 0.97 }}
-            className="w-full py-4 rounded-2xl text-base font-semibold text-white"
-            style={{
-              background: "linear-gradient(135deg, #4F46E5, #7C3AED)",
-              opacity: loading ? 0.7 : 1,
-              boxShadow: "0 8px 24px rgba(124,58,237,0.35)",
-            }}
+            className="w-full py-4 rounded-2xl text-base font-bold text-white"
+            style={{ background: accentGradient, boxShadow: accentShadow, opacity: loading ? 0.7 : 1 }}
           >
             {loading ? "Signing in…" : "Sign In"}
           </motion.button>

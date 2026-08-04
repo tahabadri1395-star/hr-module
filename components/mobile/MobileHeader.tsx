@@ -1,4 +1,5 @@
 import NotificationBell from "@/components/NotificationBell";
+import { bg, ink, muted, accentGradient } from "@/lib/mobile-theme";
 
 function greeting() {
   const hour = new Date().getHours();
@@ -12,23 +13,18 @@ export default function MobileHeader({ name }: { name: string }) {
   return (
     <header
       className="sticky top-0 z-30 flex items-center justify-between px-4 h-16"
-      style={{
-        backgroundColor: "rgba(248,250,252,0.85)",
-        backdropFilter: "blur(20px)",
-        paddingTop: "env(safe-area-inset-top)",
-        borderBottom: "1px solid rgba(226,232,240,0.6)",
-      }}
+      style={{ backgroundColor: bg, paddingTop: "env(safe-area-inset-top)" }}
     >
-      <div className="flex items-center gap-2.5">
+      <div className="flex items-center gap-3">
         <div
           className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold text-white shrink-0"
-          style={{ background: "linear-gradient(135deg, #4F46E5, #7C3AED)", boxShadow: "0 2px 8px rgba(79,70,229,0.3)" }}
+          style={{ background: accentGradient }}
         >
           {firstName.charAt(0)}
         </div>
         <div>
-          <p className="text-[11px] leading-tight" style={{ color: "#94A3B8" }}>{greeting()}</p>
-          <p className="text-sm font-semibold leading-tight" style={{ color: "#1E293B" }}>{firstName}</p>
+          <p className="text-[11px] leading-tight" style={{ color: muted }}>{greeting()}</p>
+          <p className="text-sm font-bold leading-tight" style={{ color: ink }}>{firstName}</p>
         </div>
       </div>
       <NotificationBell />

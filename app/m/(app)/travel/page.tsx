@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { bg, ink, muted, accent, neuRaised, neuInset, accentGradient, accentShadow } from "@/lib/mobile-theme";
 
 interface TravelReq {
   id: number;
@@ -22,11 +23,13 @@ interface Expense {
   status: string;
 }
 
-const STATUS_META: Record<string, { bg: string; color: string }> = {
-  pending:  { bg: "#FFFBEB", color: "#B45309" },
-  approved: { bg: "#F0FDF4", color: "#15803D" },
-  rejected: { bg: "#FEF2F2", color: "#DC2626" },
+const STATUS_COLOR: Record<string, string> = {
+  pending: "#B45309",
+  approved: "#15803D",
+  rejected: "#DC2626",
 };
+
+const inputStyle = { backgroundColor: bg, boxShadow: neuInset, color: ink };
 
 function fmt(d: string) { return new Date(d).toLocaleDateString("en-US", { month: "short", day: "numeric" }); }
 function fmtAmt(a: string) { return `₹${parseFloat(a).toLocaleString("en-IN", { minimumFractionDigits: 2 })}`; }
@@ -84,13 +87,13 @@ export default function MobileTravelPage() {
 
   return (
     <div className="space-y-4 pb-2">
-      <div className="flex gap-1 p-1 rounded-2xl" style={{ backgroundColor: "#F1F5F9" }}>
+      <div className="flex gap-1 p-1.5 rounded-2xl" style={{ backgroundColor: bg, boxShadow: neuInset }}>
         {(["travel", "expenses"] as const).map(t => (
           <button
             key={t}
             onClick={() => setTab(t)}
-            className="flex-1 text-sm font-medium py-2.5 rounded-xl transition-colors"
-            style={{ backgroundColor: tab === t ? "white" : "transparent", color: tab === t ? "#1E293B" : "#64748B", boxShadow: tab === t ? "0 1px 3px rgba(0,0,0,0.08)" : "none" }}
+            className="flex-1 text-sm font-semibold py-2.5 rounded-xl transition-colors"
+            style={{ backgroundColor: bg, color: tab === t ? accent : muted, boxShadow: tab === t ? neuRaised : "none" }}
           >
             {t === "travel" ? "Travel" : "Expenses"}
           </button>
@@ -100,49 +103,49 @@ export default function MobileTravelPage() {
       <motion.button
         whileTap={{ scale: 0.97 }}
         onClick={() => { setError(""); setSheetOpen(true); }}
-        className="w-full py-3 rounded-xl text-sm font-semibold text-white"
-        style={{ background: "linear-gradient(135deg, #4F46E5, #7C3AED)" }}
+        className="w-full py-3 rounded-xl text-sm font-bold text-white"
+        style={{ background: accentGradient, boxShadow: accentShadow }}
       >
         + New {tab === "travel" ? "Travel Request" : "Expense Claim"}
       </motion.button>
 
       {loading ? (
-        <div className="rounded-2xl h-40 animate-pulse" style={{ backgroundColor: "#F1F5F9" }} />
+        <div className="rounded-3xl h-40" style={{ backgroundColor: bg, boxShadow: neuInset }} />
       ) : tab === "travel" ? (
         travel.length === 0 ? (
-          <div className="rounded-2xl bg-white py-12 text-center text-sm" style={{ color: "#94A3B8", boxShadow: "var(--shadow-sm)" }}>No travel requests yet.</div>
+          <div className="rounded-3xl py-12 text-center text-sm" style={{ color: muted, backgroundColor: bg, boxShadow: neuRaised }}>No travel requests yet.</div>
         ) : (
           <div className="space-y-2.5">
             {travel.map(t => {
-              const sm = STATUS_META[t.status] ?? STATUS_META.pending;
+              const color = STATUS_COLOR[t.status] ?? STATUS_COLOR.pending;
               return (
-                <div key={t.id} className="rounded-2xl bg-white p-4" style={{ boxShadow: "var(--shadow-sm)" }}>
+                <div key={t.id} className="rounded-3xl p-4" style={{ backgroundColor: bg, boxShadow: neuRaised }}>
                   <div className="flex items-center justify-between mb-1.5">
-                    <span className="text-xs font-medium px-2 py-0.5 rounded-full" style={{ backgroundColor: "#EEF2FF", color: "#4338CA" }}>{t.travel_type.replace("_", " ")}</span>
-                    <span className="text-xs font-semibold px-2 py-0.5 rounded-full capitalize" style={{ backgroundColor: sm.bg, color: sm.color }}>{t.status}</span>
+                    <span className="text-xs font-bold px-2.5 py-1 rounded-full capitalize" style={{ backgroundColor: bg, boxShadow: neuInset, color: accent }}>{t.travel_type.replace("_", " ")}</span>
+                    <span className="text-xs font-bold px-2.5 py-1 rounded-full capitalize" style={{ backgroundColor: bg, boxShadow: neuInset, color }}>{t.status}</span>
                   </div>
-                  <p className="text-sm font-semibold" style={{ color: "#1E293B" }}>{t.destination}</p>
-                  <p className="text-xs mt-0.5" style={{ color: "#64748B" }}>{t.purpose}</p>
-                  <p className="text-xs mt-1" style={{ color: "#94A3B8" }}>{fmt(t.travel_date)}{t.return_date ? ` → ${fmt(t.return_date)}` : ""}</p>
+                  <p className="text-sm font-semibold" style={{ color: ink }}>{t.destination}</p>
+                  <p className="text-xs mt-0.5" style={{ color: muted }}>{t.purpose}</p>
+                  <p className="text-xs mt-1" style={{ color: muted }}>{fmt(t.travel_date)}{t.return_date ? ` → ${fmt(t.return_date)}` : ""}</p>
                 </div>
               );
             })}
           </div>
         )
       ) : expenses.length === 0 ? (
-        <div className="rounded-2xl bg-white py-12 text-center text-sm" style={{ color: "#94A3B8", boxShadow: "var(--shadow-sm)" }}>No expense claims yet.</div>
+        <div className="rounded-3xl py-12 text-center text-sm" style={{ color: muted, backgroundColor: bg, boxShadow: neuRaised }}>No expense claims yet.</div>
       ) : (
         <div className="space-y-2.5">
           {expenses.map(e => {
-            const sm = STATUS_META[e.status] ?? STATUS_META.pending;
+            const color = STATUS_COLOR[e.status] ?? STATUS_COLOR.pending;
             return (
-              <div key={e.id} className="rounded-2xl bg-white p-4 flex items-center justify-between gap-3" style={{ boxShadow: "var(--shadow-sm)" }}>
+              <div key={e.id} className="rounded-3xl p-4 flex items-center justify-between gap-3" style={{ backgroundColor: bg, boxShadow: neuRaised }}>
                 <div className="min-w-0">
-                  <span className="text-xs font-semibold px-2 py-0.5 rounded-full capitalize" style={{ backgroundColor: sm.bg, color: sm.color }}>{e.status}</span>
-                  <p className="text-sm font-semibold mt-1.5" style={{ color: "#1E293B" }}>{e.title}</p>
-                  <p className="text-xs mt-0.5" style={{ color: "#94A3B8" }}>{fmt(e.expense_date)}</p>
+                  <span className="text-xs font-bold px-2.5 py-1 rounded-full capitalize" style={{ backgroundColor: bg, boxShadow: neuInset, color }}>{e.status}</span>
+                  <p className="text-sm font-semibold mt-1.5" style={{ color: ink }}>{e.title}</p>
+                  <p className="text-xs mt-0.5" style={{ color: muted }}>{fmt(e.expense_date)}</p>
                 </div>
-                <p className="text-sm font-bold shrink-0" style={{ color: "#1E293B" }}>{fmtAmt(e.amount)}</p>
+                <p className="text-sm font-bold shrink-0" style={{ color: ink }}>{fmtAmt(e.amount)}</p>
               </div>
             );
           })}
@@ -156,35 +159,35 @@ export default function MobileTravelPage() {
             <motion.div
               initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }}
               transition={{ type: "spring", stiffness: 340, damping: 34 }}
-              className="fixed bottom-0 left-0 right-0 z-50 bg-white rounded-t-3xl p-5"
-              style={{ paddingBottom: "calc(24px + env(safe-area-inset-bottom))" }}
+              className="fixed bottom-0 left-0 right-0 z-50 rounded-t-3xl p-5"
+              style={{ backgroundColor: bg, paddingBottom: "calc(24px + env(safe-area-inset-bottom))" }}
             >
-              <div className="w-10 h-1 rounded-full mx-auto mb-4" style={{ backgroundColor: "#E2E8F0" }} />
-              <h2 className="text-base font-semibold mb-4" style={{ color: "#1E293B" }}>{tab === "travel" ? "New Travel Request" : "New Expense Claim"}</h2>
+              <div className="w-10 h-1 rounded-full mx-auto mb-4" style={{ backgroundColor: "#D1D4D9" }} />
+              <h2 className="text-base font-bold mb-4" style={{ color: ink }}>{tab === "travel" ? "New Travel Request" : "New Expense Claim"}</h2>
 
               {tab === "travel" ? (
                 <form onSubmit={submitTravel} className="space-y-3">
-                  <select value={travelForm.travel_type} onChange={e => setTravelForm({ ...travelForm, travel_type: e.target.value })} className="w-full px-3.5 py-3 rounded-xl text-sm border" style={{ borderColor: "#E2E8F0" }}>
+                  <select value={travelForm.travel_type} onChange={e => setTravelForm({ ...travelForm, travel_type: e.target.value })} className="w-full px-3.5 py-3 rounded-xl text-sm outline-none" style={inputStyle}>
                     <option value="site_visit">Site Visit</option>
                     <option value="outstation">Outstation</option>
                     <option value="local">Local Travel</option>
                   </select>
-                  <input required placeholder="Destination" value={travelForm.destination} onChange={e => setTravelForm({ ...travelForm, destination: e.target.value })} className="w-full px-3.5 py-3 rounded-xl text-sm border" style={{ borderColor: "#E2E8F0" }} />
-                  <textarea required placeholder="Purpose" value={travelForm.purpose} onChange={e => setTravelForm({ ...travelForm, purpose: e.target.value })} rows={2} className="w-full px-3.5 py-3 rounded-xl text-sm border resize-none" style={{ borderColor: "#E2E8F0" }} />
+                  <input required placeholder="Destination" value={travelForm.destination} onChange={e => setTravelForm({ ...travelForm, destination: e.target.value })} className="w-full px-3.5 py-3 rounded-xl text-sm outline-none" style={inputStyle} />
+                  <textarea required placeholder="Purpose" value={travelForm.purpose} onChange={e => setTravelForm({ ...travelForm, purpose: e.target.value })} rows={2} className="w-full px-3.5 py-3 rounded-xl text-sm outline-none resize-none" style={inputStyle} />
                   <div className="grid grid-cols-2 gap-3">
-                    <input type="date" required value={travelForm.travel_date} onChange={e => setTravelForm({ ...travelForm, travel_date: e.target.value })} className="px-3.5 py-3 rounded-xl text-sm border" style={{ borderColor: "#E2E8F0" }} />
-                    <input type="date" value={travelForm.return_date} onChange={e => setTravelForm({ ...travelForm, return_date: e.target.value })} className="px-3.5 py-3 rounded-xl text-sm border" style={{ borderColor: "#E2E8F0" }} />
+                    <input type="date" required value={travelForm.travel_date} onChange={e => setTravelForm({ ...travelForm, travel_date: e.target.value })} className="px-3.5 py-3 rounded-xl text-sm outline-none" style={inputStyle} />
+                    <input type="date" value={travelForm.return_date} onChange={e => setTravelForm({ ...travelForm, return_date: e.target.value })} className="px-3.5 py-3 rounded-xl text-sm outline-none" style={inputStyle} />
                   </div>
-                  <input type="number" placeholder="Estimated cost (optional)" value={travelForm.estimated_cost} onChange={e => setTravelForm({ ...travelForm, estimated_cost: e.target.value })} className="w-full px-3.5 py-3 rounded-xl text-sm border" style={{ borderColor: "#E2E8F0" }} />
-                  {error && <div className="px-3.5 py-2.5 rounded-xl text-xs" style={{ backgroundColor: "#FEF2F2", color: "#DC2626" }}>{error}</div>}
-                  <motion.button whileTap={{ scale: 0.97 }} type="submit" disabled={submitting} className="w-full py-3.5 rounded-xl text-sm font-semibold text-white" style={{ background: "linear-gradient(135deg, #4F46E5, #7C3AED)", opacity: submitting ? 0.7 : 1 }}>
+                  <input type="number" placeholder="Estimated cost (optional)" value={travelForm.estimated_cost} onChange={e => setTravelForm({ ...travelForm, estimated_cost: e.target.value })} className="w-full px-3.5 py-3 rounded-xl text-sm outline-none" style={inputStyle} />
+                  {error && <div className="px-3.5 py-2.5 rounded-xl text-xs font-medium" style={{ backgroundColor: bg, boxShadow: neuInset, color: "#DC2626" }}>{error}</div>}
+                  <motion.button whileTap={{ scale: 0.97 }} type="submit" disabled={submitting} className="w-full py-3.5 rounded-xl text-sm font-bold text-white" style={{ background: accentGradient, boxShadow: accentShadow, opacity: submitting ? 0.7 : 1 }}>
                     {submitting ? "Submitting…" : "Submit Request"}
                   </motion.button>
                 </form>
               ) : (
                 <form onSubmit={submitExpense} className="space-y-3">
-                  <input required placeholder="Title" value={expenseForm.title} onChange={e => setExpenseForm({ ...expenseForm, title: e.target.value })} className="w-full px-3.5 py-3 rounded-xl text-sm border" style={{ borderColor: "#E2E8F0" }} />
-                  <select value={expenseForm.category} onChange={e => setExpenseForm({ ...expenseForm, category: e.target.value })} className="w-full px-3.5 py-3 rounded-xl text-sm border" style={{ borderColor: "#E2E8F0" }}>
+                  <input required placeholder="Title" value={expenseForm.title} onChange={e => setExpenseForm({ ...expenseForm, title: e.target.value })} className="w-full px-3.5 py-3 rounded-xl text-sm outline-none" style={inputStyle} />
+                  <select value={expenseForm.category} onChange={e => setExpenseForm({ ...expenseForm, category: e.target.value })} className="w-full px-3.5 py-3 rounded-xl text-sm outline-none" style={inputStyle}>
                     <option value="travel">Travel</option>
                     <option value="food">Food</option>
                     <option value="accommodation">Accommodation</option>
@@ -192,10 +195,10 @@ export default function MobileTravelPage() {
                     <option value="communication">Communication</option>
                     <option value="other">Other</option>
                   </select>
-                  <input type="number" required placeholder="Amount (₹)" value={expenseForm.amount} onChange={e => setExpenseForm({ ...expenseForm, amount: e.target.value })} className="w-full px-3.5 py-3 rounded-xl text-sm border" style={{ borderColor: "#E2E8F0" }} />
-                  <input type="date" required value={expenseForm.expense_date} onChange={e => setExpenseForm({ ...expenseForm, expense_date: e.target.value })} className="w-full px-3.5 py-3 rounded-xl text-sm border" style={{ borderColor: "#E2E8F0" }} />
-                  {error && <div className="px-3.5 py-2.5 rounded-xl text-xs" style={{ backgroundColor: "#FEF2F2", color: "#DC2626" }}>{error}</div>}
-                  <motion.button whileTap={{ scale: 0.97 }} type="submit" disabled={submitting} className="w-full py-3.5 rounded-xl text-sm font-semibold text-white" style={{ background: "linear-gradient(135deg, #4F46E5, #7C3AED)", opacity: submitting ? 0.7 : 1 }}>
+                  <input type="number" required placeholder="Amount (₹)" value={expenseForm.amount} onChange={e => setExpenseForm({ ...expenseForm, amount: e.target.value })} className="w-full px-3.5 py-3 rounded-xl text-sm outline-none" style={inputStyle} />
+                  <input type="date" required value={expenseForm.expense_date} onChange={e => setExpenseForm({ ...expenseForm, expense_date: e.target.value })} className="w-full px-3.5 py-3 rounded-xl text-sm outline-none" style={inputStyle} />
+                  {error && <div className="px-3.5 py-2.5 rounded-xl text-xs font-medium" style={{ backgroundColor: bg, boxShadow: neuInset, color: "#DC2626" }}>{error}</div>}
+                  <motion.button whileTap={{ scale: 0.97 }} type="submit" disabled={submitting} className="w-full py-3.5 rounded-xl text-sm font-bold text-white" style={{ background: accentGradient, boxShadow: accentShadow, opacity: submitting ? 0.7 : 1 }}>
                     {submitting ? "Submitting…" : "Submit Claim"}
                   </motion.button>
                 </form>

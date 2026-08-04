@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
+import { bg, ink, muted, neuRaised, neuInset, accentGradient, accentShadow } from "@/lib/mobile-theme";
 
 interface TodayRecord {
   clock_in: string | null;
@@ -68,47 +69,47 @@ export default function ClockInOutCard() {
   }
 
   if (loading) {
-    return <div className="rounded-2xl h-28 animate-pulse" style={{ backgroundColor: "#F1F5F9" }} />;
+    return <div className="rounded-3xl h-32" style={{ backgroundColor: bg, boxShadow: neuInset }} />;
   }
 
   const clockedIn = !!today?.clock_in;
   const clockedOut = !!today?.clock_out;
 
   return (
-    <div className="rounded-2xl p-5" style={{ background: "linear-gradient(135deg, #4F46E5, #7C3AED)", boxShadow: "0 10px 30px rgba(79,70,229,0.25)" }}>
-      <div className="flex items-center justify-between mb-3">
+    <div className="rounded-3xl p-5" style={{ backgroundColor: bg, boxShadow: neuRaised }}>
+      <div className="flex items-center justify-between mb-4">
         <div>
-          <p className="text-xs" style={{ color: "rgba(255,255,255,0.7)" }}>Today's Attendance</p>
-          <p className="text-white text-sm font-semibold mt-0.5">
+          <p className="text-xs" style={{ color: muted }}>Today's Attendance</p>
+          <p className="text-base font-bold mt-0.5" style={{ color: ink }}>
             {clockedIn ? `In ${fmtTime(today!.clock_in)}` : "Not clocked in"}
             {clockedOut ? ` · Out ${fmtTime(today!.clock_out)}` : ""}
           </p>
         </div>
         {clockedIn && (
           <span
-            className="text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wide"
-            style={{ backgroundColor: today?.status === "late" ? "rgba(251,191,36,0.25)" : "rgba(255,255,255,0.2)", color: "white" }}
+            className="text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wide"
+            style={{ color: today?.status === "late" ? "#B45309" : "#15803D", backgroundColor: bg, boxShadow: neuInset }}
           >
             {today?.status}
           </span>
         )}
       </div>
 
-      {msg && <p className="text-xs mb-2" style={{ color: "#FCA5A5" }}>{msg}</p>}
+      {msg && <p className="text-xs mb-3 font-medium" style={{ color: "#DC2626" }}>{msg}</p>}
 
       {!clockedOut && (
         <motion.button
-          whileTap={{ scale: 0.96 }}
+          whileTap={{ scale: 0.97 }}
           disabled={acting}
           onClick={() => act(clockedIn ? "clock_out" : "clock_in")}
-          className="w-full py-3 rounded-xl text-sm font-semibold"
-          style={{ backgroundColor: "white", color: "#4F46E5", opacity: acting ? 0.7 : 1 }}
+          className="w-full py-3.5 rounded-2xl text-sm font-bold"
+          style={{ background: accentGradient, boxShadow: accentShadow, color: "white", opacity: acting ? 0.7 : 1 }}
         >
           {acting ? "Please wait…" : clockedIn ? "Clock Out" : "Clock In"}
         </motion.button>
       )}
       {clockedOut && (
-        <div className="w-full py-3 rounded-xl text-sm font-semibold text-center" style={{ backgroundColor: "rgba(255,255,255,0.15)", color: "white" }}>
+        <div className="w-full py-3.5 rounded-2xl text-sm font-bold text-center" style={{ backgroundColor: bg, boxShadow: neuInset, color: "#15803D" }}>
           Day complete ✓
         </div>
       )}

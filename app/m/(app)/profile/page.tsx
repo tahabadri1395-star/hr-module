@@ -61,13 +61,6 @@ export default function MobileProfilePage() {
         <Row label="Date of Birth" value={profile?.date_of_birth} />
       </div>
 
-      <div className="rounded-2xl bg-white p-4" style={{ boxShadow: "var(--shadow-sm)" }}>
-        <h2 className="text-sm font-semibold mb-1.5" style={{ color: "#1E293B" }}>Waris (Emergency Contact)</h2>
-        <Row label="Name" value={profile?.waris_name} />
-        <Row label="Relation" value={profile?.waris_relation} />
-        <Row label="Contact" value={profile?.waris_contact} />
-      </div>
-
       {education && education.length > 0 && (
         <div className="rounded-2xl bg-white p-4" style={{ boxShadow: "var(--shadow-sm)" }}>
           <h2 className="text-sm font-semibold mb-1.5" style={{ color: "#1E293B" }}>Education</h2>

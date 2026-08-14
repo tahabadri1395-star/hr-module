@@ -118,7 +118,7 @@ export default function MobileLeavePage() {
                 </p>
                 <p className="text-xs mt-1" style={{ color: muted }}>{l.reason}</p>
                 {l.status === "pending" && (
-                  <button onClick={() => cancel(l.id)} className="text-xs font-bold mt-2" style={{ color: "#DC2626" }}>Cancel Application</button>
+                  <motion.button whileTap={{ scale: 0.95 }} onClick={() => cancel(l.id)} className="text-xs font-bold mt-2" style={{ color: "#DC2626" }}>Cancel Application</motion.button>
                 )}
               </div>
             );

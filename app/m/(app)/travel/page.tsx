@@ -89,14 +89,15 @@ export default function MobileTravelPage() {
     <div className="space-y-4 pb-2">
       <div className="flex gap-1 p-1.5 rounded-2xl" style={{ backgroundColor: bg, boxShadow: neuInset }}>
         {(["travel", "expenses"] as const).map(t => (
-          <button
+          <motion.button
             key={t}
+            whileTap={{ scale: 0.96 }}
             onClick={() => setTab(t)}
             className="flex-1 text-sm font-semibold py-2.5 rounded-xl transition-colors"
             style={{ backgroundColor: bg, color: tab === t ? accent : muted, boxShadow: tab === t ? neuRaised : "none" }}
           >
             {t === "travel" ? "Travel" : "Expenses"}
-          </button>
+          </motion.button>
         ))}
       </div>
 

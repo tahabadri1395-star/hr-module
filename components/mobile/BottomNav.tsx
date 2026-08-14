@@ -43,6 +43,7 @@ export default function BottomNav() {
           <Link key={tab.key} href={href} className="flex-1 flex flex-col items-center justify-center gap-0.5 pb-2 relative">
             <motion.div
               animate={{ scale: active ? 1.06 : 1 }}
+              whileTap={{ scale: 0.85 }}
               transition={{ type: "spring", stiffness: 400, damping: 20 }}
               className="w-10 h-10 rounded-xl flex items-center justify-center"
               style={active ? { boxShadow: neuInset } : {}}

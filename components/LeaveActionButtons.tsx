@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { mutedFaint } from "@/lib/desktop-theme";
 
 interface Props {
   leaveId: number;
@@ -37,11 +38,11 @@ export default function LeaveActionButtons({ leaveId, role }: Props) {
     }
   };
 
-  const approveLabel  = role === "super_admin" ? "Final Approve" : "Approve";
-  const approveColor  = "#15803D";
-  const approveBg     = "#F0FDF4";
-  const approveBorder = "#BBF7D0";
-  const rejectLabel   = role === "super_admin" ? "Reject" : "Reject";
+  const approveLabel = role === "super_admin" ? "Final Approve" : "Approve";
+  const rejectLabel = "Reject";
+
+  const approveStyle = { backgroundColor: "rgba(74,222,128,0.12)", color: "#4ADE80", borderColor: "rgba(74,222,128,0.3)" };
+  const rejectStyle = { backgroundColor: "rgba(248,113,113,0.12)", color: "#F87171", borderColor: "rgba(248,113,113,0.3)" };
 
   return (
     <div className="mt-3">
@@ -51,14 +52,14 @@ export default function LeaveActionButtons({ leaveId, role }: Props) {
             onClick={() => doAction("approve")}
             disabled={!!loading}
             className="text-xs font-medium px-4 py-1.5 rounded-lg border transition-colors"
-            style={{ backgroundColor: approveBg, color: approveColor, borderColor: approveBorder, opacity: loading ? 0.6 : 1 }}>
+            style={{ ...approveStyle, opacity: loading ? 0.6 : 1 }}>
             {loading === "approve" ? "…" : approveLabel}
           </button>
           <button
             onClick={() => setExpanded(true)}
             disabled={!!loading}
             className="text-xs font-medium px-4 py-1.5 rounded-lg border transition-colors"
-            style={{ backgroundColor: "#FEF2F2", color: "#DC2626", borderColor: "#FECACA", opacity: loading ? 0.6 : 1 }}>
+            style={{ ...rejectStyle, opacity: loading ? 0.6 : 1 }}>
             {rejectLabel}
           </button>
         </div>
@@ -69,28 +70,28 @@ export default function LeaveActionButtons({ leaveId, role }: Props) {
             onChange={e => setNote(e.target.value)}
             placeholder="Optional note for employee..."
             rows={2}
-            className="w-full text-xs px-3 py-2 rounded-lg border outline-none resize-none"
-            style={{ borderColor: "#E2E8F0", color: "#1E293B" }}
+            className="w-full text-xs px-3 py-2 rounded-lg border outline-none resize-none glass-input"
+            style={{ borderColor: "rgba(255,255,255,0.14)", backgroundColor: "rgba(255,255,255,0.05)", color: "white" }}
           />
           <div className="flex gap-2">
             <button
               onClick={() => doAction("approve")}
               disabled={!!loading}
               className="text-xs font-medium px-3 py-1.5 rounded-lg border"
-              style={{ backgroundColor: approveBg, color: approveColor, borderColor: approveBorder, opacity: loading ? 0.6 : 1 }}>
+              style={{ ...approveStyle, opacity: loading ? 0.6 : 1 }}>
               {loading === "approve" ? "…" : approveLabel}
             </button>
             <button
               onClick={() => doAction("reject")}
               disabled={!!loading}
               className="text-xs font-medium px-3 py-1.5 rounded-lg border"
-              style={{ backgroundColor: "#FEF2F2", color: "#DC2626", borderColor: "#FECACA", opacity: loading ? 0.6 : 1 }}>
+              style={{ ...rejectStyle, opacity: loading ? 0.6 : 1 }}>
               {loading === "reject" ? "…" : "Confirm Reject"}
             </button>
             <button
               onClick={() => setExpanded(false)}
               className="text-xs px-3 py-1.5 rounded-lg border"
-              style={{ borderColor: "#E2E8F0", color: "#94A3B8" }}>
+              style={{ borderColor: "rgba(255,255,255,0.16)", color: mutedFaint }}>
               Cancel
             </button>
           </div>

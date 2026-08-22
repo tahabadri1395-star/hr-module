@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { bg, ink, muted, neuRaised, neuInset, accentGradient, accentShadow } from "@/lib/mobile-theme";
 
@@ -40,12 +41,9 @@ export default function MobileLoginPage() {
             initial={{ scale: 0.7, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
-            className="inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-5"
-            style={{ background: accentGradient, boxShadow: accentShadow }}
+            className="inline-flex items-center justify-center mb-3"
           >
-            <svg width="30" height="30" fill="none" viewBox="0 0 24 24">
-              <path d="M12 2L3 7v10l9 5 9-5V7l-9-5z" stroke="white" strokeWidth="1.6" strokeLinejoin="round" fill="rgba(255,255,255,0.15)" />
-            </svg>
+            <Image src="/estate-logo.png" alt="Estate Department" width={880} height={900} priority className="w-44 h-auto" />
           </motion.div>
           <h1 className="text-2xl font-bold tracking-tight" style={{ color: ink }}>HR Module</h1>
           <p className="text-sm mt-1.5" style={{ color: muted }}>Sign in to your Khidmat Guzar account</p>

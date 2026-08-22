@@ -82,7 +82,7 @@ export default function LoginPage() {
                 value={form.its_number}
                 onChange={e => setForm({ ...form, its_number: e.target.value })}
                 placeholder="e.g. 30303943"
-                className="w-full px-3.5 py-2.5 rounded-lg text-sm border outline-none transition-shadow text-white"
+                className="w-full px-3.5 py-2.5 rounded-lg text-sm border outline-none transition-shadow text-white glass-input"
                 style={{ borderColor: "rgba(255,255,255,0.16)", backgroundColor: "rgba(255,255,255,0.06)" }}
                 onFocus={e => { e.target.style.borderColor = "#D9B46C"; e.target.style.boxShadow = "0 0 0 3.5px rgba(217,180,108,0.15)"; }}
                 onBlur={e => { e.target.style.borderColor = "rgba(255,255,255,0.16)"; e.target.style.boxShadow = "none"; }}
@@ -98,7 +98,7 @@ export default function LoginPage() {
                 value={form.password}
                 onChange={e => setForm({ ...form, password: e.target.value })}
                 placeholder="••••••••"
-                className="w-full px-3.5 py-2.5 rounded-lg text-sm border outline-none transition-shadow text-white"
+                className="w-full px-3.5 py-2.5 rounded-lg text-sm border outline-none transition-shadow text-white glass-input"
                 style={{ borderColor: "rgba(255,255,255,0.16)", backgroundColor: "rgba(255,255,255,0.06)" }}
                 onFocus={e => { e.target.style.borderColor = "#D9B46C"; e.target.style.boxShadow = "0 0 0 3.5px rgba(217,180,108,0.15)"; }}
                 onBlur={e => { e.target.style.borderColor = "rgba(255,255,255,0.16)"; e.target.style.boxShadow = "none"; }}

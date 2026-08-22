@@ -73,3 +73,16 @@ body {
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
 }
+
+/* Glassmorphic login inputs: browsers force their own autofill background
+   (Safari's is yellow) unless overridden — this keeps the translucent look
+   even when a field is autofilled. */
+.glass-input:-webkit-autofill,
+.glass-input:-webkit-autofill:hover,
+.glass-input:-webkit-autofill:focus {
+  -webkit-text-fill-color: white;
+  -webkit-box-shadow: 0 0 0px 1000px rgba(255,255,255,0.08) inset;
+  box-shadow: 0 0 0px 1000px rgba(255,255,255,0.08) inset;
+  transition: background-color 9999s ease-in-out 0s;
+  caret-color: white;
+}

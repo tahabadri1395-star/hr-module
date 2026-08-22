@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { ink, muted, mutedFaint, gold, glassCard } from "@/lib/desktop-theme";
 
 interface Holiday {
   id: number;
@@ -53,12 +54,13 @@ export default function HolidayManager() {
   }
 
   const today = new Date().toISOString().split("T")[0];
+  const inputStyle = { borderColor: "rgba(255,255,255,0.14)", backgroundColor: "rgba(255,255,255,0.05)", color: ink };
 
   return (
     <div>
       {/* Add form */}
-      <div className="bg-white rounded-xl p-6 mb-6" style={{ boxShadow: "var(--shadow-sm)" }}>
-        <h3 className="text-sm font-semibold mb-4" style={{ color: "#1E293B" }}>Add Public Holiday</h3>
+      <div className="rounded-xl p-6 mb-6" style={glassCard}>
+        <h3 className="text-sm font-semibold mb-4" style={{ color: ink }}>Add Public Holiday</h3>
         <form onSubmit={handleAdd} className="flex flex-col sm:flex-row gap-3">
           <input
             type="date"
@@ -66,10 +68,10 @@ export default function HolidayManager() {
             min={today}
             onChange={e => setForm(f => ({ ...f, date: e.target.value }))}
             required
-            className="px-3.5 py-2.5 rounded-lg text-sm border outline-none"
-            style={{ borderColor: "#E2E8F0", color: "#1E293B" }}
-            onFocus={e => (e.target.style.borderColor = "#4F46E5")}
-            onBlur={e => (e.target.style.borderColor = "#E2E8F0")}
+            className="px-3.5 py-2.5 rounded-lg text-sm border outline-none glass-input"
+            style={inputStyle}
+            onFocus={e => (e.target.style.borderColor = gold)}
+            onBlur={e => (e.target.style.borderColor = "rgba(255,255,255,0.14)")}
           />
           <input
             type="text"
@@ -77,49 +79,49 @@ export default function HolidayManager() {
             placeholder="Holiday name (e.g. Eid ul Fitr)"
             onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
             required
-            className="flex-1 px-3.5 py-2.5 rounded-lg text-sm border outline-none"
-            style={{ borderColor: "#E2E8F0", color: "#1E293B" }}
-            onFocus={e => (e.target.style.borderColor = "#4F46E5")}
-            onBlur={e => (e.target.style.borderColor = "#E2E8F0")}
+            className="flex-1 px-3.5 py-2.5 rounded-lg text-sm border outline-none glass-input"
+            style={inputStyle}
+            onFocus={e => (e.target.style.borderColor = gold)}
+            onBlur={e => (e.target.style.borderColor = "rgba(255,255,255,0.14)")}
           />
           <button
             type="submit"
             disabled={saving}
-            className="px-5 py-2.5 rounded-lg text-sm font-medium text-white shrink-0"
-            style={{ background: "linear-gradient(135deg, #4F46E5, #7C3AED)", opacity: saving ? 0.7 : 1 }}
+            className="px-5 py-2.5 rounded-lg text-sm font-medium shrink-0"
+            style={{ backgroundColor: gold, color: "#1B1630", opacity: saving ? 0.7 : 1 }}
           >
             {saving ? "Adding…" : "Add Holiday"}
           </button>
         </form>
-        {error && <p className="mt-2 text-xs" style={{ color: "#DC2626" }}>{error}</p>}
+        {error && <p className="mt-2 text-xs" style={{ color: "#F87171" }}>{error}</p>}
       </div>
 
       {/* List */}
-      <div className="bg-white rounded-xl overflow-hidden" style={{ boxShadow: "var(--shadow-sm)" }}>
-        <div className="px-6 py-4 border-b flex items-center justify-between" style={{ borderColor: "#F1F5F9" }}>
-          <h3 className="text-sm font-semibold" style={{ color: "#1E293B" }}>Public Holidays</h3>
-          <span className="text-xs" style={{ color: "#94A3B8" }}>{holidays.length} total</span>
+      <div className="rounded-xl overflow-hidden" style={glassCard}>
+        <div className="px-6 py-4 border-b flex items-center justify-between" style={{ borderColor: "rgba(255,255,255,0.08)" }}>
+          <h3 className="text-sm font-semibold" style={{ color: ink }}>Public Holidays</h3>
+          <span className="text-xs" style={{ color: muted }}>{holidays.length} total</span>
         </div>
 
         {loading ? (
-          <div className="py-10 text-center text-sm" style={{ color: "#94A3B8" }}>Loading…</div>
+          <div className="py-10 text-center text-sm" style={{ color: muted }}>Loading…</div>
         ) : holidays.length === 0 ? (
-          <div className="py-10 text-center text-sm" style={{ color: "#94A3B8" }}>No public holidays added yet.</div>
+          <div className="py-10 text-center text-sm" style={{ color: muted }}>No public holidays added yet.</div>
         ) : (
-          <div className="divide-y" style={{ borderColor: "#F8FAFC" }}>
+          <div className="divide-y" style={{ borderColor: "rgba(255,255,255,0.06)" }}>
             {holidays.map(h => (
               <div key={h.id} className="px-6 py-3.5 flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 rounded-full" style={{ backgroundColor: "#4F46E5" }} />
+                  <div className="w-2 h-2 rounded-full" style={{ backgroundColor: gold }} />
                   <div>
-                    <p className="text-sm font-medium" style={{ color: "#1E293B" }}>{h.name}</p>
-                    <p className="text-xs mt-0.5" style={{ color: "#94A3B8" }}>{formatDate(h.date)}</p>
+                    <p className="text-sm font-medium" style={{ color: ink }}>{h.name}</p>
+                    <p className="text-xs mt-0.5" style={{ color: mutedFaint }}>{formatDate(h.date)}</p>
                   </div>
                 </div>
                 <button
                   onClick={() => handleDelete(h.id)}
                   className="text-xs px-3 py-1.5 rounded-lg border transition-colors hover:opacity-70"
-                  style={{ borderColor: "#FECDD3", color: "#DC2626" }}
+                  style={{ borderColor: "rgba(248,113,113,0.35)", color: "#F87171" }}
                 >
                   Remove
                 </button>

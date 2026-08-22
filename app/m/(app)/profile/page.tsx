@@ -2,13 +2,14 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { bg, ink, muted, accentGradient, neuRaised, neuInset } from "@/lib/mobile-theme";
+import { bg, ink, muted, neuRaised, neuInset } from "@/lib/mobile-theme";
+import AvatarUpload from "@/components/mobile/AvatarUpload";
 
 interface ProfileData {
   employee: { id: number; name: string; email: string; department: string | null; employee_code: string | null } | null;
   profile: {
     phone: string | null; whatsapp: string | null; address: string | null; city: string | null;
-    date_of_birth: string | null;
+    date_of_birth: string | null; profile_picture_url: string | null;
   } | null;
   education: { id: number; degree: string | null; field: string | null; institution: string; year_from: string | null; year_to: string | null }[];
 }
@@ -41,9 +42,7 @@ export default function MobileProfilePage() {
   return (
     <div className="space-y-4 pb-2">
       <div className="rounded-3xl p-5 flex items-center gap-4" style={{ backgroundColor: bg, boxShadow: neuRaised }}>
-        <div className="w-14 h-14 rounded-full flex items-center justify-center text-xl font-bold text-white shrink-0" style={{ background: accentGradient }}>
-          {employee?.name?.charAt(0)}
-        </div>
+        <AvatarUpload name={employee?.name ?? ""} initialUrl={profile?.profile_picture_url ?? null} />
         <div className="min-w-0">
           <p className="text-base font-bold" style={{ color: ink }}>{employee?.name}</p>
           <p className="text-xs mt-0.5" style={{ color: muted }}>{employee?.email}</p>

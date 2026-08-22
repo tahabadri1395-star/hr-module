@@ -8,7 +8,7 @@ function greeting() {
   return "Good evening";
 }
 
-export default function MobileHeader({ name }: { name: string }) {
+export default function MobileHeader({ name, pictureUrl }: { name: string; pictureUrl?: string | null }) {
   const firstName = name.split(" ")[0];
   return (
     <header
@@ -17,10 +17,15 @@ export default function MobileHeader({ name }: { name: string }) {
     >
       <div className="flex items-center gap-3">
         <div
-          className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold text-white shrink-0"
+          className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold text-white shrink-0 overflow-hidden"
           style={{ background: accentGradient }}
         >
-          {firstName.charAt(0)}
+          {pictureUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={pictureUrl} alt={name} className="w-full h-full object-cover" />
+          ) : (
+            firstName.charAt(0)
+          )}
         </div>
         <div>
           <p className="text-[11px] leading-tight" style={{ color: muted }}>{greeting()}</p>

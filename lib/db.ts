@@ -102,6 +102,7 @@ async function initDb(): Promise<void> {
       )
     `);
     await client.query(`ALTER TABLE hr_employee_profiles ADD COLUMN IF NOT EXISTS personal_email TEXT`);
+    await client.query(`ALTER TABLE hr_employee_profiles ADD COLUMN IF NOT EXISTS profile_picture_url TEXT`);
 
     await client.query(`
       CREATE TABLE IF NOT EXISTS hr_employee_education (

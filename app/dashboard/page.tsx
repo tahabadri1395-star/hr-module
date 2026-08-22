@@ -5,6 +5,7 @@ import { query } from "@/lib/db";
 import { getISTDateTime } from "@/lib/time";
 import CancelLeaveButton from "@/components/CancelLeaveButton";
 import TaskStatusButton from "@/components/TaskStatusButton";
+import AvatarUpload from "@/components/AvatarUpload";
 
 interface Task { id: number; title: string; description: string | null; priority: "low"|"medium"|"high"; status: "pending"|"ongoing"|"completed"; due_date: string | null; }
 interface LeaveApp { id: number; leave_type: string; start_date: string; end_date: string; is_half_day: boolean; half_day_period: string | null; reason: string; status: string; admin_note: string | null; super_admin_note: string | null; created_at: string; }
@@ -46,8 +47,12 @@ export default async function DashboardPage() {
   if (!employee) redirect("/login");
 
   const yr = new Date().getFullYear();
-  const empRes = await query(`SELECT department FROM hr_employees WHERE id=$1`, [employee.id]);
+  const empRes = await query(
+    `SELECT e.department, p.profile_picture_url FROM hr_employees e LEFT JOIN hr_employee_profiles p ON p.employee_id = e.id WHERE e.id=$1`,
+    [employee.id]
+  );
   const dept: string | null = empRes.rows[0]?.department ?? null;
+  const pictureUrl: string | null = empRes.rows[0]?.profile_picture_url ?? null;
 
   const todayStr = getISTDateTime().date;
   const [leavesRes, tasksRes, emergRes, muraRes, arzRes, assetsRes, docsRes, lmsRes, attendRes, expensesRes, travelRes] = await Promise.all([
@@ -105,9 +110,7 @@ export default async function DashboardPage() {
       <div className="px-6 py-9 text-center relative overflow-hidden" style={{ background: "linear-gradient(135deg, #4F46E5, #7C3AED)" }}>
         <div aria-hidden className="absolute pointer-events-none" style={{ top: "-80px", right: "10%", width: "280px", height: "280px", borderRadius: "9999px", background: "radial-gradient(circle, rgba(255,255,255,0.08), transparent 70%)" }} />
         <div className="relative animate-in">
-          <div className="w-16 h-16 rounded-full bg-white/15 flex items-center justify-center text-2xl font-bold text-white mx-auto mb-3" style={{ boxShadow: "0 0 0 4px rgba(255,255,255,0.12)" }}>
-            {employee.name.charAt(0)}
-          </div>
+          <AvatarUpload name={employee.name} initialUrl={pictureUrl} />
           <h1 className="text-xl font-bold text-white tracking-tight">Welcome, {employee.name.split(" ")[0]}</h1>
           {dept && <p className="text-sm mt-0.5 text-white/60">{dept}</p>}
           <div className="flex justify-center gap-3 mt-4 flex-wrap">

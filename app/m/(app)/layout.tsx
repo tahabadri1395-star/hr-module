@@ -14,7 +14,7 @@ export default async function MobileAppLayout({ children }: { children: React.Re
     <div className="min-h-screen" style={{ backgroundColor: bg }}>
       <PushRegistration />
       <MobileHeader name={employee.name} />
-      <main className="px-4 pt-3" style={{ paddingBottom: "calc(72px + env(safe-area-inset-bottom))" }}>
+      <main className="px-4 pt-3" style={{ paddingBottom: "calc(100px + env(safe-area-inset-bottom))" }}>
         <PageTransition>{children}</PageTransition>
       </main>
       <BottomNav />

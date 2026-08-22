@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import { pageBg, ARCH_PATTERN, ink, muted, mutedFaint, gold, glassCard, glassPill } from "@/lib/desktop-theme";
 
 interface Course {
   id: number; title: string; description: string | null; category: string;
@@ -11,18 +12,18 @@ interface Course {
 }
 
 const CAT: Record<string, { label: string; color: string; bg: string }> = {
-  technical:   { label: "Technical",    color: "#1D4ED8", bg: "#EFF6FF" },
-  soft_skills: { label: "Soft Skills",  color: "#7C3AED", bg: "#EDE9FE" },
-  compliance:  { label: "Compliance",   color: "#DC2626", bg: "#FEF2F2" },
-  leadership:  { label: "Leadership",   color: "#B45309", bg: "#FFFBEB" },
-  safety:      { label: "Safety",       color: "#059669", bg: "#ECFDF5" },
-  other:       { label: "Other",        color: "#475569", bg: "#F8FAFC" },
+  technical:   { label: "Technical",    color: "#60A5FA", bg: "rgba(96,165,250,0.15)" },
+  soft_skills: { label: "Soft Skills",  color: "#A78BFA", bg: "rgba(167,139,250,0.15)" },
+  compliance:  { label: "Compliance",   color: "#F87171", bg: "rgba(248,113,113,0.15)" },
+  leadership:  { label: "Leadership",   color: gold, bg: "rgba(217,180,108,0.15)" },
+  safety:      { label: "Safety",       color: "#34D399", bg: "rgba(52,211,153,0.15)" },
+  other:       { label: "Other",        color: muted, bg: "rgba(255,255,255,0.08)" },
 };
 
 const STATUS: Record<string, { label: string; color: string; bg: string }> = {
-  not_started: { label: "Not Started", color: "#94A3B8", bg: "#F8FAFC" },
-  in_progress: { label: "In Progress", color: "#2563EB", bg: "#EFF6FF" },
-  completed:   { label: "Completed",   color: "#16A34A", bg: "#F0FDF4" },
+  not_started: { label: "Not Started", color: mutedFaint, bg: "rgba(255,255,255,0.08)" },
+  in_progress: { label: "In Progress", color: "#60A5FA", bg: "rgba(96,165,250,0.15)" },
+  completed:   { label: "Completed",   color: "#4ADE80", bg: "rgba(74,222,128,0.15)" },
 };
 
 const CATS = ["technical", "soft_skills", "compliance", "leadership", "safety", "other"];
@@ -67,48 +68,49 @@ export default function LMSPage() {
   const completionPct = stats.total > 0 ? Math.round((stats.completed / stats.total) * 100) : 0;
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: "#F0F4FF" }}>
-      <nav className="px-6 h-14 flex items-center justify-between sticky top-0 z-10" style={{ background: "linear-gradient(135deg, #4F46E5, #7C3AED)" }}>
+    <div className="min-h-screen relative" style={{ background: pageBg }}>
+      <div aria-hidden className="absolute inset-0 pointer-events-none" style={{ backgroundImage: `url("${ARCH_PATTERN}")`, backgroundSize: "120px 120px" }} />
+      <nav className="px-6 h-14 flex items-center justify-between sticky top-0 z-10 relative" style={{ backgroundColor: "rgba(20,21,43,0.75)", backdropFilter: "blur(20px)", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
         <div className="flex items-center gap-3">
           <img src="/estate-mark-white.png" alt="Estate Department" className="w-11 h-11 object-contain" />
-          <span className="font-semibold text-sm text-white">HR Module</span>
+          <span className="font-semibold text-sm" style={{ color: ink }}>HR Module</span>
         </div>
-        <Link href="/dashboard" className="text-xs text-white/70">← Dashboard</Link>
+        <Link href="/dashboard" className="text-xs" style={{ color: muted }}>← Dashboard</Link>
       </nav>
 
       {/* Hero stats */}
-      <div className="px-4 py-6" style={{ background: "linear-gradient(135deg, #4F46E5, #7C3AED)" }}>
+      <div className="px-4 py-6 relative">
         <div className="max-w-3xl mx-auto">
-          <h1 className="text-xl font-bold text-white mb-1">Learning & Development</h1>
-          <p className="text-sm text-white/70 mb-4">Your training and course progress</p>
+          <h1 className="text-xl font-bold mb-1" style={{ color: ink }}>Learning & Development</h1>
+          <p className="text-sm mb-4" style={{ color: muted }}>Your training and course progress</p>
           <div className="grid grid-cols-4 gap-3">
             {[
-              { label: "Total",       value: stats.total,       color: "white" },
+              { label: "Total",       value: stats.total,       color: ink },
               { label: "Completed",   value: stats.completed,   color: "#4ADE80" },
-              { label: "In Progress", value: stats.in_progress, color: "#93C5FD" },
-              { label: "Completion",  value: `${completionPct}%`, color: "#FBBF24" },
+              { label: "In Progress", value: stats.in_progress, color: "#60A5FA" },
+              { label: "Completion",  value: `${completionPct}%`, color: gold },
             ].map(s => (
-              <div key={s.label} className="rounded-xl p-3 text-center" style={{ backgroundColor: "rgba(255,255,255,0.15)" }}>
+              <div key={s.label} className="rounded-xl p-3 text-center" style={glassCard}>
                 <p className="text-lg font-bold" style={{ color: s.color }}>{s.value}</p>
-                <p className="text-xs text-white/70">{s.label}</p>
+                <p className="text-xs" style={{ color: muted }}>{s.label}</p>
               </div>
             ))}
           </div>
           {stats.total > 0 && (
-            <div className="mt-3 h-2 rounded-full overflow-hidden" style={{ backgroundColor: "rgba(255,255,255,0.2)" }}>
+            <div className="mt-3 h-2 rounded-full overflow-hidden" style={{ backgroundColor: "rgba(255,255,255,0.1)" }}>
               <div className="h-full rounded-full transition-all" style={{ width: `${completionPct}%`, backgroundColor: "#4ADE80" }}></div>
             </div>
           )}
         </div>
       </div>
 
-      <div className="max-w-3xl mx-auto px-4 py-6">
+      <div className="max-w-3xl mx-auto px-4 py-6 relative">
         {/* Status filter */}
-        <div className="flex gap-1 mb-3 p-1 rounded-xl bg-white shadow-sm" style={{ boxShadow: "var(--shadow-sm)" }}>
+        <div className="flex gap-1 mb-3 p-1 rounded-xl" style={glassPill}>
           {([["all", "All"], ["not_started", "Not Started"], ["in_progress", "In Progress"], ["completed", "Completed"]] as [string, string][]).map(([f, label]) => (
             <button key={f} onClick={() => setFilter(f as typeof filter)}
               className="flex-1 text-xs py-2 rounded-lg font-medium"
-              style={{ backgroundColor: filter === f ? "#4F46E5" : "transparent", color: filter === f ? "white" : "#64748B" }}>
+              style={{ backgroundColor: filter === f ? gold : "transparent", color: filter === f ? "#1B1630" : muted }}>
               {label}
             </button>
           ))}
@@ -122,9 +124,9 @@ export default function LMSPage() {
               <button key={c} onClick={() => setCatFilter(c)}
                 className="text-xs font-medium px-3 py-1 rounded-full border"
                 style={{
-                  backgroundColor: catFilter === c ? (c === "all" ? "#4F46E5" : meta.bg) : "white",
-                  color: catFilter === c ? (c === "all" ? "white" : meta.color) : "#64748B",
-                  borderColor: catFilter === c ? (c === "all" ? "#4F46E5" : meta.color) : "#E2E8F0",
+                  backgroundColor: catFilter === c ? (c === "all" ? gold : meta.bg) : "transparent",
+                  color: catFilter === c ? (c === "all" ? "#1B1630" : meta.color) : muted,
+                  borderColor: catFilter === c ? (c === "all" ? gold : meta.color) : "rgba(255,255,255,0.14)",
                 }}>
                 {c === "all" ? "All Categories" : meta.label}
               </button>
@@ -133,9 +135,9 @@ export default function LMSPage() {
         </div>
 
         {filtered.length === 0 ? (
-          <div className="bg-white rounded-2xl py-16 text-center" style={{ boxShadow: "var(--shadow-sm)" }}>
-            <p className="text-sm font-medium" style={{ color: "#1E293B" }}>No courses found</p>
-            <p className="text-xs mt-1" style={{ color: "#94A3B8" }}>Check back when new courses are added</p>
+          <div className="rounded-2xl py-16 text-center" style={glassCard}>
+            <p className="text-sm font-medium" style={{ color: ink }}>No courses found</p>
+            <p className="text-xs mt-1" style={{ color: muted }}>Check back when new courses are added</p>
           </div>
         ) : (
           <div className="space-y-3">
@@ -144,14 +146,14 @@ export default function LMSPage() {
               const st  = STATUS[course.my_status];
               const isLoading = saving === course.id;
               return (
-                <div key={course.id} className="bg-white rounded-2xl overflow-hidden shadow-sm"
-                  style={{ border: `1px solid ${course.my_status === "completed" ? "#BBF7D0" : "#E2E8F0"}` }}>
+                <div key={course.id} className="rounded-2xl overflow-hidden"
+                  style={{ ...glassCard, border: course.my_status === "completed" ? "1px solid rgba(74,222,128,0.3)" : glassCard.border }}>
                   {/* Completion indicator strip */}
                   {course.my_status === "completed" && (
-                    <div className="h-1 w-full" style={{ backgroundColor: "#22C55E" }}></div>
+                    <div className="h-1 w-full" style={{ backgroundColor: "#4ADE80" }}></div>
                   )}
                   {course.my_status === "in_progress" && (
-                    <div className="h-1 w-1/2" style={{ backgroundColor: "#3B82F6" }}></div>
+                    <div className="h-1 w-1/2" style={{ backgroundColor: "#60A5FA" }}></div>
                   )}
                   <div className="px-5 py-4">
                     <div className="flex items-start justify-between gap-3 mb-2">
@@ -160,12 +162,12 @@ export default function LMSPage() {
                           <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{ backgroundColor: cat.bg, color: cat.color }}>{cat.label}</span>
                           <span className="text-xs font-medium px-2 py-0.5 rounded-full" style={{ backgroundColor: st.bg, color: st.color }}>{st.label}</span>
                         </div>
-                        <h3 className="text-sm font-bold" style={{ color: "#1E293B" }}>{course.title}</h3>
-                        {course.description && <p className="text-xs mt-0.5 line-clamp-2" style={{ color: "#64748B" }}>{course.description}</p>}
+                        <h3 className="text-sm font-bold" style={{ color: ink }}>{course.title}</h3>
+                        {course.description && <p className="text-xs mt-0.5 line-clamp-2" style={{ color: muted }}>{course.description}</p>}
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-4 text-xs mb-3" style={{ color: "#94A3B8" }}>
+                    <div className="flex items-center gap-4 text-xs mb-3" style={{ color: mutedFaint }}>
                       {course.instructor && <span>By {course.instructor}</span>}
                       {course.duration_hours && <span>{course.duration_hours}h</span>}
                       {course.completed_at && <span>Completed {fmt(course.completed_at)}</span>}
@@ -175,27 +177,27 @@ export default function LMSPage() {
                     <div className="flex items-center gap-2 flex-wrap">
                       {course.content_url && (
                         <a href={course.content_url} target="_blank" rel="noopener noreferrer"
-                          className="text-xs font-semibold px-3 py-1.5 rounded-lg text-white"
-                          style={{ background: "linear-gradient(135deg, #4F46E5, #7C3AED)" }}>
+                          className="text-xs font-semibold px-3 py-1.5 rounded-lg"
+                          style={{ backgroundColor: gold, color: "#1B1630" }}>
                           Open Course
                         </a>
                       )}
                       {course.my_status === "not_started" && (
                         <button onClick={() => updateStatus(course.id, "in_progress")} disabled={isLoading}
                           className="text-xs font-medium px-3 py-1.5 rounded-lg border"
-                          style={{ borderColor: "#93C5FD", color: "#1D4ED8", backgroundColor: "#EFF6FF", opacity: isLoading ? 0.7 : 1 }}>
+                          style={{ borderColor: "rgba(96,165,250,0.4)", color: "#60A5FA", backgroundColor: "rgba(96,165,250,0.1)", opacity: isLoading ? 0.7 : 1 }}>
                           {isLoading ? "…" : "Start Course"}
                         </button>
                       )}
                       {course.my_status === "in_progress" && (
                         <button onClick={() => updateStatus(course.id, "completed")} disabled={isLoading}
                           className="text-xs font-semibold px-3 py-1.5 rounded-lg"
-                          style={{ backgroundColor: "#F0FDF4", color: "#16A34A", border: "1px solid #BBF7D0", opacity: isLoading ? 0.7 : 1 }}>
+                          style={{ backgroundColor: "rgba(74,222,128,0.12)", color: "#4ADE80", border: "1px solid rgba(74,222,128,0.3)", opacity: isLoading ? 0.7 : 1 }}>
                           {isLoading ? "…" : "Mark Complete"}
                         </button>
                       )}
                       {course.my_status === "completed" && (
-                        <span className="text-xs font-bold px-3 py-1.5 rounded-lg" style={{ backgroundColor: "#F0FDF4", color: "#16A34A" }}>
+                        <span className="text-xs font-bold px-3 py-1.5 rounded-lg" style={{ backgroundColor: "rgba(74,222,128,0.12)", color: "#4ADE80" }}>
                           Completed
                         </span>
                       )}

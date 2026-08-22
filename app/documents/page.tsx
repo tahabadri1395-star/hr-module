@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import { pageBg, ARCH_PATTERN, ink, muted, mutedFaint, gold, glassCard, glassPill } from "@/lib/desktop-theme";
 
 interface Doc {
   id: number; title: string; description: string | null; category: string;
@@ -9,12 +10,12 @@ interface Doc {
 }
 
 const CAT_META: Record<string, { label: string; color: string; bg: string; icon: string }> = {
-  policy:      { label: "Policy",      color: "#1D4ED8", bg: "#EFF6FF", icon: "M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" },
-  form:        { label: "Form",        color: "#7C3AED", bg: "#EDE9FE", icon: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" },
-  certificate: { label: "Certificate", color: "#B45309", bg: "#FFFBEB", icon: "M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" },
-  circular:    { label: "Circular",    color: "#0891B2", bg: "#ECFEFF", icon: "M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" },
-  sop:         { label: "SOP",         color: "#059669", bg: "#ECFDF5", icon: "M4 6h16M4 10h16M4 14h16M4 18h16" },
-  other:       { label: "Other",       color: "#475569", bg: "#F8FAFC", icon: "M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" },
+  policy:      { label: "Policy",      color: "#60A5FA", bg: "rgba(96,165,250,0.15)", icon: "M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" },
+  form:        { label: "Form",        color: "#A78BFA", bg: "rgba(167,139,250,0.15)", icon: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" },
+  certificate: { label: "Certificate", color: gold, bg: "rgba(217,180,108,0.15)", icon: "M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" },
+  circular:    { label: "Circular",    color: "#22D3EE", bg: "rgba(34,211,238,0.15)", icon: "M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" },
+  sop:         { label: "SOP",         color: "#34D399", bg: "rgba(52,211,153,0.15)", icon: "M4 6h16M4 10h16M4 14h16M4 18h16" },
+  other:       { label: "Other",       color: muted, bg: "rgba(255,255,255,0.08)", icon: "M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" },
 };
 
 const CATEGORIES = ["policy", "form", "certificate", "circular", "sop", "other"];
@@ -50,31 +51,32 @@ export default function DocumentsPage() {
     : { [catFilter]: filtered };
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: "#F0F4FF" }}>
-      <nav className="px-6 h-14 flex items-center justify-between sticky top-0 z-10" style={{ background: "linear-gradient(135deg, #4F46E5, #7C3AED)" }}>
+    <div className="min-h-screen relative" style={{ background: pageBg }}>
+      <div aria-hidden className="absolute inset-0 pointer-events-none" style={{ backgroundImage: `url("${ARCH_PATTERN}")`, backgroundSize: "120px 120px" }} />
+      <nav className="px-6 h-14 flex items-center justify-between sticky top-0 z-10 relative" style={{ backgroundColor: "rgba(20,21,43,0.75)", backdropFilter: "blur(20px)", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
         <div className="flex items-center gap-3">
           <img src="/estate-mark-white.png" alt="Estate Department" className="w-11 h-11 object-contain" />
-          <span className="font-semibold text-sm text-white">HR Module</span>
+          <span className="font-semibold text-sm" style={{ color: ink }}>HR Module</span>
         </div>
-        <Link href="/dashboard" className="text-xs text-white/70">← Dashboard</Link>
+        <Link href="/dashboard" className="text-xs" style={{ color: muted }}>← Dashboard</Link>
       </nav>
 
-      <div className="max-w-3xl mx-auto px-4 py-8">
+      <div className="max-w-3xl mx-auto px-4 py-8 relative">
         <div className="mb-6">
-          <h1 className="text-2xl font-bold" style={{ color: "#1E293B" }}>Document Vault</h1>
-          <p className="text-sm mt-0.5" style={{ color: "#64748B" }}>Policies, forms, certificates and official documents</p>
+          <h1 className="text-2xl font-bold" style={{ color: ink }}>Document Vault</h1>
+          <p className="text-sm mt-0.5" style={{ color: muted }}>Policies, forms, certificates and official documents</p>
         </div>
 
         {/* Search */}
         <div className="relative mb-4">
           <svg className="absolute left-3.5 top-1/2 -translate-y-1/2" width="16" height="16" fill="none" viewBox="0 0 24 24">
-            <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke="#94A3B8" strokeWidth="2" strokeLinecap="round"/>
+            <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke={mutedFaint} strokeWidth="2" strokeLinecap="round"/>
           </svg>
           <input value={search} onChange={e => setSearch(e.target.value)}
             placeholder="Search documents…"
-            className="w-full pl-10 pr-4 py-2.5 rounded-xl text-sm border bg-white outline-none"
-            style={{ borderColor: "#E2E8F0", color: "#1E293B" }}
-            onFocus={e => (e.target.style.borderColor = "#4F46E5")} onBlur={e => (e.target.style.borderColor = "#E2E8F0")} />
+            className="w-full pl-10 pr-4 py-2.5 rounded-xl text-sm border outline-none glass-input"
+            style={{ borderColor: "rgba(255,255,255,0.14)", backgroundColor: "rgba(255,255,255,0.05)", color: ink }}
+            onFocus={e => (e.target.style.borderColor = gold)} onBlur={e => (e.target.style.borderColor = "rgba(255,255,255,0.14)")} />
         </div>
 
         {/* Category filter */}
@@ -86,9 +88,9 @@ export default function DocumentsPage() {
               <button key={c} onClick={() => setCatFilter(c)}
                 className="text-xs font-medium px-3 py-1.5 rounded-full border transition"
                 style={{
-                  backgroundColor: catFilter === c ? (c === "all" ? "#4F46E5" : meta.bg) : "white",
-                  color: catFilter === c ? (c === "all" ? "white" : meta.color) : "#64748B",
-                  borderColor: catFilter === c ? (c === "all" ? "#4F46E5" : meta.color) : "#E2E8F0",
+                  backgroundColor: catFilter === c ? (c === "all" ? gold : meta.bg) : "transparent",
+                  color: catFilter === c ? (c === "all" ? "#1B1630" : meta.color) : muted,
+                  borderColor: catFilter === c ? (c === "all" ? gold : meta.color) : "rgba(255,255,255,0.14)",
                 }}>
                 {c === "all" ? `All (${count})` : `${meta.label} (${count})`}
               </button>
@@ -97,16 +99,16 @@ export default function DocumentsPage() {
         </div>
 
         {loading ? (
-          <div className="bg-white rounded-2xl py-12 text-center" style={{ boxShadow: "var(--shadow-sm)" }}>
-            <p className="text-sm" style={{ color: "#94A3B8" }}>Loading…</p>
+          <div className="rounded-2xl py-12 text-center" style={glassCard}>
+            <p className="text-sm" style={{ color: muted }}>Loading…</p>
           </div>
         ) : filtered.length === 0 ? (
-          <div className="bg-white rounded-2xl py-16 text-center" style={{ boxShadow: "var(--shadow-sm)" }}>
-            <div className="w-12 h-12 rounded-2xl mx-auto mb-3 flex items-center justify-center" style={{ backgroundColor: "#F1F5F9" }}>
-              <svg width="24" height="24" fill="none" viewBox="0 0 24 24"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke="#94A3B8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          <div className="rounded-2xl py-16 text-center" style={glassCard}>
+            <div className="w-12 h-12 rounded-2xl mx-auto mb-3 flex items-center justify-center" style={{ backgroundColor: "rgba(255,255,255,0.08)" }}>
+              <svg width="24" height="24" fill="none" viewBox="0 0 24 24"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke={mutedFaint} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
             </div>
-            <p className="text-sm font-medium" style={{ color: "#1E293B" }}>No documents found</p>
-            <p className="text-xs mt-1" style={{ color: "#94A3B8" }}>Try a different search or category</p>
+            <p className="text-sm font-medium" style={{ color: ink }}>No documents found</p>
+            <p className="text-xs mt-1" style={{ color: muted }}>Try a different search or category</p>
           </div>
         ) : (
           <div className="space-y-6">
@@ -119,20 +121,20 @@ export default function DocumentsPage() {
                       <svg width="12" height="12" fill="none" viewBox="0 0 24 24"><path d={meta.icon} stroke={meta.color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
                     </div>
                     <span className="text-xs font-bold uppercase tracking-wide" style={{ color: meta.color }}>{meta.label}</span>
-                    <span className="text-xs" style={{ color: "#94A3B8" }}>· {items.length}</span>
+                    <span className="text-xs" style={{ color: mutedFaint }}>· {items.length}</span>
                   </div>
                   <div className="space-y-2">
                     {items.map(doc => (
                       <a key={doc.id} href={doc.file_url} target="_blank" rel="noopener noreferrer"
-                        className="block bg-white rounded-2xl px-5 py-4 transition hover:shadow-md"
-                        style={{ boxShadow: "var(--shadow-sm)" }}>
+                        className="block rounded-2xl px-5 py-4 transition"
+                        style={glassCard}>
                         <div className="flex items-start justify-between gap-3">
                           <div className="flex-1 min-w-0">
-                            <p className="text-sm font-semibold" style={{ color: "#1E293B" }}>{doc.title}</p>
-                            {doc.description && <p className="text-xs mt-0.5 line-clamp-2" style={{ color: "#64748B" }}>{doc.description}</p>}
+                            <p className="text-sm font-semibold" style={{ color: ink }}>{doc.title}</p>
+                            {doc.description && <p className="text-xs mt-0.5 line-clamp-2" style={{ color: muted }}>{doc.description}</p>}
                             <div className="flex items-center gap-3 mt-1.5">
-                              <p className="text-xs" style={{ color: "#94A3B8" }}>{fmt(doc.created_at)}</p>
-                              {doc.department && <span className="text-xs px-2 py-0.5 rounded-full" style={{ backgroundColor: "#F1F5F9", color: "#475569" }}>{doc.department}</span>}
+                              <p className="text-xs" style={{ color: mutedFaint }}>{fmt(doc.created_at)}</p>
+                              {doc.department && <span className="text-xs px-2 py-0.5 rounded-full" style={glassPill}>{doc.department}</span>}
                             </div>
                           </div>
                           <div className="shrink-0 w-8 h-8 rounded-xl flex items-center justify-center" style={{ backgroundColor: meta.bg }}>

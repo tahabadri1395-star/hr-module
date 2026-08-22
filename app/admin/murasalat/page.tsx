@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import { adminPageBg, ARCH_PATTERN, ink, muted, mutedFaint, gold, glassCard, glassPill } from "@/lib/desktop-theme";
 
 interface Murasalat {
   id: number; title: string; body: string; department: string | null;
@@ -10,9 +11,9 @@ interface Murasalat {
 }
 
 const P = {
-  urgent: { label: "Urgent", bg: "#FEF2F2", color: "#DC2626" },
-  normal: { label: "Normal", bg: "#EEF2FF", color: "#4338CA" },
-  info:   { label: "Info",   bg: "#F0FDF4", color: "#15803D" },
+  urgent: { label: "Urgent", bg: "rgba(248,113,113,0.15)", color: "#F87171" },
+  normal: { label: "Normal", bg: "rgba(217,180,108,0.15)", color: "#D9B46C" },
+  info:   { label: "Info",   bg: "rgba(74,222,128,0.15)", color: "#4ADE80" },
 };
 
 function fmt(d: string) { return new Date(d).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }); }
@@ -57,71 +58,71 @@ export default function AdminMurasalatPage() {
     load();
   }
 
+  const inputStyle = { borderColor: "rgba(255,255,255,0.14)", backgroundColor: "rgba(255,255,255,0.06)", color: ink };
+
   return (
-    <div className="min-h-screen" style={{ backgroundColor: "#0F172A" }}>
-      {/* Same dark nav as admin dashboard */}
-      <nav className="px-6 h-14 flex items-center justify-between max-w-5xl mx-auto sticky top-0 z-20" style={{ backgroundColor: "#0F172A" }}>
+    <div className="min-h-screen relative" style={{ background: adminPageBg }}>
+      <div aria-hidden className="absolute inset-0 pointer-events-none" style={{ backgroundImage: `url("${ARCH_PATTERN}")`, backgroundSize: "120px 120px" }} />
+      <nav className="px-6 h-14 flex items-center justify-between sticky top-0 z-10 relative"
+        style={{ backgroundColor: "rgba(11,14,23,0.75)", backdropFilter: "blur(20px)", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
         <div className="flex items-center gap-3">
           <div className="w-11 h-11 rounded-lg flex items-center justify-center p-1.5" style={{ backgroundColor: "#F59E0B" }}>
             <img src="/estate-mark.png" alt="Estate Department" className="w-full h-full object-contain" />
           </div>
-          <span className="font-bold text-sm text-white">HR Module</span>
+          <span className="font-semibold text-sm" style={{ color: ink }}>HR Module</span>
         </div>
-        <Link href="/admin" className="text-xs" style={{ color: "#475569" }}>← Dashboard</Link>
+        <Link href="/admin" className="text-xs" style={{ color: muted }}>← Dashboard</Link>
       </nav>
 
-      <div className="px-6 pb-8 pt-2 max-w-5xl mx-auto">
-        <div className="flex items-center justify-between mb-4">
+      <div className="max-w-5xl mx-auto px-6 py-8 relative">
+        <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-2xl font-bold text-white">Murasalat</h1>
-            <p className="text-sm mt-0.5" style={{ color: "#475569" }}>Send circulars and instructions to Khidmat Guzars</p>
+            <h1 className="text-2xl font-semibold" style={{ color: ink }}>Murasalat</h1>
+            <p className="text-sm mt-0.5" style={{ color: muted }}>Send circulars and instructions to Khidmat Guzars</p>
           </div>
           <button onClick={() => { setShowForm(true); setMsg(""); }}
-            className="text-sm font-semibold px-4 py-2 rounded-xl text-black"
-            style={{ backgroundColor: "#F59E0B" }}>
+            className="text-sm font-semibold px-4 py-2 rounded-xl"
+            style={{ backgroundColor: gold, color: "#1B1630" }}>
             + New Murasalat
           </button>
         </div>
-      </div>
-
-      <div className="rounded-t-3xl min-h-screen px-6 py-6 max-w-5xl mx-auto" style={{ backgroundColor: "#F1F5F9" }}>
 
         {/* Compose Form */}
         {showForm && (
-          <div className="bg-white rounded-2xl p-6 mb-5 shadow-sm" style={{ border: "2px solid #F59E0B" }}>
-            <h2 className="text-sm font-bold mb-4" style={{ color: "#1E293B" }}>New Murasalat</h2>
-            {msg && <p className="mb-3 text-xs" style={{ color: "#DC2626" }}>{msg}</p>}
+          <div className="rounded-2xl p-6 mb-5" style={{ ...glassCard, border: "1px solid rgba(217,180,108,0.4)" }}>
+            <h2 className="text-sm font-semibold mb-4" style={{ color: ink }}>New Murasalat</h2>
+            {msg && <p className="mb-3 text-xs" style={{ color: "#F87171" }}>{msg}</p>}
             <div className="space-y-3">
               <div>
-                <label className="block text-xs font-medium mb-1.5" style={{ color: "#64748B" }}>Title *</label>
+                <label className="block text-xs font-medium mb-1.5" style={{ color: muted }}>Title *</label>
                 <input value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))}
                   placeholder="Subject of this circular…"
-                  className="w-full px-3.5 py-2.5 rounded-xl text-sm border outline-none"
-                  style={{ borderColor: "#E2E8F0", color: "#1E293B" }}
-                  onFocus={e => (e.target.style.borderColor = "#F59E0B")} onBlur={e => (e.target.style.borderColor = "#E2E8F0")} />
+                  className="w-full px-3.5 py-2.5 rounded-xl text-sm border outline-none glass-input"
+                  style={inputStyle}
+                  onFocus={e => (e.target.style.borderColor = gold)} onBlur={e => (e.target.style.borderColor = "rgba(255,255,255,0.14)")} />
               </div>
               <div>
-                <label className="block text-xs font-medium mb-1.5" style={{ color: "#64748B" }}>Body *</label>
+                <label className="block text-xs font-medium mb-1.5" style={{ color: muted }}>Body *</label>
                 <textarea value={form.body} onChange={e => setForm(f => ({ ...f, body: e.target.value }))}
                   rows={5} placeholder="Full text of the instruction or circular…"
-                  className="w-full px-3.5 py-2.5 rounded-xl text-sm border outline-none resize-none"
-                  style={{ borderColor: "#E2E8F0", color: "#1E293B" }}
-                  onFocus={e => (e.target.style.borderColor = "#F59E0B")} onBlur={e => (e.target.style.borderColor = "#E2E8F0")} />
+                  className="w-full px-3.5 py-2.5 rounded-xl text-sm border outline-none resize-none glass-input"
+                  style={inputStyle}
+                  onFocus={e => (e.target.style.borderColor = gold)} onBlur={e => (e.target.style.borderColor = "rgba(255,255,255,0.14)")} />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-medium mb-1.5" style={{ color: "#64748B" }}>Priority</label>
+                  <label className="block text-xs font-medium mb-1.5" style={{ color: muted }}>Priority</label>
                   <select value={form.priority} onChange={e => setForm(f => ({ ...f, priority: e.target.value }))}
-                    className="w-full px-3.5 py-2.5 rounded-xl text-sm border outline-none" style={{ borderColor: "#E2E8F0", color: "#1E293B" }}>
+                    className="w-full px-3.5 py-2.5 rounded-xl text-sm border outline-none glass-input" style={inputStyle}>
                     <option value="urgent">Urgent</option>
                     <option value="normal">Normal</option>
                     <option value="info">Info</option>
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-medium mb-1.5" style={{ color: "#64748B" }}>Department (leave blank = all)</label>
+                  <label className="block text-xs font-medium mb-1.5" style={{ color: muted }}>Department (leave blank = all)</label>
                   <select value={form.department} onChange={e => setForm(f => ({ ...f, department: e.target.value }))}
-                    className="w-full px-3.5 py-2.5 rounded-xl text-sm border outline-none" style={{ borderColor: "#E2E8F0", color: "#1E293B" }}>
+                    className="w-full px-3.5 py-2.5 rounded-xl text-sm border outline-none glass-input" style={inputStyle}>
                     <option value="">All Khidmat Guzars</option>
                     {departments.map(d => <option key={d} value={d}>{d}</option>)}
                   </select>
@@ -130,20 +131,20 @@ export default function AdminMurasalatPage() {
             </div>
             <div className="flex gap-3 mt-4">
               <button onClick={submit} disabled={saving}
-                className="text-sm font-semibold px-5 py-2 rounded-xl text-black"
-                style={{ backgroundColor: "#F59E0B", opacity: saving ? 0.7 : 1 }}>
+                className="text-sm font-semibold px-5 py-2 rounded-xl"
+                style={{ backgroundColor: gold, color: "#1B1630", opacity: saving ? 0.7 : 1 }}>
                 {saving ? "Sending…" : "Send Murasalat"}
               </button>
-              <button onClick={() => setShowForm(false)} className="text-sm px-4 py-2 rounded-xl border" style={{ borderColor: "#E2E8F0", color: "#64748B" }}>Cancel</button>
+              <button onClick={() => setShowForm(false)} className="text-sm px-4 py-2 rounded-xl border" style={{ borderColor: "rgba(255,255,255,0.16)", color: muted }}>Cancel</button>
             </div>
           </div>
         )}
 
         {/* List */}
         {items.length === 0 ? (
-          <div className="bg-white rounded-2xl py-16 text-center" style={{ boxShadow: "var(--shadow-sm)" }}>
-            <p className="text-sm font-medium" style={{ color: "#1E293B" }}>No murasalat sent yet</p>
-            <p className="text-xs mt-1" style={{ color: "#94A3B8" }}>Create your first circular above</p>
+          <div className="rounded-2xl py-16 text-center" style={glassCard}>
+            <p className="text-sm font-medium" style={{ color: ink }}>No murasalat sent yet</p>
+            <p className="text-xs mt-1" style={{ color: mutedFaint }}>Create your first circular above</p>
           </div>
         ) : (
           <div className="space-y-3">
@@ -154,43 +155,40 @@ export default function AdminMurasalatPage() {
                 : 0;
               const isOpen = expanded === m.id;
               return (
-                <div key={m.id} className="bg-white rounded-2xl overflow-hidden" style={{ boxShadow: "var(--shadow-sm)" }}>
+                <div key={m.id} className="rounded-2xl overflow-hidden" style={glassCard}>
                   <div className="px-5 py-4 flex items-start gap-3 cursor-pointer" onClick={() => setExpanded(isOpen ? null : m.id)}>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1 flex-wrap">
                         <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{ backgroundColor: p.bg, color: p.color }}>{p.label}</span>
-                        {m.department
-                          ? <span className="text-xs px-2 py-0.5 rounded-full" style={{ backgroundColor: "#F1F5F9", color: "#475569" }}>{m.department}</span>
-                          : <span className="text-xs px-2 py-0.5 rounded-full" style={{ backgroundColor: "#F1F5F9", color: "#475569" }}>All</span>
-                        }
+                        <span className="text-xs px-2 py-0.5 rounded-full" style={glassPill}>{m.department || "All"}</span>
                       </div>
-                      <p className="text-sm font-semibold" style={{ color: "#1E293B" }}>{m.title}</p>
-                      <p className="text-xs mt-0.5" style={{ color: "#94A3B8" }}>{fmt(m.created_at)}</p>
+                      <p className="text-sm font-semibold" style={{ color: ink }}>{m.title}</p>
+                      <p className="text-xs mt-0.5" style={{ color: mutedFaint }}>{fmt(m.created_at)}</p>
                     </div>
                     <div className="text-right shrink-0">
-                      <p className="text-sm font-bold" style={{ color: readPct === 100 ? "#15803D" : "#B45309" }}>{readPct}%</p>
-                      <p className="text-xs" style={{ color: "#94A3B8" }}>{m.read_count}/{m.total_kgs} read</p>
+                      <p className="text-sm font-bold" style={{ color: readPct === 100 ? "#4ADE80" : "#D9B46C" }}>{readPct}%</p>
+                      <p className="text-xs" style={{ color: mutedFaint }}>{m.read_count}/{m.total_kgs} read</p>
                     </div>
                     <svg width="16" height="16" fill="none" viewBox="0 0 24 24" className="shrink-0 mt-1 ml-1"
-                      style={{ transform: isOpen ? "rotate(180deg)" : "rotate(0)", color: "#94A3B8" }}>
+                      style={{ transform: isOpen ? "rotate(180deg)" : "rotate(0)", color: mutedFaint }}>
                       <path d="M19 9l-7 7-7-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                     </svg>
                   </div>
 
                   {/* Read progress bar */}
                   <div className="px-5 pb-3 -mt-1">
-                    <div className="h-1 rounded-full overflow-hidden" style={{ backgroundColor: "#F1F5F9" }}>
-                      <div className="h-full rounded-full transition-all" style={{ width: `${readPct}%`, backgroundColor: readPct === 100 ? "#15803D" : "#F59E0B" }}></div>
+                    <div className="h-1 rounded-full overflow-hidden" style={{ backgroundColor: "rgba(255,255,255,0.08)" }}>
+                      <div className="h-full rounded-full transition-all" style={{ width: `${readPct}%`, backgroundColor: readPct === 100 ? "#4ADE80" : gold }}></div>
                     </div>
                   </div>
 
                   {isOpen && (
-                    <div className="px-5 pb-5 border-t" style={{ borderColor: "#F8FAFC" }}>
-                      <p className="text-sm leading-relaxed mt-3 whitespace-pre-wrap" style={{ color: "#334155" }}>{m.body}</p>
-                      <div className="flex items-center justify-between mt-4 pt-3 border-t" style={{ borderColor: "#F1F5F9" }}>
-                        <p className="text-xs" style={{ color: "#94A3B8" }}>Sent by {m.created_by}</p>
+                    <div className="px-5 pb-5 border-t" style={{ borderColor: "rgba(255,255,255,0.08)" }}>
+                      <p className="text-sm leading-relaxed mt-3 whitespace-pre-wrap" style={{ color: muted }}>{m.body}</p>
+                      <div className="flex items-center justify-between mt-4 pt-3 border-t" style={{ borderColor: "rgba(255,255,255,0.08)" }}>
+                        <p className="text-xs" style={{ color: mutedFaint }}>Sent by {m.created_by}</p>
                         <button onClick={() => remove(m.id, m.title)}
-                          className="text-xs px-3 py-1.5 rounded-lg border" style={{ borderColor: "#FECACA", color: "#DC2626", backgroundColor: "#FEF2F2" }}>
+                          className="text-xs px-3 py-1.5 rounded-lg border" style={{ borderColor: "rgba(248,113,113,0.35)", color: "#F87171", backgroundColor: "rgba(248,113,113,0.1)" }}>
                           Delete
                         </button>
                       </div>

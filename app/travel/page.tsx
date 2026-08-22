@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import { pageBg, ARCH_PATTERN, ink, muted, mutedFaint, gold, glassCard, glassPill } from "@/lib/desktop-theme";
 
 interface TravelRequest {
   id: number; travel_type: string; destination: string; purpose: string;
@@ -17,20 +18,20 @@ interface Expense {
 type Tab = "travel" | "expenses";
 
 const STATUS_META = {
-  pending:  { label: "Pending",  bg: "#FFFBEB", color: "#B45309" },
-  approved: { label: "Approved", bg: "#F0FDF4", color: "#15803D" },
-  rejected: { label: "Rejected", bg: "#FEF2F2", color: "#DC2626" },
+  pending:  { label: "Pending",  bg: "rgba(251,191,36,0.15)", color: "#FBBF24" },
+  approved: { label: "Approved", bg: "rgba(74,222,128,0.15)", color: "#4ADE80" },
+  rejected: { label: "Rejected", bg: "rgba(248,113,113,0.15)", color: "#F87171" },
 };
 const TYPE_META: Record<string, string> = {
   site_visit: "Site Visit", outstation: "Outstation", local: "Local Travel",
 };
 const CAT_META: Record<string, { label: string; color: string; bg: string }> = {
-  travel:          { label: "Travel",          color: "#2563EB", bg: "#EFF6FF" },
-  food:            { label: "Food",            color: "#D97706", bg: "#FFFBEB" },
-  accommodation:   { label: "Accommodation",   color: "#7C3AED", bg: "#EDE9FE" },
-  office_supplies: { label: "Office Supplies", color: "#0891B2", bg: "#ECFEFF" },
-  communication:   { label: "Communication",   color: "#059669", bg: "#ECFDF5" },
-  other:           { label: "Other",           color: "#64748B", bg: "#F1F5F9" },
+  travel:          { label: "Travel",          color: "#60A5FA", bg: "rgba(96,165,250,0.15)" },
+  food:            { label: "Food",            color: gold, bg: "rgba(217,180,108,0.15)" },
+  accommodation:   { label: "Accommodation",   color: "#A78BFA", bg: "rgba(167,139,250,0.15)" },
+  office_supplies: { label: "Office Supplies", color: "#22D3EE", bg: "rgba(34,211,238,0.15)" },
+  communication:   { label: "Communication",   color: "#34D399", bg: "rgba(52,211,153,0.15)" },
+  other:           { label: "Other",           color: muted, bg: "rgba(255,255,255,0.08)" },
 };
 
 function fmt(d: string) {
@@ -93,37 +94,36 @@ export default function TravelPage() {
     await fetch(`/api/expenses/${id}`, { method: "DELETE" }); load();
   }
 
-  const inputClass = "w-full px-3.5 py-2.5 rounded-lg text-sm border outline-none bg-white";
-  const iStyle = { borderColor: "#E2E8F0", color: "#1E293B" };
+  const inputClass = "w-full px-3.5 py-2.5 rounded-lg text-sm border outline-none glass-input";
+  const iStyle = { borderColor: "rgba(255,255,255,0.14)", backgroundColor: "rgba(255,255,255,0.05)", color: ink };
 
   const pendingTravel  = travel.filter(t => t.status === "pending").length;
   const pendingExpense = expenses.filter(e => e.status === "pending").length;
   const totalApproved  = expenses.filter(e => e.status === "approved").reduce((s, e) => s + parseFloat(e.amount), 0);
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: "#F8FAFC" }}>
-      <nav className="bg-white border-b px-6 h-14 flex items-center justify-between sticky top-0 z-10" style={{ borderColor: "#E2E8F0" }}>
+    <div className="min-h-screen relative" style={{ background: pageBg }}>
+      <div aria-hidden className="absolute inset-0 pointer-events-none" style={{ backgroundImage: `url("${ARCH_PATTERN}")`, backgroundSize: "120px 120px" }} />
+      <nav className="px-6 h-14 flex items-center justify-between sticky top-0 z-10 relative" style={{ backgroundColor: "rgba(20,21,43,0.75)", backdropFilter: "blur(20px)", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
         <div className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-lg flex items-center justify-center p-1.5" style={{ background: "linear-gradient(135deg, #4F46E5, #7C3AED)" }}>
-            <img src="/estate-mark-white.png" alt="Estate Department" className="w-full h-full object-contain" />
-          </div>
-          <span className="font-semibold text-sm" style={{ color: "#1E293B" }}>HR Module</span>
+          <img src="/estate-mark-white.png" alt="Estate Department" className="w-11 h-11 object-contain" />
+          <span className="font-semibold text-sm" style={{ color: ink }}>HR Module</span>
         </div>
         <div className="flex items-center gap-4">
-          <Link href="/dashboard" className="text-xs" style={{ color: "#64748B" }}>← Dashboard</Link>
+          <Link href="/dashboard" className="text-xs" style={{ color: muted }}>← Dashboard</Link>
         </div>
       </nav>
 
-      <div className="max-w-4xl mx-auto px-6 py-8">
+      <div className="max-w-4xl mx-auto px-6 py-8 relative">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-2xl font-semibold" style={{ color: "#1E293B" }}>Travel & Expenses</h1>
-            <p className="text-sm mt-1" style={{ color: "#64748B" }}>Site visits, travel requests, and expense claims</p>
+            <h1 className="text-2xl font-semibold" style={{ color: ink }}>Travel & Expenses</h1>
+            <p className="text-sm mt-1" style={{ color: muted }}>Site visits, travel requests, and expense claims</p>
           </div>
           <button
             onClick={() => { if (tab === "travel") { setShowTravelForm(true); setShowExpenseForm(false); } else { setShowExpenseForm(true); setShowTravelForm(false); } setMsg({ text: "", ok: true }); }}
-            className="text-sm font-medium px-4 py-2.5 rounded-lg text-white"
-            style={{ background: "linear-gradient(135deg, #4F46E5, #7C3AED)" }}>
+            className="text-sm font-medium px-4 py-2.5 rounded-lg"
+            style={{ backgroundColor: gold, color: "#1B1630" }}>
             {tab === "travel" ? "+ New Request" : "+ New Claim"}
           </button>
         </div>
@@ -131,30 +131,29 @@ export default function TravelPage() {
         {/* Summary stats */}
         <div className="grid grid-cols-3 gap-4 mb-6">
           {[
-            { label: "Pending Travel",  value: pendingTravel,  color: "#B45309" },
-            { label: "Pending Claims",  value: pendingExpense, color: "#0891B2" },
-            { label: "Total Reimbursed", value: fmtAmount(totalApproved.toString()), color: "#15803D" },
+            { label: "Pending Travel",  value: pendingTravel,  color: gold },
+            { label: "Pending Claims",  value: pendingExpense, color: "#22D3EE" },
+            { label: "Total Reimbursed", value: fmtAmount(totalApproved.toString()), color: "#4ADE80" },
           ].map(s => (
-            <div key={s.label} className="bg-white rounded-xl px-5 py-4" style={{ boxShadow: "var(--shadow-sm)" }}>
+            <div key={s.label} className="rounded-xl px-5 py-4" style={glassCard}>
               <p className="text-2xl font-bold" style={{ color: s.color }}>{s.value}</p>
-              <p className="text-xs mt-1" style={{ color: "#94A3B8" }}>{s.label}</p>
+              <p className="text-xs mt-1" style={{ color: muted }}>{s.label}</p>
             </div>
           ))}
         </div>
 
         {msg.text && (
-          <div className="mb-4 px-4 py-3 rounded-lg text-sm" style={{ backgroundColor: msg.ok ? "#F0FDF4" : "#FEF2F2", color: msg.ok ? "#15803D" : "#DC2626" }}>
+          <div className="mb-4 px-4 py-3 rounded-lg text-sm" style={{ backgroundColor: msg.ok ? "rgba(74,222,128,0.15)" : "rgba(248,113,113,0.15)", color: msg.ok ? "#4ADE80" : "#F87171" }}>
             {msg.text}
           </div>
         )}
 
         {/* Tabs */}
-        <div className="flex gap-1 mb-6 p-1 rounded-xl" style={{ backgroundColor: "#F1F5F9" }}>
+        <div className="flex gap-1 mb-6 p-1 rounded-xl" style={glassPill}>
           {([["travel", "Travel Requests"], ["expenses", "Expense Claims"]] as [Tab, string][]).map(([key, label]) => (
             <button key={key} onClick={() => { setTab(key); setShowTravelForm(false); setShowExpenseForm(false); setMsg({ text: "", ok: true }); }}
               className="flex-1 text-sm font-medium px-4 py-2 rounded-lg"
-              style={{ backgroundColor: tab === key ? "white" : "transparent", color: tab === key ? "#1E293B" : "#64748B",
-                boxShadow: tab === key ? "0 1px 3px rgba(0,0,0,0.08)" : "none" }}>
+              style={{ backgroundColor: tab === key ? "rgba(255,255,255,0.12)" : "transparent", color: tab === key ? ink : muted }}>
               {label}
             </button>
           ))}
@@ -162,152 +161,152 @@ export default function TravelPage() {
 
         {/* Travel Request Form */}
         {tab === "travel" && showTravelForm && (
-          <div className="bg-white rounded-xl border p-6 mb-5" style={{ borderColor: "#4F46E5" }}>
-            <h2 className="text-sm font-semibold mb-4" style={{ color: "#1E293B" }}>New Travel Request</h2>
+          <div className="rounded-xl p-6 mb-5" style={{ ...glassCard, border: `2px solid ${gold}` }}>
+            <h2 className="text-sm font-semibold mb-4" style={{ color: ink }}>New Travel Request</h2>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-medium mb-1.5" style={{ color: "#64748B" }}>Travel Type</label>
+                <label className="block text-xs font-medium mb-1.5" style={{ color: muted }}>Travel Type</label>
                 <select value={tForm.travel_type} onChange={e => setTForm(f => ({ ...f, travel_type: e.target.value }))}
                   className={inputClass} style={iStyle}>
-                  <option value="site_visit">Site Visit</option>
-                  <option value="outstation">Outstation</option>
-                  <option value="local">Local Travel</option>
+                  <option value="site_visit" style={{ color: "#1E293B" }}>Site Visit</option>
+                  <option value="outstation" style={{ color: "#1E293B" }}>Outstation</option>
+                  <option value="local" style={{ color: "#1E293B" }}>Local Travel</option>
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-medium mb-1.5" style={{ color: "#64748B" }}>Destination *</label>
+                <label className="block text-xs font-medium mb-1.5" style={{ color: muted }}>Destination *</label>
                 <input value={tForm.destination} onChange={e => setTForm(f => ({ ...f, destination: e.target.value }))}
                   placeholder="Location / site name…" className={inputClass} style={iStyle} />
               </div>
               <div className="col-span-2">
-                <label className="block text-xs font-medium mb-1.5" style={{ color: "#64748B" }}>Purpose *</label>
+                <label className="block text-xs font-medium mb-1.5" style={{ color: muted }}>Purpose *</label>
                 <textarea value={tForm.purpose} onChange={e => setTForm(f => ({ ...f, purpose: e.target.value }))}
                   rows={2} placeholder="Purpose of visit…" className={inputClass + " resize-none"} style={iStyle} />
               </div>
               <div>
-                <label className="block text-xs font-medium mb-1.5" style={{ color: "#64748B" }}>Travel Date *</label>
+                <label className="block text-xs font-medium mb-1.5" style={{ color: muted }}>Travel Date *</label>
                 <input type="date" value={tForm.travel_date} onChange={e => setTForm(f => ({ ...f, travel_date: e.target.value }))}
                   className={inputClass} style={iStyle} />
               </div>
               <div>
-                <label className="block text-xs font-medium mb-1.5" style={{ color: "#64748B" }}>Return Date</label>
+                <label className="block text-xs font-medium mb-1.5" style={{ color: muted }}>Return Date</label>
                 <input type="date" value={tForm.return_date} onChange={e => setTForm(f => ({ ...f, return_date: e.target.value }))}
                   className={inputClass} style={iStyle} />
               </div>
               <div>
-                <label className="block text-xs font-medium mb-1.5" style={{ color: "#64748B" }}>Estimated Cost (₹)</label>
+                <label className="block text-xs font-medium mb-1.5" style={{ color: muted }}>Estimated Cost (₹)</label>
                 <input type="number" value={tForm.estimated_cost} onChange={e => setTForm(f => ({ ...f, estimated_cost: e.target.value }))}
                   placeholder="0.00" className={inputClass} style={iStyle} />
               </div>
             </div>
             <div className="flex gap-3 mt-5">
               <button onClick={submitTravel} disabled={saving}
-                className="text-sm font-medium px-5 py-2 rounded-lg text-white"
-                style={{ background: "linear-gradient(135deg, #4F46E5, #7C3AED)", opacity: saving ? 0.7 : 1 }}>
+                className="text-sm font-medium px-5 py-2 rounded-lg"
+                style={{ backgroundColor: gold, color: "#1B1630", opacity: saving ? 0.7 : 1 }}>
                 {saving ? "Submitting…" : "Submit Request"}
               </button>
-              <button onClick={() => setShowTravelForm(false)} className="text-sm px-4 py-2 rounded-lg border" style={{ borderColor: "#E2E8F0", color: "#64748B" }}>Cancel</button>
+              <button onClick={() => setShowTravelForm(false)} className="text-sm px-4 py-2 rounded-lg border" style={{ borderColor: "rgba(255,255,255,0.16)", color: muted }}>Cancel</button>
             </div>
           </div>
         )}
 
         {/* Expense Claim Form */}
         {tab === "expenses" && showExpenseForm && (
-          <div className="bg-white rounded-xl border p-6 mb-5" style={{ borderColor: "#4F46E5" }}>
-            <h2 className="text-sm font-semibold mb-4" style={{ color: "#1E293B" }}>New Expense Claim</h2>
+          <div className="rounded-xl p-6 mb-5" style={{ ...glassCard, border: `2px solid ${gold}` }}>
+            <h2 className="text-sm font-semibold mb-4" style={{ color: ink }}>New Expense Claim</h2>
             <div className="grid grid-cols-2 gap-4">
               <div className="col-span-2">
-                <label className="block text-xs font-medium mb-1.5" style={{ color: "#64748B" }}>Title *</label>
+                <label className="block text-xs font-medium mb-1.5" style={{ color: muted }}>Title *</label>
                 <input value={eForm.title} onChange={e => setEForm(f => ({ ...f, title: e.target.value }))}
                   placeholder="e.g. Taxi to client site" className={inputClass} style={iStyle} />
               </div>
               <div>
-                <label className="block text-xs font-medium mb-1.5" style={{ color: "#64748B" }}>Category *</label>
+                <label className="block text-xs font-medium mb-1.5" style={{ color: muted }}>Category *</label>
                 <select value={eForm.category} onChange={e => setEForm(f => ({ ...f, category: e.target.value }))}
                   className={inputClass} style={iStyle}>
-                  {Object.entries(CAT_META).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
+                  {Object.entries(CAT_META).map(([k, v]) => <option key={k} value={k} style={{ color: "#1E293B" }}>{v.label}</option>)}
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-medium mb-1.5" style={{ color: "#64748B" }}>Amount (₹) *</label>
+                <label className="block text-xs font-medium mb-1.5" style={{ color: muted }}>Amount (₹) *</label>
                 <input type="number" min="0" step="0.01" value={eForm.amount} onChange={e => setEForm(f => ({ ...f, amount: e.target.value }))}
                   placeholder="0.00" className={inputClass} style={iStyle} />
               </div>
               <div>
-                <label className="block text-xs font-medium mb-1.5" style={{ color: "#64748B" }}>Expense Date *</label>
+                <label className="block text-xs font-medium mb-1.5" style={{ color: muted }}>Expense Date *</label>
                 <input type="date" value={eForm.expense_date} onChange={e => setEForm(f => ({ ...f, expense_date: e.target.value }))}
                   className={inputClass} style={iStyle} />
               </div>
               <div>
-                <label className="block text-xs font-medium mb-1.5" style={{ color: "#64748B" }}>Link to Travel Request</label>
+                <label className="block text-xs font-medium mb-1.5" style={{ color: muted }}>Link to Travel Request</label>
                 <select value={eForm.travel_id} onChange={e => setEForm(f => ({ ...f, travel_id: e.target.value }))}
                   className={inputClass} style={iStyle}>
-                  <option value="">None (standalone claim)</option>
+                  <option value="" style={{ color: "#1E293B" }}>None (standalone claim)</option>
                   {travel.filter(t => t.status === "approved").map(t => (
-                    <option key={t.id} value={t.id}>{t.destination} — {fmt(t.travel_date)}</option>
+                    <option key={t.id} value={t.id} style={{ color: "#1E293B" }}>{t.destination} — {fmt(t.travel_date)}</option>
                   ))}
                 </select>
               </div>
               <div className="col-span-2">
-                <label className="block text-xs font-medium mb-1.5" style={{ color: "#64748B" }}>Receipt URL <span style={{ color: "#94A3B8" }}>(Google Drive / OneDrive link)</span></label>
+                <label className="block text-xs font-medium mb-1.5" style={{ color: muted }}>Receipt URL <span style={{ color: mutedFaint }}>(Google Drive / OneDrive link)</span></label>
                 <input value={eForm.receipt_url} onChange={e => setEForm(f => ({ ...f, receipt_url: e.target.value }))}
                   placeholder="https://drive.google.com/..." className={inputClass} style={iStyle} />
               </div>
               <div className="col-span-2">
-                <label className="block text-xs font-medium mb-1.5" style={{ color: "#64748B" }}>Description</label>
+                <label className="block text-xs font-medium mb-1.5" style={{ color: muted }}>Description</label>
                 <textarea value={eForm.description} onChange={e => setEForm(f => ({ ...f, description: e.target.value }))}
                   rows={2} placeholder="Additional details…" className={inputClass + " resize-none"} style={iStyle} />
               </div>
             </div>
             <div className="flex gap-3 mt-5">
               <button onClick={submitExpense} disabled={saving}
-                className="text-sm font-medium px-5 py-2 rounded-lg text-white"
-                style={{ background: "linear-gradient(135deg, #4F46E5, #7C3AED)", opacity: saving ? 0.7 : 1 }}>
+                className="text-sm font-medium px-5 py-2 rounded-lg"
+                style={{ backgroundColor: gold, color: "#1B1630", opacity: saving ? 0.7 : 1 }}>
                 {saving ? "Submitting…" : "Submit Claim"}
               </button>
-              <button onClick={() => setShowExpenseForm(false)} className="text-sm px-4 py-2 rounded-lg border" style={{ borderColor: "#E2E8F0", color: "#64748B" }}>Cancel</button>
+              <button onClick={() => setShowExpenseForm(false)} className="text-sm px-4 py-2 rounded-lg border" style={{ borderColor: "rgba(255,255,255,0.16)", color: muted }}>Cancel</button>
             </div>
           </div>
         )}
 
         {/* Travel List */}
         {tab === "travel" && (
-          <div className="bg-white rounded-xl overflow-hidden" style={{ boxShadow: "var(--shadow-sm)" }}>
-            <div className="px-6 py-4 border-b" style={{ borderColor: "#F1F5F9" }}>
-              <h2 className="text-sm font-semibold" style={{ color: "#1E293B" }}>My Travel Requests</h2>
+          <div className="rounded-xl overflow-hidden" style={glassCard}>
+            <div className="px-6 py-4 border-b" style={{ borderColor: "rgba(255,255,255,0.08)" }}>
+              <h2 className="text-sm font-semibold" style={{ color: ink }}>My Travel Requests</h2>
             </div>
             {travel.length === 0 ? (
               <div className="py-14 text-center">
-                <p className="text-sm font-medium mb-1" style={{ color: "#1E293B" }}>No requests yet</p>
-                <p className="text-xs" style={{ color: "#94A3B8" }}>Submit a travel request to get started</p>
+                <p className="text-sm font-medium mb-1" style={{ color: ink }}>No requests yet</p>
+                <p className="text-xs" style={{ color: muted }}>Submit a travel request to get started</p>
               </div>
             ) : (
-              <div className="divide-y" style={{ borderColor: "#F8FAFC" }}>
+              <div className="divide-y" style={{ borderColor: "rgba(255,255,255,0.06)" }}>
                 {travel.map(t => {
                   const sm = STATUS_META[t.status];
                   return (
                     <div key={t.id} className="px-6 py-4 flex items-start justify-between gap-4">
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1 flex-wrap">
-                          <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{ backgroundColor: "#EEF2FF", color: "#4338CA" }}>{TYPE_META[t.travel_type]}</span>
+                          <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{ backgroundColor: "rgba(96,165,250,0.15)", color: "#60A5FA" }}>{TYPE_META[t.travel_type]}</span>
                           <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{ backgroundColor: sm.bg, color: sm.color }}>{sm.label}</span>
                         </div>
-                        <p className="text-sm font-semibold mt-1" style={{ color: "#1E293B" }}>{t.destination}</p>
-                        <p className="text-xs mt-0.5" style={{ color: "#64748B" }}>{t.purpose}</p>
-                        <p className="text-xs mt-1" style={{ color: "#94A3B8" }}>
+                        <p className="text-sm font-semibold mt-1" style={{ color: ink }}>{t.destination}</p>
+                        <p className="text-xs mt-0.5" style={{ color: muted }}>{t.purpose}</p>
+                        <p className="text-xs mt-1" style={{ color: mutedFaint }}>
                           {fmt(t.travel_date)}{t.return_date ? ` — ${fmt(t.return_date)}` : ""}
                           {t.estimated_cost ? ` · Est. ₹${parseFloat(t.estimated_cost).toLocaleString()}` : ""}
                         </p>
                         {t.status === "rejected" && t.admin_note && (
-                          <div className="mt-2 px-3 py-2 rounded-lg border text-xs" style={{ backgroundColor: "#FEF2F2", borderColor: "#FECDD3", color: "#7F1D1D" }}>
-                            <span className="font-semibold text-red-600">Note: </span>{t.admin_note}
+                          <div className="mt-2 px-3 py-2 rounded-lg border text-xs" style={{ backgroundColor: "rgba(248,113,113,0.1)", borderColor: "rgba(248,113,113,0.25)", color: "#FCA5A5" }}>
+                            <span className="font-semibold" style={{ color: "#F87171" }}>Note: </span>{t.admin_note}
                           </div>
                         )}
                         {t.status === "pending" && (
-                          <button onClick={() => withdrawTravel(t.id)} className="mt-2 text-xs" style={{ color: "#DC2626" }}>Withdraw</button>
+                          <button onClick={() => withdrawTravel(t.id)} className="mt-2 text-xs" style={{ color: "#F87171" }}>Withdraw</button>
                         )}
                       </div>
-                      <p className="text-xs shrink-0" style={{ color: "#94A3B8" }}>{fmt(t.created_at)}</p>
+                      <p className="text-xs shrink-0" style={{ color: mutedFaint }}>{fmt(t.created_at)}</p>
                     </div>
                   );
                 })}
@@ -318,20 +317,20 @@ export default function TravelPage() {
 
         {/* Expense Claims List */}
         {tab === "expenses" && (
-          <div className="bg-white rounded-xl overflow-hidden" style={{ boxShadow: "var(--shadow-sm)" }}>
-            <div className="px-6 py-4 border-b flex items-center justify-between" style={{ borderColor: "#F1F5F9" }}>
-              <h2 className="text-sm font-semibold" style={{ color: "#1E293B" }}>My Claims</h2>
+          <div className="rounded-xl overflow-hidden" style={glassCard}>
+            <div className="px-6 py-4 border-b flex items-center justify-between" style={{ borderColor: "rgba(255,255,255,0.08)" }}>
+              <h2 className="text-sm font-semibold" style={{ color: ink }}>My Claims</h2>
               {expenses.length > 0 && (
-                <p className="text-xs" style={{ color: "#64748B" }}>Total approved: {fmtAmount(totalApproved.toString())}</p>
+                <p className="text-xs" style={{ color: muted }}>Total approved: {fmtAmount(totalApproved.toString())}</p>
               )}
             </div>
             {expenses.length === 0 ? (
               <div className="py-14 text-center">
-                <p className="text-sm font-medium mb-1" style={{ color: "#1E293B" }}>No claims yet</p>
-                <p className="text-xs" style={{ color: "#94A3B8" }}>Submit your first expense claim</p>
+                <p className="text-sm font-medium mb-1" style={{ color: ink }}>No claims yet</p>
+                <p className="text-xs" style={{ color: muted }}>Submit your first expense claim</p>
               </div>
             ) : (
-              <div className="divide-y" style={{ borderColor: "#F8FAFC" }}>
+              <div className="divide-y" style={{ borderColor: "rgba(255,255,255,0.06)" }}>
                 {expenses.map(exp => {
                   const cat = CAT_META[exp.category] ?? CAT_META.other;
                   const sm  = STATUS_META[exp.status];
@@ -342,28 +341,28 @@ export default function TravelPage() {
                           <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{ backgroundColor: cat.bg, color: cat.color }}>{cat.label}</span>
                           <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{ backgroundColor: sm.bg, color: sm.color }}>{sm.label}</span>
                         </div>
-                        <p className="text-sm font-semibold mt-1" style={{ color: "#1E293B" }}>{exp.title}</p>
-                        {exp.description && <p className="text-xs mt-0.5" style={{ color: "#64748B" }}>{exp.description}</p>}
-                        <p className="text-xs mt-1" style={{ color: "#94A3B8" }}>{fmt(exp.expense_date)}</p>
+                        <p className="text-sm font-semibold mt-1" style={{ color: ink }}>{exp.title}</p>
+                        {exp.description && <p className="text-xs mt-0.5" style={{ color: muted }}>{exp.description}</p>}
+                        <p className="text-xs mt-1" style={{ color: mutedFaint }}>{fmt(exp.expense_date)}</p>
                         {exp.receipt_url && (
                           <a href={exp.receipt_url} target="_blank" rel="noreferrer"
-                            className="text-xs font-medium mt-1 inline-flex items-center gap-1" style={{ color: "#4F46E5" }}>
+                            className="text-xs font-medium mt-1 inline-flex items-center gap-1" style={{ color: gold }}>
                             <svg width="12" height="12" fill="none" viewBox="0 0 24 24"><path d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>
                             View Receipt
                           </a>
                         )}
                         {exp.status === "rejected" && exp.admin_note && (
-                          <div className="mt-2 px-3 py-2 rounded-lg border text-xs" style={{ backgroundColor: "#FEF2F2", borderColor: "#FECDD3", color: "#7F1D1D" }}>
-                            <span className="font-semibold text-red-600">Note: </span>{exp.admin_note}
+                          <div className="mt-2 px-3 py-2 rounded-lg border text-xs" style={{ backgroundColor: "rgba(248,113,113,0.1)", borderColor: "rgba(248,113,113,0.25)", color: "#FCA5A5" }}>
+                            <span className="font-semibold" style={{ color: "#F87171" }}>Note: </span>{exp.admin_note}
                           </div>
                         )}
                         {exp.status === "pending" && (
-                          <button onClick={() => withdrawExpense(exp.id)} className="mt-2 text-xs" style={{ color: "#DC2626" }}>Withdraw</button>
+                          <button onClick={() => withdrawExpense(exp.id)} className="mt-2 text-xs" style={{ color: "#F87171" }}>Withdraw</button>
                         )}
                       </div>
                       <div className="text-right shrink-0">
-                        <p className="text-sm font-bold" style={{ color: "#1E293B" }}>{fmtAmount(exp.amount)}</p>
-                        <p className="text-xs mt-0.5" style={{ color: "#94A3B8" }}>{fmt(exp.created_at)}</p>
+                        <p className="text-sm font-bold" style={{ color: ink }}>{fmtAmount(exp.amount)}</p>
+                        <p className="text-xs mt-0.5" style={{ color: mutedFaint }}>{fmt(exp.created_at)}</p>
                       </div>
                     </div>
                   );

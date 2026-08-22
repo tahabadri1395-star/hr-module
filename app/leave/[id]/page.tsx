@@ -3,6 +3,7 @@ import { getEmployeeFromCookies } from "@/lib/auth";
 import { getAdminFromCookies } from "@/lib/admin-auth";
 import { query } from "@/lib/db";
 import Link from "next/link";
+import { pageBg, ARCH_PATTERN, ink, muted } from "@/lib/desktop-theme";
 
 const STATUS_LABELS: Record<string, string> = {
   pending: "Pending Review",
@@ -56,23 +57,24 @@ export default async function LeaveSlipPage({ params }: { params: Promise<{ id: 
   const backUrl = admin ? "/admin" : "/dashboard";
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: "#F8FAFC" }}>
+    <div className="min-h-screen relative" style={{ background: pageBg }}>
+      <div aria-hidden className="absolute inset-0 pointer-events-none print:hidden" style={{ backgroundImage: `url("${ARCH_PATTERN}")`, backgroundSize: "120px 120px" }} />
       {/* Nav — hidden on print */}
-      <nav className="bg-white border-b px-6 h-14 flex items-center justify-between print:hidden sticky top-0 z-10" style={{ borderColor: "#E2E8F0" }}>
-        <span className="font-semibold text-sm" style={{ color: "#1E293B" }}>HR Module</span>
+      <nav className="px-6 h-14 flex items-center justify-between print:hidden sticky top-0 z-10 relative" style={{ backgroundColor: "rgba(20,21,43,0.75)", backdropFilter: "blur(20px)", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
+        <span className="font-semibold text-sm" style={{ color: ink }}>HR Module</span>
         <div className="flex items-center gap-4">
           <button
             onClick={() => window.print()}
-            className="text-xs px-4 py-2 rounded-lg font-medium text-white"
-            style={{ background: "linear-gradient(135deg, #4F46E5, #7C3AED)" }}
+            className="text-xs px-4 py-2 rounded-lg font-medium"
+            style={{ backgroundColor: "#D9B46C", color: "#1B1630" }}
           >
             Print / Save PDF
           </button>
-          <Link href={backUrl} className="text-xs" style={{ color: "#64748B" }}>← Back</Link>
+          <Link href={backUrl} className="text-xs" style={{ color: muted }}>← Back</Link>
         </div>
       </nav>
 
-      <div className="max-w-2xl mx-auto px-6 py-10">
+      <div className="max-w-2xl mx-auto px-6 py-10 relative">
         {/* Slip */}
         <div className="bg-white rounded-xl p-10 animate-in" style={{ boxShadow: "var(--shadow-lg)" }}>
           {/* Header */}

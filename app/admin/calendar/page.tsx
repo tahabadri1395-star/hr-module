@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getAdminFromCookies } from "@/lib/admin-auth";
 import { query } from "@/lib/db";
+import { adminPageBg, ARCH_PATTERN, ink, muted, mutedFaint, gold, glassCard, glassPill } from "@/lib/desktop-theme";
 
 interface LeaveOnDay {
   id: number;
@@ -15,8 +16,8 @@ const MONTH_NAMES = ["January","February","March","April","May","June","July","A
 const DAY_NAMES = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 
 const TYPE_COLOR: Record<string, { bg: string; color: string }> = {
-  emergency: { bg: "#FFF1F2", color: "#E11D48" },
-  normal:    { bg: "#EEF2FF", color: "#4338CA" },
+  emergency: { bg: "rgba(244,63,94,0.18)", color: "#FB7185" },
+  normal:    { bg: "rgba(96,165,250,0.18)", color: "#93C5FD" },
 };
 
 function pad(n: number) { return String(n).padStart(2, "0"); }
@@ -95,51 +96,49 @@ export default async function CalendarPage({ searchParams }: { searchParams: Pro
   const todayStr = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: "#F8FAFC" }}>
-      <nav className="bg-white border-b px-6 h-14 flex items-center justify-between sticky top-0 z-10"
-        style={{ borderColor: "#E2E8F0" }}>
+    <div className="min-h-screen relative" style={{ background: adminPageBg }}>
+      <div aria-hidden className="absolute inset-0 pointer-events-none" style={{ backgroundImage: `url("${ARCH_PATTERN}")`, backgroundSize: "120px 120px" }} />
+      <nav className="px-6 h-14 flex items-center justify-between sticky top-0 z-10 relative"
+        style={{ backgroundColor: "rgba(11,14,23,0.75)", backdropFilter: "blur(20px)", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg flex items-center justify-center"
+          <div className="w-11 h-11 rounded-lg flex items-center justify-center p-1.5"
             style={{ background: "linear-gradient(135deg, #0F172A, #1E293B)" }}>
-            <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
-              <rect x="3" y="4" width="18" height="18" rx="2" stroke="white" strokeWidth="2"/>
-              <path d="M3 10h18M8 2v4M16 2v4" stroke="white" strokeWidth="2" strokeLinecap="round"/>
-            </svg>
+            <img src="/estate-mark-white.png" alt="Estate Department" className="w-full h-full object-contain" />
           </div>
-          <span className="font-semibold text-sm" style={{ color: "#1E293B" }}>HR Module</span>
-          <span className="text-xs px-2 py-0.5 rounded-full" style={{ backgroundColor: "#F1F5F9", color: "#475569" }}>
+          <span className="font-semibold text-sm" style={{ color: ink }}>HR Module</span>
+          <span className="text-xs px-2 py-0.5 rounded-full" style={glassPill}>
             Leave Calendar
           </span>
         </div>
         <div className="flex items-center gap-5">
-          <Link href="/admin" className="text-xs" style={{ color: "#64748B" }}>Admin</Link>
-          <Link href="/admin/settings" className="text-xs" style={{ color: "#64748B" }}>Settings</Link>
+          <Link href="/admin" className="text-xs" style={{ color: muted }}>Admin</Link>
+          <Link href="/admin/settings" className="text-xs" style={{ color: muted }}>Settings</Link>
           <form action="/api/admin/logout" method="POST">
-            <button type="submit" className="text-xs" style={{ color: "#94A3B8" }}>Sign Out</button>
+            <button type="submit" className="text-xs" style={{ color: mutedFaint }}>Sign Out</button>
           </form>
         </div>
       </nav>
 
-      <div className="max-w-6xl mx-auto px-6 py-8">
+      <div className="max-w-6xl mx-auto px-6 py-8 relative">
         {/* Month nav */}
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-semibold" style={{ color: "#1E293B" }}>
+          <h1 className="text-2xl font-semibold" style={{ color: ink }}>
             {MONTH_NAMES[month - 1]} {year}
           </h1>
           <div className="flex items-center gap-2">
             <Link href={`/admin/calendar?month=${prevParam}`}
-              className="px-4 py-2 rounded-lg border text-sm font-medium transition-colors hover:opacity-70"
-              style={{ borderColor: "#E2E8F0", color: "#64748B" }}>
+              className="px-4 py-2 rounded-lg border text-sm font-medium transition-colors"
+              style={{ borderColor: "rgba(255,255,255,0.16)", color: muted }}>
               ← Prev
             </Link>
             <Link href="/admin/calendar"
               className="px-4 py-2 rounded-lg border text-sm font-medium"
-              style={{ borderColor: "#E2E8F0", color: "#64748B" }}>
+              style={{ borderColor: "rgba(255,255,255,0.16)", color: muted }}>
               Today
             </Link>
             <Link href={`/admin/calendar?month=${nextParam}`}
-              className="px-4 py-2 rounded-lg border text-sm font-medium transition-colors hover:opacity-70"
-              style={{ borderColor: "#E2E8F0", color: "#64748B" }}>
+              className="px-4 py-2 rounded-lg border text-sm font-medium transition-colors"
+              style={{ borderColor: "rgba(255,255,255,0.16)", color: muted }}>
               Next →
             </Link>
           </div>
@@ -147,19 +146,19 @@ export default async function CalendarPage({ searchParams }: { searchParams: Pro
 
         {/* Legend */}
         <div className="flex items-center gap-4 mb-4 text-xs">
-          <span style={{ color: "#94A3B8" }}>Legend:</span>
-          <span className="px-2 py-0.5 rounded-full font-medium" style={{ backgroundColor: "#EEF2FF", color: "#4338CA" }}>Normal</span>
-          <span className="px-2 py-0.5 rounded-full font-medium" style={{ backgroundColor: "#FFF1F2", color: "#E11D48" }}>Emergency</span>
-          <span className="px-2 py-0.5 rounded-full font-medium" style={{ backgroundColor: "#FEF9C3", color: "#92400E" }}>Public Holiday</span>
+          <span style={{ color: mutedFaint }}>Legend:</span>
+          <span className="px-2 py-0.5 rounded-full font-medium" style={{ backgroundColor: "rgba(96,165,250,0.18)", color: "#93C5FD" }}>Normal</span>
+          <span className="px-2 py-0.5 rounded-full font-medium" style={{ backgroundColor: "rgba(244,63,94,0.18)", color: "#FB7185" }}>Emergency</span>
+          <span className="px-2 py-0.5 rounded-full font-medium" style={{ backgroundColor: "rgba(217,180,108,0.18)", color: gold }}>Public Holiday</span>
         </div>
 
         {/* Calendar grid */}
-        <div className="bg-white rounded-xl overflow-hidden" style={{ boxShadow: "var(--shadow-sm)" }}>
+        <div className="rounded-xl overflow-hidden" style={glassCard}>
           {/* Day headers */}
-          <div className="grid grid-cols-7 border-b" style={{ borderColor: "#F1F5F9" }}>
+          <div className="grid grid-cols-7 border-b" style={{ borderColor: "rgba(255,255,255,0.08)" }}>
             {DAY_NAMES.map(d => (
               <div key={d} className="py-3 text-center text-xs font-semibold uppercase tracking-wider"
-                style={{ color: "#94A3B8" }}>
+                style={{ color: mutedFaint }}>
                 {d}
               </div>
             ))}
@@ -167,10 +166,10 @@ export default async function CalendarPage({ searchParams }: { searchParams: Pro
 
           {/* Weeks */}
           {Array.from({ length: cells.length / 7 }, (_, wi) => (
-            <div key={wi} className="grid grid-cols-7 border-b last:border-b-0" style={{ borderColor: "#F8FAFC" }}>
+            <div key={wi} className="grid grid-cols-7 border-b last:border-b-0" style={{ borderColor: "rgba(255,255,255,0.06)" }}>
               {cells.slice(wi * 7, wi * 7 + 7).map((day, di) => {
                 if (!day) return (
-                  <div key={di} className="min-h-24 p-2 border-r last:border-r-0" style={{ borderColor: "#F8FAFC", backgroundColor: "#FAFAFA" }} />
+                  <div key={di} className="min-h-24 p-2 border-r last:border-r-0" style={{ borderColor: "rgba(255,255,255,0.06)", backgroundColor: "rgba(255,255,255,0.02)" }} />
                 );
                 const dateKey = `${year}-${pad(month)}-${pad(day)}`;
                 const dayLeaves = dayMap[dateKey] ?? [];
@@ -178,17 +177,17 @@ export default async function CalendarPage({ searchParams }: { searchParams: Pro
                 const isToday = dateKey === todayStr;
                 return (
                   <div key={di} className="min-h-24 p-2 border-r last:border-r-0 relative"
-                    style={{ borderColor: "#F8FAFC", backgroundColor: isToday ? "#EEF2FF" : "white" }}>
+                    style={{ borderColor: "rgba(255,255,255,0.06)", backgroundColor: isToday ? "rgba(217,180,108,0.08)" : "transparent" }}>
                     <span className={`text-xs font-semibold inline-flex items-center justify-center w-6 h-6 rounded-full mb-1`}
                       style={{
-                        backgroundColor: isToday ? "#4F46E5" : "transparent",
-                        color: isToday ? "white" : "#1E293B",
+                        backgroundColor: isToday ? gold : "transparent",
+                        color: isToday ? "#1B1630" : ink,
                       }}>
                       {day}
                     </span>
                     {holiday && (
                       <div className="text-xs px-1.5 py-0.5 rounded mb-1 truncate font-medium"
-                        style={{ backgroundColor: "#FEF9C3", color: "#92400E" }}>
+                        style={{ backgroundColor: "rgba(217,180,108,0.18)", color: gold }}>
                         {holiday}
                       </div>
                     )}
@@ -204,7 +203,7 @@ export default async function CalendarPage({ searchParams }: { searchParams: Pro
                         );
                       })}
                       {dayLeaves.length > 3 && (
-                        <p className="text-xs" style={{ color: "#94A3B8" }}>+{dayLeaves.length - 3} more</p>
+                        <p className="text-xs" style={{ color: mutedFaint }}>+{dayLeaves.length - 3} more</p>
                       )}
                     </div>
                   </div>

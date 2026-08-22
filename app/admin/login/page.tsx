@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function AdminLoginPage() {
   const [form, setForm] = useState({ username: "", password: "" });
@@ -43,12 +44,8 @@ export default function AdminLoginPage() {
       <div className="w-full max-w-sm relative">
         {/* Logo */}
         <div className="text-center mb-8 animate-in">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl mb-4"
-            style={{ background: "linear-gradient(135deg, #0F172A, #1E293B)", boxShadow: "0 8px 24px rgba(15,23,42,0.28)" }}>
-            <svg width="24" height="24" fill="none" viewBox="0 0 24 24">
-              <path d="M12 2L3 7v10l9 5 9-5V7l-9-5z" stroke="white" strokeWidth="1.8" strokeLinejoin="round"/>
-              <path d="M12 12l9-5M12 12v10M12 12L3 7" stroke="white" strokeWidth="1.5"/>
-            </svg>
+          <div className="inline-flex items-center justify-center mb-2">
+            <Image src="/estate-logo.png" alt="Estate Department" width={880} height={900} priority className="w-40 h-auto" />
           </div>
           <h1 className="text-2xl font-semibold tracking-tight" style={{ color: "#1E293B" }}>Admin / HR Login</h1>
           <p className="text-sm mt-1.5" style={{ color: "#64748B" }}>Access the HR management dashboard</p>

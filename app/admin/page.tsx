@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getAdminFromCookies } from "@/lib/admin-auth";
 import { query } from "@/lib/db";
+import { adminPageBg, ARCH_PATTERN, ink, muted, mutedFaint, gold, glassCard } from "@/lib/desktop-theme";
 
 interface RecentLeave { id: number; leave_type: string; start_date: string; employee_name: string; created_at: string; }
 interface RecentTask  { id: number; title: string; status: string; employee_name: string; due_date: string | null; }
@@ -50,71 +51,69 @@ export default async function AdminDashboardPage() {
   const pendingExpenses = parseInt(s.pending_expenses, 10);
 
   const modules = [
-    { href: "/admin/leaves",    label: "Leave Approvals",  badge: pendingLeaves,               color: "#F59E0B", desc: `${emergLeaves} emergency` },
-    { href: "/admin/tasks",     label: "Task Management",  badge: openTasks,                   color: "#3B82F6", desc: "assign & track" },
-    { href: "/admin/travel",    label: "Travel & Expenses", badge: pendingTravel + pendingExpenses, color: "#10B981", desc: `${pendingExpenses} claims` },
-    { href: "/admin/murasalat", label: "Murasalat",        badge: parseInt(s.total_mura, 10),  color: "#8B5CF6", desc: "circulars" },
-    { href: "/admin/arz",       label: "Personal Arz",     badge: openArz,                     color: "#EA580C", desc: "requests & grievances" },
-    { href: "/admin/assets",    label: "Asset Tracking",   badge: totalAssets,  color: "#B45309", desc: "equipment & software" },
-    { href: "/admin/documents", label: "Document Vault",   badge: totalDocs,      color: "#1D4ED8", desc: "policies & forms" },
-    { href: "/admin/lms",        label: "L&D",              badge: activeCourses, color: "#059669", desc: "courses & training" },
-    { href: "/admin/attendance", label: "Attendance",       badge: clockedToday,    color: "#0891B2", desc: "clocked in today" },
-    { href: "/admin/settings",   label: "Settings",         badge: 0,               color: "#6B7280", desc: `${totalKGs} active KGs` },
+    { href: "/admin/leaves",    label: "Leave Approvals",  badge: pendingLeaves,               color: gold, desc: `${emergLeaves} emergency` },
+    { href: "/admin/tasks",     label: "Task Management",  badge: openTasks,                   color: "#60A5FA", desc: "assign & track" },
+    { href: "/admin/travel",    label: "Travel & Expenses", badge: pendingTravel + pendingExpenses, color: "#34D399", desc: `${pendingExpenses} claims` },
+    { href: "/admin/murasalat", label: "Murasalat",        badge: parseInt(s.total_mura, 10),  color: "#A78BFA", desc: "circulars" },
+    { href: "/admin/arz",       label: "Personal Arz",     badge: openArz,                     color: "#FB923C", desc: "requests & grievances" },
+    { href: "/admin/assets",    label: "Asset Tracking",   badge: totalAssets,  color: gold, desc: "equipment & software" },
+    { href: "/admin/documents", label: "Document Vault",   badge: totalDocs,      color: "#60A5FA", desc: "policies & forms" },
+    { href: "/admin/lms",        label: "L&D",              badge: activeCourses, color: "#34D399", desc: "courses & training" },
+    { href: "/admin/attendance", label: "Attendance",       badge: clockedToday,    color: "#22D3EE", desc: "clocked in today" },
+    { href: "/admin/settings",   label: "Settings",         badge: 0,               color: mutedFaint, desc: `${totalKGs} active KGs` },
   ];
 
   const stats = [
-    { label: "Pending Leaves",  value: pendingLeaves,  color: "#F59E0B" },
-    { label: "Emergency",       value: emergLeaves,    color: "#EF4444" },
-    { label: "Open Tasks",      value: openTasks,      color: "#3B82F6" },
-    { label: "Travel Pending",  value: pendingTravel,  color: "#10B981" },
-    { label: "Claims Pending",  value: pendingExpenses, color: "#8B5CF6" },
-    { label: "Active KGs",      value: totalKGs,       color: "#94A3B8" },
+    { label: "Pending Leaves",  value: pendingLeaves,  color: gold },
+    { label: "Emergency",       value: emergLeaves,    color: "#F87171" },
+    { label: "Open Tasks",      value: openTasks,      color: "#60A5FA" },
+    { label: "Travel Pending",  value: pendingTravel,  color: "#34D399" },
+    { label: "Claims Pending",  value: pendingExpenses, color: "#A78BFA" },
+    { label: "Active KGs",      value: totalKGs,       color: muted },
   ];
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: "#0F172A" }}>
-      {/* Dark top bar */}
-      <div style={{ backgroundColor: "#0F172A" }}>
-        <nav className="px-6 h-14 flex items-center justify-between max-w-6xl mx-auto sticky top-0 z-20" style={{ backgroundColor: "#0F172A" }}>
-          <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-lg flex items-center justify-center p-1.5" style={{ backgroundColor: "#F59E0B" }}>
-              <img src="/estate-mark.png" alt="Estate Department" className="w-full h-full object-contain" />
-            </div>
-            <span className="font-bold text-sm text-white">HR Module</span>
-            <span className="text-xs px-2 py-0.5 rounded text-white/50" style={{ backgroundColor: "#1E293B" }}>Admin</span>
-          </div>
-          <form action="/api/admin/logout" method="POST">
-            <button type="submit" className="text-xs transition-colors hover:text-white/80" style={{ color: "#475569" }}>Sign Out</button>
-          </form>
-        </nav>
+    <div className="min-h-screen relative" style={{ background: adminPageBg }}>
+      <div aria-hidden className="absolute inset-0 pointer-events-none" style={{ backgroundImage: `url("${ARCH_PATTERN}")`, backgroundSize: "120px 120px" }} />
 
-        {/* Header stats strip */}
-        <div className="px-6 pb-8 pt-2 max-w-6xl mx-auto animate-in">
-          <p className="text-xs mb-2" style={{ color: "#475569" }}>
-            {new Date().toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
-          </p>
-          <h1 className="text-3xl font-bold text-white mb-6 tracking-tight">Operations Centre</h1>
-          <div className="flex flex-wrap gap-2">
-            {stats.map(s => (
-              <div key={s.label} className="rounded-xl px-4 py-3 flex-1 min-w-[130px] transition-colors" style={{ backgroundColor: "#1E293B", border: "1px solid rgba(255,255,255,0.04)" }}>
-                <p className="text-2xl font-bold" style={{ color: s.color }}>{s.value}</p>
-                <p className="text-xs mt-0.5" style={{ color: "#64748B" }}>{s.label}</p>
-              </div>
-            ))}
+      <nav className="px-6 h-14 flex items-center justify-between max-w-6xl mx-auto sticky top-0 z-20 relative" style={{ backgroundColor: "rgba(11,14,23,0.75)", backdropFilter: "blur(20px)", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
+        <div className="flex items-center gap-3">
+          <div className="w-11 h-11 rounded-lg flex items-center justify-center p-1.5" style={{ backgroundColor: "#F59E0B" }}>
+            <img src="/estate-mark.png" alt="Estate Department" className="w-full h-full object-contain" />
           </div>
+          <span className="font-bold text-sm" style={{ color: ink }}>HR Module</span>
+          <span className="text-xs px-2 py-0.5 rounded" style={{ backgroundColor: "rgba(255,255,255,0.08)", color: muted }}>Admin</span>
+        </div>
+        <form action="/api/admin/logout" method="POST">
+          <button type="submit" className="text-xs transition-colors" style={{ color: mutedFaint }}>Sign Out</button>
+        </form>
+      </nav>
+
+      {/* Header stats strip */}
+      <div className="px-6 pb-8 pt-6 max-w-6xl mx-auto relative animate-in">
+        <p className="text-xs mb-2" style={{ color: mutedFaint }}>
+          {new Date().toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
+        </p>
+        <h1 className="text-3xl font-bold mb-6 tracking-tight" style={{ color: ink }}>Operations Centre</h1>
+        <div className="flex flex-wrap gap-2">
+          {stats.map(s => (
+            <div key={s.label} className="rounded-xl px-4 py-3 flex-1 min-w-[130px]" style={glassCard}>
+              <p className="text-2xl font-bold" style={{ color: s.color }}>{s.value}</p>
+              <p className="text-xs mt-0.5" style={{ color: muted }}>{s.label}</p>
+            </div>
+          ))}
         </div>
       </div>
 
       {/* Body */}
-      <div className="rounded-t-3xl min-h-screen px-6 py-6 max-w-6xl mx-auto" style={{ backgroundColor: "#F1F5F9", boxShadow: "0 -8px 24px rgba(0,0,0,0.15)" }}>
-        {/* Module Grid */}
-        <h2 className="text-xs font-semibold uppercase tracking-widest mb-3" style={{ color: "#94A3B8" }}>Modules</h2>
+      <div className="px-6 py-6 max-w-6xl mx-auto relative">
+        <h2 className="text-xs font-semibold uppercase tracking-widest mb-3" style={{ color: mutedFaint }}>Modules</h2>
         <div className="flex flex-wrap gap-3 mb-6 animate-in animate-in-delay-1">
           {modules.map(m => (
             <Link key={m.label} href={m.href}
-              className="card-hover bg-white p-4 flex items-center gap-4 flex-1 min-w-[220px]"
-              style={{ borderRadius: "var(--radius-lg)", boxShadow: "var(--shadow-sm)" }}>
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: m.color + "18" }}>
+              className="card-hover p-4 flex items-center gap-4 flex-1 min-w-[220px]"
+              style={{ ...glassCard, borderRadius: "18px" }}>
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: m.color + "22" }}>
                 {m.badge > 0 && (
                   <span className="text-sm font-bold" style={{ color: m.color }}>{m.badge}</span>
                 )}
@@ -123,8 +122,8 @@ export default async function AdminDashboardPage() {
                 )}
               </div>
               <div className="min-w-0">
-                <p className="text-sm font-semibold truncate" style={{ color: "#1E293B" }}>{m.label}</p>
-                <p className="text-xs" style={{ color: "#94A3B8" }}>{m.desc}</p>
+                <p className="text-sm font-semibold truncate" style={{ color: ink }}>{m.label}</p>
+                <p className="text-xs" style={{ color: muted }}>{m.desc}</p>
               </div>
             </Link>
           ))}
@@ -132,30 +131,30 @@ export default async function AdminDashboardPage() {
 
         <div className="grid sm:grid-cols-2 gap-4 animate-in animate-in-delay-2">
           {/* Pending Leaves */}
-          <div className="bg-white overflow-hidden" style={{ borderRadius: "var(--radius-lg)", boxShadow: "var(--shadow-sm)" }}>
-            <div className="px-5 py-3.5 flex items-center justify-between" style={{ borderBottom: "1px solid #F1F5F9" }}>
+          <div className="overflow-hidden" style={glassCard}>
+            <div className="px-5 py-3.5 flex items-center justify-between" style={{ borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
               <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: "#F59E0B" }}></div>
-                <p className="text-sm font-semibold" style={{ color: "#1E293B" }}>Pending Leaves</p>
+                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: gold }}></div>
+                <p className="text-sm font-semibold" style={{ color: ink }}>Pending Leaves</p>
               </div>
-              <Link href="/admin/leaves" className="text-xs font-medium" style={{ color: "#F59E0B" }}>Review all →</Link>
+              <Link href="/admin/leaves" className="text-xs font-medium" style={{ color: gold }}>Review all →</Link>
             </div>
             {recentLeaves.length === 0 ? (
               <div className="py-10 text-center">
-                <div className="w-10 h-10 rounded-full mx-auto mb-2 flex items-center justify-center" style={{ backgroundColor: "#F0FDF4" }}>
-                  <svg width="18" height="18" fill="none" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" stroke="#15803D" strokeWidth="2" strokeLinecap="round"/></svg>
+                <div className="w-10 h-10 rounded-full mx-auto mb-2 flex items-center justify-center" style={{ backgroundColor: "rgba(74,222,128,0.15)" }}>
+                  <svg width="18" height="18" fill="none" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" stroke="#4ADE80" strokeWidth="2" strokeLinecap="round"/></svg>
                 </div>
-                <p className="text-sm font-medium" style={{ color: "#1E293B" }}>All cleared</p>
+                <p className="text-sm font-medium" style={{ color: ink }}>All cleared</p>
               </div>
             ) : (
-              <div className="divide-y" style={{ borderColor: "#F8FAFC" }}>
+              <div className="divide-y" style={{ borderColor: "rgba(255,255,255,0.06)" }}>
                 {recentLeaves.map(l => (
                   <div key={l.id} className="px-5 py-3 flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium" style={{ color: "#1E293B" }}>{l.employee_name}</p>
-                      <p className="text-xs capitalize" style={{ color: "#94A3B8" }}>{l.leave_type} · {fmt(l.start_date)}</p>
+                      <p className="text-sm font-medium" style={{ color: ink }}>{l.employee_name}</p>
+                      <p className="text-xs capitalize" style={{ color: muted }}>{l.leave_type} · {fmt(l.start_date)}</p>
                     </div>
-                    <Link href="/admin/leaves" className="text-xs px-3 py-1.5 rounded-lg font-medium transition-transform hover:-translate-y-px" style={{ backgroundColor: "#FFFBEB", color: "#B45309" }}>Review</Link>
+                    <Link href="/admin/leaves" className="text-xs px-3 py-1.5 rounded-lg font-medium transition-transform hover:-translate-y-px" style={{ backgroundColor: "rgba(251,191,36,0.15)", color: "#FBBF24" }}>Review</Link>
                   </div>
                 ))}
               </div>
@@ -163,31 +162,31 @@ export default async function AdminDashboardPage() {
           </div>
 
           {/* Active Tasks */}
-          <div className="bg-white overflow-hidden" style={{ borderRadius: "var(--radius-lg)", boxShadow: "var(--shadow-sm)" }}>
-            <div className="px-5 py-3.5 flex items-center justify-between" style={{ borderBottom: "1px solid #F1F5F9" }}>
+          <div className="overflow-hidden" style={glassCard}>
+            <div className="px-5 py-3.5 flex items-center justify-between" style={{ borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
               <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: "#3B82F6" }}></div>
-                <p className="text-sm font-semibold" style={{ color: "#1E293B" }}>Active Tasks</p>
+                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: "#60A5FA" }}></div>
+                <p className="text-sm font-semibold" style={{ color: ink }}>Active Tasks</p>
               </div>
-              <Link href="/admin/tasks" className="text-xs font-medium" style={{ color: "#3B82F6" }}>Manage →</Link>
+              <Link href="/admin/tasks" className="text-xs font-medium" style={{ color: "#60A5FA" }}>Manage →</Link>
             </div>
             {recentTasks.length === 0 ? (
               <div className="py-10 text-center">
-                <div className="w-10 h-10 rounded-full mx-auto mb-2 flex items-center justify-center" style={{ backgroundColor: "#EFF6FF" }}>
-                  <svg width="18" height="18" fill="none" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" stroke="#1D4ED8" strokeWidth="2" strokeLinecap="round"/></svg>
+                <div className="w-10 h-10 rounded-full mx-auto mb-2 flex items-center justify-center" style={{ backgroundColor: "rgba(96,165,250,0.15)" }}>
+                  <svg width="18" height="18" fill="none" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" stroke="#60A5FA" strokeWidth="2" strokeLinecap="round"/></svg>
                 </div>
-                <p className="text-sm font-medium" style={{ color: "#1E293B" }}>No open tasks</p>
+                <p className="text-sm font-medium" style={{ color: ink }}>No open tasks</p>
               </div>
             ) : (
-              <div className="divide-y" style={{ borderColor: "#F8FAFC" }}>
+              <div className="divide-y" style={{ borderColor: "rgba(255,255,255,0.06)" }}>
                 {recentTasks.map(t => (
                   <div key={t.id} className="px-5 py-3 flex items-center justify-between">
                     <div className="min-w-0 flex-1">
-                      <p className="text-sm font-medium truncate" style={{ color: "#1E293B" }}>{t.title}</p>
-                      <p className="text-xs" style={{ color: "#94A3B8" }}>{t.employee_name}{t.due_date ? ` · Due ${fmt(t.due_date)}` : ""}</p>
+                      <p className="text-sm font-medium truncate" style={{ color: ink }}>{t.title}</p>
+                      <p className="text-xs" style={{ color: muted }}>{t.employee_name}{t.due_date ? ` · Due ${fmt(t.due_date)}` : ""}</p>
                     </div>
                     <span className="text-xs px-2 py-0.5 rounded-full ml-3 capitalize font-medium shrink-0"
-                      style={{ backgroundColor: t.status === "ongoing" ? "#EFF6FF" : "#FFFBEB", color: t.status === "ongoing" ? "#1D4ED8" : "#B45309" }}>
+                      style={{ backgroundColor: t.status === "ongoing" ? "rgba(96,165,250,0.15)" : "rgba(251,191,36,0.15)", color: t.status === "ongoing" ? "#60A5FA" : "#FBBF24" }}>
                       {t.status}
                     </span>
                   </div>
@@ -198,20 +197,20 @@ export default async function AdminDashboardPage() {
 
           {/* Recent Murasalat */}
           {recentMura.length > 0 && (
-            <div className="bg-white overflow-hidden sm:col-span-2" style={{ borderRadius: "var(--radius-lg)", boxShadow: "var(--shadow-sm)" }}>
-              <div className="px-5 py-3.5 flex items-center justify-between" style={{ borderBottom: "1px solid #F1F5F9" }}>
+            <div className="overflow-hidden sm:col-span-2" style={glassCard}>
+              <div className="px-5 py-3.5 flex items-center justify-between" style={{ borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
                 <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full" style={{ backgroundColor: "#8B5CF6" }}></div>
-                  <p className="text-sm font-semibold" style={{ color: "#1E293B" }}>Recent Murasalat</p>
+                  <div className="w-2 h-2 rounded-full" style={{ backgroundColor: "#A78BFA" }}></div>
+                  <p className="text-sm font-semibold" style={{ color: ink }}>Recent Murasalat</p>
                 </div>
-                <Link href="/admin/murasalat" className="text-xs font-medium" style={{ color: "#8B5CF6" }}>Manage →</Link>
+                <Link href="/admin/murasalat" className="text-xs font-medium" style={{ color: "#A78BFA" }}>Manage →</Link>
               </div>
-              <div className="grid sm:grid-cols-3 divide-x" style={{ borderColor: "#F1F5F9" }}>
+              <div className="grid sm:grid-cols-3 divide-x" style={{ borderColor: "rgba(255,255,255,0.08)" }}>
                 {recentMura.map((m: { id: number; title: string; priority: string; created_at: string }) => (
                   <div key={m.id} className="px-5 py-4">
-                    {m.priority === "urgent" && <span className="text-xs font-bold px-2 py-0.5 rounded-full mb-1 inline-block" style={{ backgroundColor: "#FEF2F2", color: "#DC2626" }}>Urgent</span>}
-                    <p className="text-sm font-semibold" style={{ color: "#1E293B" }}>{m.title}</p>
-                    <p className="text-xs mt-0.5" style={{ color: "#94A3B8" }}>{fmt(m.created_at)}</p>
+                    {m.priority === "urgent" && <span className="text-xs font-bold px-2 py-0.5 rounded-full mb-1 inline-block" style={{ backgroundColor: "rgba(248,113,113,0.15)", color: "#F87171" }}>Urgent</span>}
+                    <p className="text-sm font-semibold" style={{ color: ink }}>{m.title}</p>
+                    <p className="text-xs mt-0.5" style={{ color: muted }}>{fmt(m.created_at)}</p>
                   </div>
                 ))}
               </div>

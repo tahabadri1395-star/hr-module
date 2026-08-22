@@ -53,9 +53,7 @@ export default function DocumentsPage() {
     <div className="min-h-screen" style={{ backgroundColor: "#F0F4FF" }}>
       <nav className="px-6 h-14 flex items-center justify-between sticky top-0 z-10" style={{ background: "linear-gradient(135deg, #4F46E5, #7C3AED)" }}>
         <div className="flex items-center gap-3">
-          <div className="w-7 h-7 rounded-lg bg-white/20 flex items-center justify-center">
-            <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path d="M12 2L3 7v10l9 5 9-5V7l-9-5z" stroke="white" strokeWidth="2" strokeLinejoin="round"/></svg>
-          </div>
+          <img src="/estate-mark-white.png" alt="Estate Department" className="w-11 h-11 object-contain" />
           <span className="font-semibold text-sm text-white">HR Module</span>
         </div>
         <Link href="/dashboard" className="text-xs text-white/70">← Dashboard</Link>

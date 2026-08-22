@@ -83,8 +83,8 @@ export default function AdminAttendancePage() {
     <div className="min-h-screen" style={{ backgroundColor: "#0F172A" }}>
       <nav className="px-6 h-14 flex items-center justify-between max-w-6xl mx-auto sticky top-0 z-20" style={{ backgroundColor: "#0F172A" }}>
         <div className="flex items-center gap-3">
-          <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ backgroundColor: "#F59E0B" }}>
-            <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path d="M12 2L3 7v10l9 5 9-5V7l-9-5z" stroke="#0F172A" strokeWidth="2.5" strokeLinejoin="round"/></svg>
+          <div className="w-11 h-11 rounded-lg flex items-center justify-center p-1.5" style={{ backgroundColor: "#F59E0B" }}>
+            <img src="/estate-mark.png" alt="Estate Department" className="w-full h-full object-contain" />
           </div>
           <span className="font-bold text-sm text-white">HR Module</span>
         </div>

@@ -52,12 +52,7 @@ export default async function SuperAdminPage() {
       <div style={{ background: "linear-gradient(135deg, #064E3B 0%, #065F46 50%, #047857 100%)" }}>
         <nav className="px-6 h-14 flex items-center justify-between max-w-6xl mx-auto sticky top-0 z-20" style={{ background: "linear-gradient(135deg, #064E3B 0%, #065F46 50%, #047857 100%)" }}>
           <div className="flex items-center gap-3">
-            <div className="w-7 h-7 rounded-lg bg-white/20 flex items-center justify-center">
-              <svg width="14" height="14" fill="none" viewBox="0 0 24 24">
-                <path d="M12 2L3 7v10l9 5 9-5V7l-9-5z" stroke="white" strokeWidth="2" strokeLinejoin="round"/>
-                <circle cx="12" cy="12" r="2" fill="white"/>
-              </svg>
-            </div>
+            <img src="/estate-mark-white.png" alt="Estate Department" className="w-11 h-11 object-contain" />
             <span className="font-bold text-sm text-white">HR Module</span>
             <span className="text-xs px-2 py-0.5 rounded-full text-white/80" style={{ backgroundColor: "rgba(255,255,255,0.15)" }}>Super Admin</span>
           </div>

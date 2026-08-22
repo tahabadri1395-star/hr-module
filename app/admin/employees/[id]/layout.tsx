@@ -29,10 +29,8 @@ export default async function EmployeeDetailLayout({
     <div className="min-h-screen" style={{ backgroundColor: "#F8FAFC" }}>
       <nav className="bg-white border-b px-6 h-14 flex items-center justify-between sticky top-0 z-10" style={{ borderColor: "#E2E8F0" }}>
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "linear-gradient(135deg, #0F172A, #1E293B)" }}>
-            <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
-              <path d="M12 2L3 7v10l9 5 9-5V7l-9-5z" stroke="white" strokeWidth="2" strokeLinejoin="round"/>
-            </svg>
+          <div className="w-11 h-11 rounded-lg flex items-center justify-center p-1.5" style={{ background: "linear-gradient(135deg, #0F172A, #1E293B)" }}>
+            <img src="/estate-mark-white.png" alt="Estate Department" className="w-full h-full object-contain" />
           </div>
           <span className="font-semibold text-sm" style={{ color: "#1E293B" }}>HR Module</span>
         </div>

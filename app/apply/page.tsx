@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { pageBg, ARCH_PATTERN, ink, muted, mutedFaint, gold, glassCard } from "@/lib/desktop-theme";
 
 export default function ApplyLeavePage() {
   const router = useRouter();
@@ -30,7 +31,6 @@ export default function ApplyLeavePage() {
       .then(data => { if (data.emergency_remaining !== undefined) setEmergencyRemaining(data.emergency_remaining); })
       .catch(() => {});
 
-    // Load holidays for warning
     fetch("/api/public/holidays")
       .then(r => r.json())
       .then(data => {
@@ -41,7 +41,6 @@ export default function ApplyLeavePage() {
       .catch(() => {});
   }, []);
 
-  // Auto-switch to emergency if start_date is < 2 days away
   useEffect(() => {
     if (!form.start_date) { setAdvanceWarning(false); setHolidayWarning(""); return; }
     const daysAhead = Math.floor((new Date(form.start_date).setHours(0,0,0,0) - new Date(today).setHours(0,0,0,0)) / 86400000);
@@ -51,7 +50,6 @@ export default function ApplyLeavePage() {
     } else {
       setAdvanceWarning(false);
     }
-    // Holiday warning
     const warn: string[] = [];
     if (holidays[form.start_date]) warn.push(`${form.start_date} is ${holidays[form.start_date]}`);
     if (form.end_date && form.end_date !== form.start_date && holidays[form.end_date]) warn.push(`${form.end_date} is ${holidays[form.end_date]}`);
@@ -88,80 +86,77 @@ export default function ApplyLeavePage() {
     }
   };
 
+  const inputStyle = { borderColor: "rgba(255,255,255,0.14)", backgroundColor: "rgba(255,255,255,0.05)", color: ink };
+
   return (
-    <div className="min-h-screen" style={{ backgroundColor: "#F8FAFC" }}>
-      <nav className="bg-white border-b px-6 h-14 flex items-center justify-between sticky top-0 z-10" style={{ borderColor: "#E2E8F0" }}>
+    <div className="min-h-screen relative" style={{ background: pageBg }}>
+      <div aria-hidden className="absolute inset-0 pointer-events-none" style={{ backgroundImage: `url("${ARCH_PATTERN}")`, backgroundSize: "120px 120px" }} />
+      <nav className="px-6 h-14 flex items-center justify-between sticky top-0 z-10 relative" style={{ backgroundColor: "rgba(20,21,43,0.75)", backdropFilter: "blur(20px)", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg flex items-center justify-center"
-            style={{ background: "linear-gradient(135deg, #4F46E5, #7C3AED)" }}>
-            <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
-              <path d="M17 20H7a2 2 0 01-2-2V9l5-5h7a2 2 0 012 2v12a2 2 0 01-2 2z" stroke="white" strokeWidth="2" strokeLinejoin="round"/>
-              <path d="M9 13h6M9 16h4" stroke="white" strokeWidth="1.8" strokeLinecap="round"/>
-            </svg>
-          </div>
-          <span className="font-semibold text-sm" style={{ color: "#1E293B" }}>HR Module</span>
+          <img src="/estate-mark-white.png" alt="Estate Department" className="w-11 h-11 object-contain" />
+          <span className="font-semibold text-sm" style={{ color: ink }}>HR Module</span>
         </div>
-        <Link href="/dashboard" className="text-xs" style={{ color: "#64748B" }}>← Back to Dashboard</Link>
+        <Link href="/dashboard" className="text-xs" style={{ color: muted }}>← Back to Dashboard</Link>
       </nav>
 
-      <div className="max-w-xl mx-auto px-6 py-10">
+      <div className="max-w-xl mx-auto px-6 py-10 relative">
         <div className="mb-6">
-          <h1 className="text-2xl font-semibold" style={{ color: "#1E293B" }}>Apply for Leave</h1>
-          <p className="text-sm mt-1" style={{ color: "#64748B" }}>Fill in the details below to submit a leave request</p>
+          <h1 className="text-2xl font-semibold" style={{ color: ink }}>Apply for Leave</h1>
+          <p className="text-sm mt-1" style={{ color: muted }}>Fill in the details below to submit a leave request</p>
         </div>
 
         {emergencyRemaining !== null && (
           <div className="mb-5 px-5 py-3.5 rounded-xl border flex items-center justify-between"
-            style={{ backgroundColor: emergencyRemaining === 0 ? "#FFF1F2" : "#EEF2FF", borderColor: emergencyRemaining === 0 ? "#FECDD3" : "#C7D2FE" }}>
-            <span className="text-xs font-medium" style={{ color: emergencyRemaining === 0 ? "#E11D48" : "#4338CA" }}>
+            style={{ backgroundColor: emergencyRemaining === 0 ? "rgba(248,113,113,0.1)" : "rgba(167,139,250,0.1)", borderColor: emergencyRemaining === 0 ? "rgba(248,113,113,0.25)" : "rgba(167,139,250,0.25)" }}>
+            <span className="text-xs font-medium" style={{ color: emergencyRemaining === 0 ? "#F87171" : "#A78BFA" }}>
               Emergency Leave Remaining (this year)
             </span>
-            <span className="text-sm font-bold" style={{ color: emergencyRemaining === 0 ? "#E11D48" : "#4338CA" }}>
+            <span className="text-sm font-bold" style={{ color: emergencyRemaining === 0 ? "#F87171" : "#A78BFA" }}>
               {emergencyRemaining} / 7
             </span>
           </div>
         )}
 
         {success ? (
-          <div className="bg-white rounded-xl p-10 text-center animate-in" style={{ boxShadow: "var(--shadow-md)" }}>
-            <div className="w-12 h-12 rounded-full mx-auto mb-4 flex items-center justify-center" style={{ backgroundColor: "#F0FDF4" }}>
+          <div className="rounded-xl p-10 text-center animate-in" style={glassCard}>
+            <div className="w-12 h-12 rounded-full mx-auto mb-4 flex items-center justify-center" style={{ backgroundColor: "rgba(74,222,128,0.15)" }}>
               <svg width="22" height="22" fill="none" viewBox="0 0 24 24">
-                <path d="M5 13l4 4L19 7" stroke="#15803D" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M5 13l4 4L19 7" stroke="#4ADE80" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </div>
-            <h2 className="text-lg font-semibold mb-2" style={{ color: "#1E293B" }}>Application Submitted</h2>
-            <p className="text-sm" style={{ color: "#64748B" }}>Your leave request is pending approval. Redirecting...</p>
+            <h2 className="text-lg font-semibold mb-2" style={{ color: ink }}>Application Submitted</h2>
+            <p className="text-sm" style={{ color: muted }}>Your leave request is pending approval. Redirecting...</p>
           </div>
         ) : (
-          <div className="bg-white rounded-xl p-8 animate-in" style={{ boxShadow: "var(--shadow-sm)" }}>
+          <div className="rounded-xl p-8 animate-in" style={glassCard}>
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Leave Type */}
               <div>
-                <label className="block text-xs font-medium mb-3" style={{ color: "#64748B" }}>Leave Type</label>
+                <label className="block text-xs font-medium mb-3" style={{ color: muted }}>Leave Type</label>
                 <div className="grid grid-cols-2 gap-3">
                   {[
-                    { value: "normal",    label: "Normal Leave",   desc: "Apply 2+ days in advance",                     color: "#4338CA", bg: "#EEF2FF", border: "#C7D2FE" },
-                    { value: "emergency", label: "Emergency Leave", desc: `${emergencyRemaining ?? "—"} of 7 remaining`, color: "#E11D48", bg: "#FFF1F2", border: "#FECDD3" },
+                    { value: "normal",    label: "Normal Leave",   desc: "Apply 2+ days in advance",                     color: "#A78BFA", bg: "rgba(167,139,250,0.12)", border: "rgba(167,139,250,0.35)" },
+                    { value: "emergency", label: "Emergency Leave", desc: `${emergencyRemaining ?? "—"} of 7 remaining`, color: "#FB7185", bg: "rgba(251,113,133,0.12)", border: "rgba(251,113,133,0.35)" },
                   ].map(opt => (
                     <button key={opt.value} type="button"
                       onClick={() => setForm(f => ({ ...f, leave_type: opt.value }))}
                       disabled={opt.value === "emergency" && emergencyRemaining === 0}
                       className="relative p-4 rounded-xl border-2 text-left transition-all"
                       style={{
-                        borderColor: form.leave_type === opt.value ? opt.border : "#E2E8F0",
-                        backgroundColor: form.leave_type === opt.value ? opt.bg : "white",
+                        borderColor: form.leave_type === opt.value ? opt.border : "rgba(255,255,255,0.12)",
+                        backgroundColor: form.leave_type === opt.value ? opt.bg : "rgba(255,255,255,0.03)",
                         opacity: opt.value === "emergency" && emergencyRemaining === 0 ? 0.5 : 1,
                         cursor: opt.value === "emergency" && emergencyRemaining === 0 ? "not-allowed" : "pointer",
                       }}>
-                      <div className="text-xs font-semibold mb-0.5" style={{ color: form.leave_type === opt.value ? opt.color : "#1E293B" }}>
+                      <div className="text-xs font-semibold mb-0.5" style={{ color: form.leave_type === opt.value ? opt.color : ink }}>
                         {opt.label}
                       </div>
-                      <div className="text-xs" style={{ color: "#94A3B8" }}>{opt.desc}</div>
+                      <div className="text-xs" style={{ color: mutedFaint }}>{opt.desc}</div>
                       {form.leave_type === opt.value && (
                         <div className="absolute top-2 right-2 w-4 h-4 rounded-full flex items-center justify-center"
                           style={{ backgroundColor: opt.color }}>
                           <svg width="8" height="8" viewBox="0 0 10 10" fill="none">
-                            <path d="M2 5l2.5 2.5L8 3" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                            <path d="M2 5l2.5 2.5L8 3" stroke="#1B1630" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                           </svg>
                         </div>
                       )}
@@ -170,7 +165,7 @@ export default function ApplyLeavePage() {
                 </div>
 
                 {advanceWarning && (
-                  <div className="mt-3 px-4 py-3 rounded-lg text-xs" style={{ backgroundColor: "#FFFBEB", color: "#92400E", borderLeft: "3px solid #F59E0B" }}>
+                  <div className="mt-3 px-4 py-3 rounded-lg text-xs" style={{ backgroundColor: "rgba(251,191,36,0.12)", color: "#FBBF24", borderLeft: "3px solid #FBBF24" }}>
                     <strong>Notice:</strong> Your selected start date is less than 2 days away — automatically switched to Emergency Leave.
                   </div>
                 )}
@@ -181,11 +176,11 @@ export default function ApplyLeavePage() {
                 <button type="button"
                   onClick={() => setForm(f => ({ ...f, is_half_day: !f.is_half_day }))}
                   className="relative w-10 h-5 rounded-full transition-colors"
-                  style={{ backgroundColor: form.is_half_day ? "#4F46E5" : "#E2E8F0" }}>
+                  style={{ backgroundColor: form.is_half_day ? gold : "rgba(255,255,255,0.15)" }}>
                   <span className="absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform"
                     style={{ transform: form.is_half_day ? "translateX(20px)" : "translateX(0)" }} />
                 </button>
-                <span className="text-sm font-medium" style={{ color: "#1E293B" }}>Half Day</span>
+                <span className="text-sm font-medium" style={{ color: ink }}>Half Day</span>
                 {form.is_half_day && (
                   <div className="flex gap-2 ml-2">
                     {["morning", "afternoon"].map(p => (
@@ -193,9 +188,9 @@ export default function ApplyLeavePage() {
                         onClick={() => setForm(f => ({ ...f, half_day_period: p }))}
                         className="text-xs px-3 py-1.5 rounded-lg border font-medium capitalize"
                         style={{
-                          borderColor: form.half_day_period === p ? "#4F46E5" : "#E2E8F0",
-                          backgroundColor: form.half_day_period === p ? "#EEF2FF" : "white",
-                          color: form.half_day_period === p ? "#4338CA" : "#64748B",
+                          borderColor: form.half_day_period === p ? gold : "rgba(255,255,255,0.14)",
+                          backgroundColor: form.half_day_period === p ? "rgba(217,180,108,0.15)" : "transparent",
+                          color: form.half_day_period === p ? gold : muted,
                         }}>
                         {p}
                       </button>
@@ -207,7 +202,7 @@ export default function ApplyLeavePage() {
               {/* Dates */}
               <div className={form.is_half_day ? "" : "grid grid-cols-2 gap-4"}>
                 <div>
-                  <label className="block text-xs font-medium mb-1.5" style={{ color: "#64748B" }}>
+                  <label className="block text-xs font-medium mb-1.5" style={{ color: muted }}>
                     {form.is_half_day ? "Date" : "Start Date"}
                   </label>
                   <input type="date" value={form.start_date} min={today}
@@ -215,21 +210,21 @@ export default function ApplyLeavePage() {
                       const val = e.target.value;
                       setForm(f => ({ ...f, start_date: val, end_date: f.end_date < val ? val : f.end_date }));
                     }}
-                    className="w-full px-3.5 py-2.5 rounded-lg text-sm border outline-none"
-                    style={{ borderColor: "#E2E8F0", color: "#1E293B" }}
-                    onFocus={e => (e.target.style.borderColor = "#4F46E5")}
-                    onBlur={e => (e.target.style.borderColor = "#E2E8F0")}
+                    className="w-full px-3.5 py-2.5 rounded-lg text-sm border outline-none glass-input"
+                    style={inputStyle}
+                    onFocus={e => (e.target.style.borderColor = gold)}
+                    onBlur={e => (e.target.style.borderColor = "rgba(255,255,255,0.14)")}
                     required />
                 </div>
                 {!form.is_half_day && (
                   <div>
-                    <label className="block text-xs font-medium mb-1.5" style={{ color: "#64748B" }}>End Date</label>
+                    <label className="block text-xs font-medium mb-1.5" style={{ color: muted }}>End Date</label>
                     <input type="date" value={form.end_date} min={form.start_date || today}
                       onChange={e => setForm(f => ({ ...f, end_date: e.target.value }))}
-                      className="w-full px-3.5 py-2.5 rounded-lg text-sm border outline-none"
-                      style={{ borderColor: "#E2E8F0", color: "#1E293B" }}
-                      onFocus={e => (e.target.style.borderColor = "#4F46E5")}
-                      onBlur={e => (e.target.style.borderColor = "#E2E8F0")}
+                      className="w-full px-3.5 py-2.5 rounded-lg text-sm border outline-none glass-input"
+                      style={inputStyle}
+                      onFocus={e => (e.target.style.borderColor = gold)}
+                      onBlur={e => (e.target.style.borderColor = "rgba(255,255,255,0.14)")}
                       required />
                   </div>
                 )}
@@ -237,29 +232,29 @@ export default function ApplyLeavePage() {
 
               {/* Holiday warning */}
               {holidayWarning && (
-                <div className="px-4 py-3 rounded-lg text-xs" style={{ backgroundColor: "#FEF9C3", color: "#92400E", borderLeft: "3px solid #F59E0B" }}>
+                <div className="px-4 py-3 rounded-lg text-xs" style={{ backgroundColor: "rgba(251,191,36,0.12)", color: "#FBBF24", borderLeft: "3px solid #FBBF24" }}>
                   <strong>Note:</strong> {holidayWarning} — public holiday already observed.
                 </div>
               )}
 
               {/* Reason */}
               <div>
-                <label className="block text-xs font-medium mb-1.5" style={{ color: "#64748B" }}>
-                  Reason <span style={{ color: "#DC2626" }}>*</span>
+                <label className="block text-xs font-medium mb-1.5" style={{ color: muted }}>
+                  Reason <span style={{ color: "#F87171" }}>*</span>
                 </label>
                 <textarea value={form.reason}
                   onChange={e => setForm(f => ({ ...f, reason: e.target.value }))}
                   placeholder="Provide a detailed reason for your leave request..."
                   rows={4}
-                  className="w-full px-3.5 py-2.5 rounded-lg text-sm border outline-none resize-none"
-                  style={{ borderColor: "#E2E8F0", color: "#1E293B" }}
-                  onFocus={e => (e.target.style.borderColor = "#4F46E5")}
-                  onBlur={e => (e.target.style.borderColor = "#E2E8F0")}
+                  className="w-full px-3.5 py-2.5 rounded-lg text-sm border outline-none resize-none glass-input"
+                  style={inputStyle}
+                  onFocus={e => (e.target.style.borderColor = gold)}
+                  onBlur={e => (e.target.style.borderColor = "rgba(255,255,255,0.14)")}
                   required />
               </div>
 
               {error && (
-                <div className="px-4 py-3 rounded-lg text-sm" style={{ backgroundColor: "#FEF2F2", color: "#DC2626" }}>
+                <div className="px-4 py-3 rounded-lg text-sm" style={{ backgroundColor: "rgba(248,113,113,0.15)", color: "#F87171" }}>
                   {error}
                 </div>
               )}
@@ -267,12 +262,12 @@ export default function ApplyLeavePage() {
               <div className="flex gap-3 pt-2">
                 <Link href="/dashboard"
                   className="flex-1 py-2.5 rounded-lg text-sm font-medium text-center border"
-                  style={{ borderColor: "#E2E8F0", color: "#64748B" }}>
+                  style={{ borderColor: "rgba(255,255,255,0.16)", color: muted }}>
                   Cancel
                 </Link>
                 <button type="submit" disabled={loading}
-                  className="flex-1 py-2.5 rounded-lg text-sm font-medium text-white"
-                  style={{ background: "linear-gradient(135deg, #4F46E5, #7C3AED)", opacity: loading ? 0.7 : 1 }}>
+                  className="flex-1 py-2.5 rounded-lg text-sm font-medium"
+                  style={{ backgroundColor: gold, color: "#1B1630", opacity: loading ? 0.7 : 1 }}>
                   {loading ? "Submitting…" : "Submit Application"}
                 </button>
               </div>
@@ -281,13 +276,13 @@ export default function ApplyLeavePage() {
         )}
 
         <div className="mt-6 grid grid-cols-2 gap-4">
-          <div className="p-4 rounded-xl border bg-white" style={{ borderColor: "#E2E8F0" }}>
-            <p className="text-xs font-semibold mb-1" style={{ color: "#4338CA" }}>Normal Leave</p>
-            <p className="text-xs" style={{ color: "#64748B" }}>Apply at least <strong>2 days</strong> before. No annual limit. Half-day supported.</p>
+          <div className="p-4 rounded-xl" style={glassCard}>
+            <p className="text-xs font-semibold mb-1" style={{ color: "#A78BFA" }}>Normal Leave</p>
+            <p className="text-xs" style={{ color: muted }}>Apply at least <strong>2 days</strong> before. No annual limit. Half-day supported.</p>
           </div>
-          <div className="p-4 rounded-xl border bg-white" style={{ borderColor: "#E2E8F0" }}>
-            <p className="text-xs font-semibold mb-1" style={{ color: "#E11D48" }}>Emergency Leave</p>
-            <p className="text-xs" style={{ color: "#64748B" }}>Anytime. <strong>7 max</strong> per year. Half-day supported.</p>
+          <div className="p-4 rounded-xl" style={glassCard}>
+            <p className="text-xs font-semibold mb-1" style={{ color: "#FB7185" }}>Emergency Leave</p>
+            <p className="text-xs" style={{ color: muted }}>Anytime. <strong>7 max</strong> per year. Half-day supported.</p>
           </div>
         </div>
       </div>

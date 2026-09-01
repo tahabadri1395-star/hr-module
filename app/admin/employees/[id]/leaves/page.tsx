@@ -1,18 +1,19 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { query } from "@/lib/db";
+import { ink, muted, mutedFaint, gold, glassCard } from "@/lib/desktop-theme";
 
 const STATUS_META: Record<string, { label: string; bg: string; color: string }> = {
-  pending:              { label: "Pending",           bg: "#FFFBEB", color: "#B45309" },
-  admin_approved:       { label: "Admin Approved",    bg: "#EFF6FF", color: "#1D4ED8" },
-  approved:             { label: "Approved",          bg: "#F0FDF4", color: "#15803D" },
-  admin_rejected:       { label: "Rejected by Admin", bg: "#FEF2F2", color: "#DC2626" },
-  super_admin_rejected: { label: "Rejected by HR",   bg: "#FEF2F2", color: "#DC2626" },
+  pending:              { label: "Pending",           bg: "rgba(217,180,108,0.15)", color: "#D9B46C" },
+  admin_approved:       { label: "Admin Approved",    bg: "rgba(96,165,250,0.15)", color: "#93C5FD" },
+  approved:             { label: "Approved",          bg: "rgba(74,222,128,0.15)", color: "#4ADE80" },
+  admin_rejected:       { label: "Rejected by Admin", bg: "rgba(248,113,113,0.15)", color: "#F87171" },
+  super_admin_rejected: { label: "Rejected by HR",   bg: "rgba(248,113,113,0.15)", color: "#F87171" },
 };
 
 const LEAVE_META: Record<string, { label: string; bg: string; color: string }> = {
-  emergency: { label: "Emergency", bg: "#FFF1F2", color: "#E11D48" },
-  normal:    { label: "Normal",    bg: "#EEF2FF", color: "#4338CA" },
+  emergency: { label: "Emergency", bg: "rgba(244,63,94,0.15)", color: "#FB7185" },
+  normal:    { label: "Normal",    bg: "rgba(96,165,250,0.15)", color: "#93C5FD" },
 };
 
 function formatDate(d: string) {
@@ -52,42 +53,42 @@ export default async function EmployeeLeavesPage({ params }: { params: Promise<{
   return (
     <div>
       {/* Stats */}
-      <div className="bg-white rounded-xl p-5 mb-6 flex items-center gap-6" style={{ boxShadow: "var(--shadow-sm)" }}>
+      <div className="rounded-xl p-5 mb-6 flex items-center gap-6" style={glassCard}>
         <div className="grid grid-cols-3 gap-6 text-center flex-1">
           {[
-            { label: "Total", value: leaves.length, color: "#4F46E5" },
-            { label: "Approved", value: approved, color: "#15803D" },
-            { label: "Pending", value: pending, color: "#B45309" },
+            { label: "Total", value: leaves.length, color: gold },
+            { label: "Approved", value: approved, color: "#4ADE80" },
+            { label: "Pending", value: pending, color: "#D9B46C" },
           ].map(s => (
             <div key={s.label}>
               <p className="text-xl font-bold" style={{ color: s.color }}>{s.value}</p>
-              <p className="text-xs" style={{ color: "#94A3B8" }}>{s.label}</p>
+              <p className="text-xs" style={{ color: muted }}>{s.label}</p>
             </div>
           ))}
         </div>
-        <div className="pl-6 border-l text-xs shrink-0" style={{ borderColor: "#F1F5F9" }}>
-          <span style={{ color: "#64748B" }}>Emergency used this year:</span>{" "}
-          <span className="font-semibold" style={{ color: emergencyUsed >= 7 ? "#E11D48" : "#4338CA" }}>
+        <div className="pl-6 border-l text-xs shrink-0" style={{ borderColor: "rgba(255,255,255,0.08)" }}>
+          <span style={{ color: muted }}>Emergency used this year:</span>{" "}
+          <span className="font-semibold" style={{ color: emergencyUsed >= 7 ? "#FB7185" : "#93C5FD" }}>
             {emergencyUsed} / 7
           </span>
         </div>
       </div>
 
       {/* Leave history table */}
-      <div className="bg-white rounded-xl overflow-hidden" style={{ boxShadow: "var(--shadow-sm)" }}>
-        <div className="px-6 py-4 border-b" style={{ borderColor: "#F1F5F9" }}>
-          <h2 className="text-sm font-semibold" style={{ color: "#1E293B" }}>All Leave Applications</h2>
+      <div className="rounded-xl overflow-hidden" style={glassCard}>
+        <div className="px-6 py-4 border-b" style={{ borderColor: "rgba(255,255,255,0.08)" }}>
+          <h2 className="text-sm font-semibold" style={{ color: ink }}>All Leave Applications</h2>
         </div>
 
         {leaves.length === 0 ? (
-          <div className="py-12 text-center text-sm" style={{ color: "#94A3B8" }}>No applications on record.</div>
+          <div className="py-12 text-center text-sm" style={{ color: mutedFaint }}>No applications on record.</div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr style={{ borderBottom: "1px solid #F1F5F9" }}>
+                <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
                   {["Type", "Dates", "Duration", "Status", "Applied", ""].map(h => (
-                    <th key={h} className="px-5 py-3 text-left text-xs font-medium uppercase tracking-wider" style={{ color: "#94A3B8" }}>
+                    <th key={h} className="px-5 py-3 text-left text-xs font-medium uppercase tracking-wider" style={{ color: mutedFaint }}>
                       {h}
                     </th>
                   ))}
@@ -99,16 +100,16 @@ export default async function EmployeeLeavesPage({ params }: { params: Promise<{
                   const sm = STATUS_META[leave.status] ?? STATUS_META.pending;
                   const days = dayCount(leave.start_date, leave.end_date, !!leave.is_half_day);
                   return (
-                    <tr key={leave.id} style={{ borderBottom: i < leaves.length - 1 ? "1px solid #F8FAFC" : undefined }}>
+                    <tr key={leave.id} style={{ borderBottom: i < leaves.length - 1 ? "1px solid rgba(255,255,255,0.06)" : undefined }}>
                       <td className="px-5 py-3.5">
                         <span className="text-xs font-medium px-2 py-0.5 rounded-full" style={{ backgroundColor: lm.bg, color: lm.color }}>
                           {lm.label}
                         </span>
                       </td>
-                      <td className="px-5 py-3.5 text-xs" style={{ color: "#64748B" }}>
+                      <td className="px-5 py-3.5 text-xs" style={{ color: muted }}>
                         {formatDate(leave.start_date)}{!leave.is_half_day ? ` → ${formatDate(leave.end_date)}` : ""}
                       </td>
-                      <td className="px-5 py-3.5 text-xs" style={{ color: "#475569" }}>
+                      <td className="px-5 py-3.5 text-xs" style={{ color: muted }}>
                         {leave.is_half_day ? `½ day · ${leave.half_day_period ?? ""}` : `${days} day${days !== "1" ? "s" : ""}`}
                       </td>
                       <td className="px-5 py-3.5">
@@ -116,9 +117,9 @@ export default async function EmployeeLeavesPage({ params }: { params: Promise<{
                           {sm.label}
                         </span>
                       </td>
-                      <td className="px-5 py-3.5 text-xs" style={{ color: "#94A3B8" }}>{formatDate(leave.created_at)}</td>
+                      <td className="px-5 py-3.5 text-xs" style={{ color: mutedFaint }}>{formatDate(leave.created_at)}</td>
                       <td className="px-5 py-3.5">
-                        <Link href={`/leave/${leave.id}`} className="text-xs font-medium" style={{ color: "#4F46E5" }}>
+                        <Link href={`/leave/${leave.id}`} className="text-xs font-medium" style={{ color: gold }}>
                           Slip
                         </Link>
                       </td>

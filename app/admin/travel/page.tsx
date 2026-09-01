@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import { adminPageBg, ARCH_PATTERN, ink, muted, mutedFaint, gold, glassCard, glassPill } from "@/lib/desktop-theme";
 
 interface TravelRequest {
   id: number; travel_type: string; destination: string; purpose: string;
@@ -20,18 +21,18 @@ interface Stats { pending: string; approved: string; rejected: string; total_app
 type Tab = "travel" | "expenses";
 
 const STATUS_META = {
-  pending:  { label: "Pending",  bg: "#FFFBEB", color: "#B45309" },
-  approved: { label: "Approved", bg: "#F0FDF4", color: "#15803D" },
-  rejected: { label: "Rejected", bg: "#FEF2F2", color: "#DC2626" },
+  pending:  { label: "Pending",  bg: "rgba(217,180,108,0.15)", color: "#D9B46C" },
+  approved: { label: "Approved", bg: "rgba(74,222,128,0.15)", color: "#4ADE80" },
+  rejected: { label: "Rejected", bg: "rgba(248,113,113,0.15)", color: "#F87171" },
 };
 const TYPE_META: Record<string, string> = { site_visit: "Site Visit", outstation: "Outstation", local: "Local Travel" };
 const CAT_META: Record<string, { label: string; color: string; bg: string }> = {
-  travel:          { label: "Travel",          color: "#2563EB", bg: "#EFF6FF" },
-  food:            { label: "Food",            color: "#D97706", bg: "#FFFBEB" },
-  accommodation:   { label: "Accommodation",   color: "#7C3AED", bg: "#EDE9FE" },
-  office_supplies: { label: "Office Supplies", color: "#0891B2", bg: "#ECFEFF" },
-  communication:   { label: "Communication",   color: "#059669", bg: "#ECFDF5" },
-  other:           { label: "Other",           color: "#64748B", bg: "#F1F5F9" },
+  travel:          { label: "Travel",          color: "#93C5FD", bg: "rgba(96,165,250,0.15)" },
+  food:            { label: "Food",            color: "#D9B46C", bg: "rgba(217,180,108,0.15)" },
+  accommodation:   { label: "Accommodation",   color: "#C4B5FD", bg: "rgba(167,139,250,0.15)" },
+  office_supplies: { label: "Office Supplies", color: "#67E8F9", bg: "rgba(34,211,238,0.15)" },
+  communication:   { label: "Communication",   color: "#6EE7B7", bg: "rgba(52,211,153,0.15)" },
+  other:           { label: "Other",           color: "rgba(255,255,255,0.6)", bg: "rgba(255,255,255,0.08)" },
 };
 
 function fmt(d: string) { return new Date(d).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }); }
@@ -99,52 +100,52 @@ export default function AdminTravelPage() {
   const pendingExpense = expenseStats ? parseInt(expenseStats.pending, 10) : 0;
   const totalApproved  = expenseStats ? parseFloat(expenseStats.total_approved_amount) : 0;
 
-  const inputClass = "w-full px-3.5 py-2.5 rounded-lg text-sm border outline-none bg-white";
-  const iStyle = { borderColor: "#E2E8F0", color: "#1E293B" };
+  const inputStyle = { borderColor: "rgba(255,255,255,0.14)", backgroundColor: "rgba(255,255,255,0.06)", color: ink };
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: "#F8FAFC" }}>
-      <nav className="bg-white border-b px-6 h-14 flex items-center justify-between sticky top-0 z-10" style={{ borderColor: "#E2E8F0" }}>
+    <div className="min-h-screen relative" style={{ background: adminPageBg }}>
+      <div aria-hidden className="absolute inset-0 pointer-events-none" style={{ backgroundImage: `url("${ARCH_PATTERN}")`, backgroundSize: "120px 120px" }} />
+      <nav className="px-6 h-14 flex items-center justify-between sticky top-0 z-10 relative"
+        style={{ backgroundColor: "rgba(11,14,23,0.75)", backdropFilter: "blur(20px)", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
         <div className="flex items-center gap-3">
           <div className="w-11 h-11 rounded-lg flex items-center justify-center p-1.5" style={{ background: "linear-gradient(135deg, #0F172A, #1E293B)" }}>
             <img src="/estate-mark-white.png" alt="Estate Department" className="w-full h-full object-contain" />
           </div>
-          <span className="font-semibold text-sm" style={{ color: "#1E293B" }}>HR Module</span>
+          <span className="font-semibold text-sm" style={{ color: ink }}>HR Module</span>
         </div>
-        <Link href="/admin" className="text-xs" style={{ color: "#64748B" }}>← Dashboard</Link>
+        <Link href="/admin" className="text-xs" style={{ color: muted }}>← Dashboard</Link>
       </nav>
 
-      <div className="max-w-5xl mx-auto px-6 py-8">
+      <div className="max-w-5xl mx-auto px-6 py-8 relative">
         <div className="mb-6">
-          <h1 className="text-2xl font-semibold" style={{ color: "#1E293B" }}>Travel & Expenses</h1>
-          <p className="text-sm mt-1" style={{ color: "#64748B" }}>Review travel requests and expense claims</p>
+          <h1 className="text-2xl font-semibold" style={{ color: ink }}>Travel & Expenses</h1>
+          <p className="text-sm mt-1" style={{ color: muted }}>Review travel requests and expense claims</p>
         </div>
 
         {/* Stats */}
         <div className="grid grid-cols-3 gap-4 mb-6">
           {[
-            { label: "Pending Travel",  value: pendingTravel,  color: "#B45309" },
-            { label: "Pending Claims",  value: pendingExpense, color: "#0891B2" },
-            { label: "Total Reimbursed", value: fmtAmount(totalApproved), color: "#15803D" },
+            { label: "Pending Travel",  value: pendingTravel,  color: "#D9B46C" },
+            { label: "Pending Claims",  value: pendingExpense, color: "#67E8F9" },
+            { label: "Total Reimbursed", value: fmtAmount(totalApproved), color: "#4ADE80" },
           ].map(s => (
-            <div key={s.label} className="bg-white rounded-xl px-5 py-4" style={{ boxShadow: "var(--shadow-sm)" }}>
+            <div key={s.label} className="rounded-xl px-5 py-4" style={glassCard}>
               <p className="text-2xl font-bold" style={{ color: s.color }}>{s.value}</p>
-              <p className="text-xs mt-1" style={{ color: "#94A3B8" }}>{s.label}</p>
+              <p className="text-xs mt-1" style={{ color: muted }}>{s.label}</p>
             </div>
           ))}
         </div>
 
         {/* Tabs + Filter */}
         <div className="flex items-center justify-between mb-5">
-          <div className="flex gap-1 p-1 rounded-xl" style={{ backgroundColor: "#F1F5F9" }}>
+          <div className="flex gap-1 p-1 rounded-xl" style={glassPill}>
             {([["travel", "Travel Requests"], ["expenses", "Expense Claims"]] as [Tab, string][]).map(([key, label]) => (
               <button key={key} onClick={() => setTab(key)}
                 className="text-sm font-medium px-4 py-2 rounded-lg"
-                style={{ backgroundColor: tab === key ? "white" : "transparent", color: tab === key ? "#1E293B" : "#64748B",
-                  boxShadow: tab === key ? "0 1px 3px rgba(0,0,0,0.08)" : "none" }}>
+                style={{ backgroundColor: tab === key ? "rgba(255,255,255,0.12)" : "transparent", color: tab === key ? ink : muted }}>
                 {label}
                 {((key === "travel" && pendingTravel > 0) || (key === "expenses" && pendingExpense > 0)) && (
-                  <span className="ml-1.5 text-xs px-1.5 py-0.5 rounded-full" style={{ backgroundColor: "#FFFBEB", color: "#B45309" }}>
+                  <span className="ml-1.5 text-xs px-1.5 py-0.5 rounded-full" style={{ backgroundColor: "rgba(217,180,108,0.2)", color: gold }}>
                     {key === "travel" ? pendingTravel : pendingExpense}
                   </span>
                 )}
@@ -152,7 +153,7 @@ export default function AdminTravelPage() {
             ))}
           </div>
           <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)}
-            className="px-3 py-2 rounded-lg border text-sm outline-none" style={iStyle}>
+            className="px-3 py-2 rounded-lg border text-sm outline-none glass-input" style={inputStyle}>
             <option value="pending">Pending</option>
             <option value="approved">Approved</option>
             <option value="rejected">Rejected</option>
@@ -162,22 +163,22 @@ export default function AdminTravelPage() {
 
         {/* Travel Action Modal */}
         {actionId !== null && (
-          <div className="fixed inset-0 flex items-center justify-center z-50" style={{ backgroundColor: "rgba(0,0,0,0.4)" }}>
-            <div className="bg-white rounded-2xl p-6 w-full max-w-md mx-4 shadow-xl">
-              <h3 className="text-sm font-semibold mb-4" style={{ color: "#1E293B" }}>
+          <div className="fixed inset-0 flex items-center justify-center z-50" style={{ backgroundColor: "rgba(0,0,0,0.6)" }}>
+            <div className="rounded-2xl p-6 w-full max-w-md mx-4" style={{ ...glassCard, backdropFilter: "blur(30px)", WebkitBackdropFilter: "blur(30px)", backgroundColor: "rgba(30,25,60,0.9)" }}>
+              <h3 className="text-sm font-semibold mb-4" style={{ color: ink }}>
                 {decision === "approved" ? "Approve" : "Reject"} Travel Request
               </h3>
-              <label className="block text-xs font-medium mb-1.5" style={{ color: "#64748B" }}>Note (optional)</label>
+              <label className="block text-xs font-medium mb-1.5" style={{ color: muted }}>Note (optional)</label>
               <textarea value={note} onChange={e => setNote(e.target.value)} rows={3}
                 placeholder={decision === "rejected" ? "Reason for rejection…" : "Any note for the Khidmat Guzar…"}
-                className={inputClass + " resize-none"} style={iStyle} />
+                className="w-full px-3.5 py-2.5 rounded-lg text-sm border outline-none resize-none glass-input" style={inputStyle} />
               <div className="flex gap-3 mt-4">
                 <button onClick={submitAction} disabled={saving}
-                  className="flex-1 text-sm font-medium py-2.5 rounded-lg text-white"
-                  style={{ background: decision === "approved" ? "linear-gradient(135deg,#059669,#047857)" : "linear-gradient(135deg,#DC2626,#B91C1C)", opacity: saving ? 0.7 : 1 }}>
+                  className="flex-1 text-sm font-medium py-2.5 rounded-lg"
+                  style={{ backgroundColor: decision === "approved" ? "#4ADE80" : "#F87171", color: "#1B1630", opacity: saving ? 0.7 : 1 }}>
                   {saving ? "Saving…" : decision === "approved" ? "Approve" : "Reject"}
                 </button>
-                <button onClick={() => setActionId(null)} className="flex-1 text-sm py-2.5 rounded-lg border" style={{ borderColor: "#E2E8F0", color: "#64748B" }}>Cancel</button>
+                <button onClick={() => setActionId(null)} className="flex-1 text-sm py-2.5 rounded-lg border" style={{ borderColor: "rgba(255,255,255,0.16)", color: muted }}>Cancel</button>
               </div>
             </div>
           </div>
@@ -185,11 +186,11 @@ export default function AdminTravelPage() {
 
         {/* Travel List */}
         {tab === "travel" && (
-          <div className="bg-white rounded-xl overflow-hidden" style={{ boxShadow: "var(--shadow-sm)" }}>
+          <div className="rounded-xl overflow-hidden" style={glassCard}>
             {filteredTravel.length === 0 ? (
-              <div className="py-14 text-center text-sm" style={{ color: "#94A3B8" }}>No {filterStatus === "all" ? "" : filterStatus} travel requests.</div>
+              <div className="py-14 text-center text-sm" style={{ color: mutedFaint }}>No {filterStatus === "all" ? "" : filterStatus} travel requests.</div>
             ) : (
-              <div className="divide-y" style={{ borderColor: "#F8FAFC" }}>
+              <div className="divide-y" style={{ borderColor: "rgba(255,255,255,0.06)" }}>
                 {filteredTravel.map(t => {
                   const sm = STATUS_META[t.status];
                   return (
@@ -197,30 +198,30 @@ export default function AdminTravelPage() {
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-1 flex-wrap">
-                            <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{ backgroundColor: "#EEF2FF", color: "#4338CA" }}>{TYPE_META[t.travel_type]}</span>
+                            <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={glassPill}>{TYPE_META[t.travel_type]}</span>
                             <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{ backgroundColor: sm.bg, color: sm.color }}>{sm.label}</span>
                           </div>
-                          <p className="text-sm font-semibold" style={{ color: "#1E293B" }}>{t.destination}</p>
-                          <p className="text-xs mt-0.5" style={{ color: "#64748B" }}>{t.purpose}</p>
+                          <p className="text-sm font-semibold" style={{ color: ink }}>{t.destination}</p>
+                          <p className="text-xs mt-0.5" style={{ color: muted }}>{t.purpose}</p>
                           <div className="flex items-center gap-3 mt-1.5">
-                            <span className="text-xs font-medium" style={{ color: "#4F46E5" }}>{t.employee_name}</span>
-                            {t.department && <span className="text-xs" style={{ color: "#94A3B8" }}>{t.department}</span>}
-                            <span className="text-xs" style={{ color: "#94A3B8" }}>{fmt(t.travel_date)}{t.return_date ? ` → ${fmt(t.return_date)}` : ""}</span>
-                            {t.estimated_cost && <span className="text-xs" style={{ color: "#94A3B8" }}>Est. ₹{parseFloat(t.estimated_cost).toLocaleString()}</span>}
+                            <span className="text-xs font-medium" style={{ color: gold }}>{t.employee_name}</span>
+                            {t.department && <span className="text-xs" style={{ color: mutedFaint }}>{t.department}</span>}
+                            <span className="text-xs" style={{ color: mutedFaint }}>{fmt(t.travel_date)}{t.return_date ? ` → ${fmt(t.return_date)}` : ""}</span>
+                            {t.estimated_cost && <span className="text-xs" style={{ color: mutedFaint }}>Est. ₹{parseFloat(t.estimated_cost).toLocaleString()}</span>}
                           </div>
-                          {t.admin_note && <p className="text-xs mt-1.5 italic" style={{ color: "#64748B" }}>Note: {t.admin_note}</p>}
+                          {t.admin_note && <p className="text-xs mt-1.5 italic" style={{ color: muted }}>Note: {t.admin_note}</p>}
                         </div>
                         <div className="flex gap-2 shrink-0">
                           {t.status === "pending" && (
                             <>
                               <button onClick={() => openAction(t.id, "approved")}
-                                className="text-xs px-3 py-1.5 rounded-lg text-white font-medium" style={{ background: "linear-gradient(135deg,#059669,#047857)" }}>Approve</button>
+                                className="text-xs px-3 py-1.5 rounded-lg font-medium" style={{ backgroundColor: "rgba(74,222,128,0.15)", color: "#4ADE80", border: "1px solid rgba(74,222,128,0.3)" }}>Approve</button>
                               <button onClick={() => openAction(t.id, "rejected")}
-                                className="text-xs px-3 py-1.5 rounded-lg border font-medium" style={{ borderColor: "#FECACA", color: "#DC2626", backgroundColor: "#FEF2F2" }}>Reject</button>
+                                className="text-xs px-3 py-1.5 rounded-lg border font-medium" style={{ borderColor: "rgba(248,113,113,0.35)", color: "#F87171", backgroundColor: "rgba(248,113,113,0.1)" }}>Reject</button>
                             </>
                           )}
                           <button onClick={() => removeTravel(t.id)}
-                            className="text-xs px-3 py-1.5 rounded-lg" style={{ backgroundColor: "#F1F5F9", color: "#94A3B8" }}>Delete</button>
+                            className="text-xs px-3 py-1.5 rounded-lg" style={{ backgroundColor: "rgba(255,255,255,0.08)", color: mutedFaint }}>Delete</button>
                         </div>
                       </div>
                     </div>
@@ -235,7 +236,7 @@ export default function AdminTravelPage() {
         {tab === "expenses" && (
           <div className="space-y-4">
             {expenses.length === 0 ? (
-              <div className="bg-white rounded-xl py-14 text-center text-sm" style={{ boxShadow: "var(--shadow-sm)", color: "#94A3B8" }}>
+              <div className="rounded-xl py-14 text-center text-sm" style={{ ...glassCard, color: mutedFaint }}>
                 No {filterStatus === "all" ? "" : filterStatus} expense claims.
               </div>
             ) : (
@@ -243,48 +244,48 @@ export default function AdminTravelPage() {
                 const cat = CAT_META[exp.category] ?? CAT_META.other;
                 const sm  = STATUS_META[exp.status];
                 return (
-                  <div key={exp.id} className="bg-white rounded-xl p-5" style={{ boxShadow: "var(--shadow-sm)" }}>
+                  <div key={exp.id} className="rounded-xl p-5" style={glassCard}>
                     <div className="flex items-start justify-between gap-4 mb-3">
                       <div className="flex items-start gap-3">
                         <div className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold text-white shrink-0"
-                          style={{ background: "linear-gradient(135deg, #0F172A, #1E293B)" }}>
+                          style={{ background: "linear-gradient(135deg, #4F46E5, #7C3AED)" }}>
                           {exp.employee_name.charAt(0)}
                         </div>
                         <div>
-                          <p className="text-sm font-bold" style={{ color: "#1E293B" }}>{exp.employee_name}</p>
-                          <p className="text-xs" style={{ color: "#94A3B8" }}>
+                          <p className="text-sm font-semibold" style={{ color: ink }}>{exp.employee_name}</p>
+                          <p className="text-xs" style={{ color: mutedFaint }}>
                             {exp.employee_code && <span>{exp.employee_code} · </span>}
                             {exp.department || "No dept"}
                           </p>
                         </div>
                       </div>
                       <div className="text-right shrink-0">
-                        <p className="text-lg font-bold" style={{ color: "#1E293B" }}>{fmtAmount(exp.amount)}</p>
+                        <p className="text-lg font-bold" style={{ color: ink }}>{fmtAmount(exp.amount)}</p>
                         <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{ backgroundColor: sm.bg, color: sm.color }}>{sm.label}</span>
                       </div>
                     </div>
 
-                    <div className="p-3 rounded-xl mb-3" style={{ backgroundColor: "#F8FAFC" }}>
+                    <div className="p-3 rounded-xl mb-3" style={{ backgroundColor: "rgba(255,255,255,0.04)" }}>
                       <div className="flex items-center gap-2 mb-1 flex-wrap">
-                        <p className="text-sm font-semibold" style={{ color: "#1E293B" }}>{exp.title}</p>
+                        <p className="text-sm font-semibold" style={{ color: ink }}>{exp.title}</p>
                         <span className="text-xs font-medium px-2 py-0.5 rounded-full" style={{ backgroundColor: cat.bg, color: cat.color }}>{cat.label}</span>
-                        <span className="text-xs" style={{ color: "#94A3B8" }}>{fmt(exp.expense_date)}</span>
+                        <span className="text-xs" style={{ color: mutedFaint }}>{fmt(exp.expense_date)}</span>
                       </div>
-                      {exp.description && <p className="text-xs" style={{ color: "#64748B" }}>{exp.description}</p>}
+                      {exp.description && <p className="text-xs" style={{ color: muted }}>{exp.description}</p>}
                     </div>
 
                     {exp.receipt_url && (
                       <a href={exp.receipt_url} target="_blank" rel="noreferrer"
-                        className="inline-flex items-center gap-1 text-xs font-medium mb-3" style={{ color: "#4F46E5" }}>
+                        className="inline-flex items-center gap-1 text-xs font-medium mb-3" style={{ color: gold }}>
                         <svg width="12" height="12" fill="none" viewBox="0 0 24 24"><path d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>
                         View Receipt
                       </a>
                     )}
 
                     {exp.admin_note && (
-                      <div className="mb-3 p-2 rounded-lg text-xs" style={{ backgroundColor: exp.status === "approved" ? "#F0FDF4" : "#FEF2F2", color: exp.status === "approved" ? "#15803D" : "#DC2626" }}>
+                      <div className="mb-3 p-2 rounded-lg text-xs" style={{ backgroundColor: exp.status === "approved" ? "rgba(74,222,128,0.1)" : "rgba(248,113,113,0.1)", color: exp.status === "approved" ? "#4ADE80" : "#F87171" }}>
                         <span className="font-semibold">Note: </span>{exp.admin_note}
-                        {exp.approved_by && <span style={{ color: "#94A3B8" }}> — {exp.approved_by}</span>}
+                        {exp.approved_by && <span style={{ color: mutedFaint }}> — {exp.approved_by}</span>}
                       </div>
                     )}
 
@@ -294,21 +295,21 @@ export default function AdminTravelPage() {
                           value={expenseNoteMap[exp.id] || ""}
                           onChange={e => setExpenseNoteMap(m => ({ ...m, [exp.id]: e.target.value }))}
                           rows={2} placeholder="Admin note (optional)…"
-                          className="w-full text-xs px-3 py-2 rounded-xl outline-none resize-none"
-                          style={{ border: "1.5px solid #E2E8F0", color: "#1E293B" }} />
+                          className="w-full text-xs px-3 py-2 rounded-xl outline-none resize-none glass-input"
+                          style={{ border: "1.5px solid rgba(255,255,255,0.14)", backgroundColor: "rgba(255,255,255,0.05)", color: ink }} />
                         <div className="flex gap-2">
                           <button onClick={() => expenseAction(exp.id, "approved")} disabled={actingExpense === exp.id}
                             className="flex-1 text-xs font-semibold py-2 rounded-xl"
-                            style={{ backgroundColor: "#F0FDF4", color: "#15803D", border: "1.5px solid #BBF7D0", opacity: actingExpense === exp.id ? 0.6 : 1 }}>
+                            style={{ backgroundColor: "rgba(74,222,128,0.12)", color: "#4ADE80", border: "1.5px solid rgba(74,222,128,0.3)", opacity: actingExpense === exp.id ? 0.6 : 1 }}>
                             {actingExpense === exp.id ? "…" : "Approve"}
                           </button>
                           <button onClick={() => expenseAction(exp.id, "rejected")} disabled={actingExpense === exp.id}
                             className="flex-1 text-xs font-semibold py-2 rounded-xl"
-                            style={{ backgroundColor: "#FEF2F2", color: "#DC2626", border: "1.5px solid #FECACA", opacity: actingExpense === exp.id ? 0.6 : 1 }}>
+                            style={{ backgroundColor: "rgba(248,113,113,0.12)", color: "#F87171", border: "1.5px solid rgba(248,113,113,0.3)", opacity: actingExpense === exp.id ? 0.6 : 1 }}>
                             {actingExpense === exp.id ? "…" : "Reject"}
                           </button>
                           <button onClick={() => removeExpense(exp.id)}
-                            className="text-xs px-3 py-2 rounded-xl" style={{ backgroundColor: "#F1F5F9", color: "#94A3B8" }}>
+                            className="text-xs px-3 py-2 rounded-xl" style={{ backgroundColor: "rgba(255,255,255,0.08)", color: mutedFaint }}>
                             Delete
                           </button>
                         </div>
@@ -316,7 +317,7 @@ export default function AdminTravelPage() {
                     ) : (
                       <div className="flex justify-end">
                         <button onClick={() => removeExpense(exp.id)}
-                          className="text-xs px-3 py-1.5 rounded-lg" style={{ backgroundColor: "#F1F5F9", color: "#94A3B8" }}>
+                          className="text-xs px-3 py-1.5 rounded-lg" style={{ backgroundColor: "rgba(255,255,255,0.08)", color: mutedFaint }}>
                           Delete
                         </button>
                       </div>

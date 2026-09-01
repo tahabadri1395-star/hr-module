@@ -3,6 +3,9 @@ import Link from "next/link";
 import { getAdminFromCookies } from "@/lib/admin-auth";
 import { query } from "@/lib/db";
 import LeaveActionButtons from "@/components/LeaveActionButtons";
+import { ARCH_PATTERN, ink, muted, mutedFaint, glassCard } from "@/lib/desktop-theme";
+
+const superPageBg = "radial-gradient(circle at 20% 15%, #064E3B, transparent 55%), radial-gradient(circle at 85% 80%, #065F46, transparent 50%), linear-gradient(160deg, #08130F 0%, #0B1F19 55%, #0A1A15 100%)";
 
 interface LeaveWithEmployee {
   id: number; leave_type: string; start_date: string; end_date: string;
@@ -12,8 +15,8 @@ interface LeaveWithEmployee {
 }
 
 const LEAVE_META: Record<string, { label: string; bg: string; color: string }> = {
-  emergency: { label: "Emergency", bg: "#FFF1F2", color: "#E11D48" },
-  normal:    { label: "Normal",    bg: "#EEF2FF", color: "#4338CA" },
+  emergency: { label: "Emergency", bg: "rgba(244,63,94,0.15)", color: "#FB7185" },
+  normal:    { label: "Normal",    bg: "rgba(96,165,250,0.15)", color: "#93C5FD" },
 };
 
 function fmt(d: string) { return new Date(d).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }); }
@@ -47,116 +50,117 @@ export default async function SuperAdminPage() {
   const s = statsRes.rows[0];
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: "#F8FAFC" }}>
-      {/* Emerald top header - distinct from both KG (purple) and Admin (dark navy) */}
-      <div style={{ background: "linear-gradient(135deg, #064E3B 0%, #065F46 50%, #047857 100%)" }}>
-        <nav className="px-6 h-14 flex items-center justify-between max-w-6xl mx-auto sticky top-0 z-20" style={{ background: "linear-gradient(135deg, #064E3B 0%, #065F46 50%, #047857 100%)" }}>
-          <div className="flex items-center gap-3">
-            <img src="/estate-mark-white.png" alt="Estate Department" className="w-11 h-11 object-contain" />
-            <span className="font-bold text-sm text-white">HR Module</span>
-            <span className="text-xs px-2 py-0.5 rounded-full text-white/80" style={{ backgroundColor: "rgba(255,255,255,0.15)" }}>Super Admin</span>
-          </div>
-          <div className="flex items-center gap-4 flex-wrap">
-            <Link href="/admin/leaves"    className="text-xs text-white/60 hover:text-white">Leaves</Link>
-            <Link href="/admin/tasks"     className="text-xs text-white/60 hover:text-white">Tasks</Link>
-            <Link href="/admin/murasalat" className="text-xs text-white/60 hover:text-white">Murasalat</Link>
-            <Link href="/admin/arz"       className="text-xs text-white/60 hover:text-white">Arz</Link>
-            <Link href="/admin/assets"    className="text-xs text-white/60 hover:text-white">Assets</Link>
-            <Link href="/admin/documents" className="text-xs text-white/60 hover:text-white">Documents</Link>
-            <Link href="/admin/lms"        className="text-xs text-white/60 hover:text-white">L&D</Link>
-            <Link href="/admin/attendance" className="text-xs text-white/60 hover:text-white">Attendance</Link>
-            <Link href="/admin/travel"    className="text-xs text-white/60 hover:text-white">Travel & Expenses</Link>
-            <Link href="/admin/settings"  className="text-xs text-white/60 hover:text-white">Settings</Link>
-            <form action="/api/admin/logout" method="POST">
-              <button type="submit" className="text-xs text-white/40 hover:text-white/70">Sign Out</button>
-            </form>
-          </div>
-        </nav>
+    <div className="min-h-screen relative" style={{ background: superPageBg }}>
+      <div aria-hidden className="absolute inset-0 pointer-events-none" style={{ backgroundImage: `url("${ARCH_PATTERN}")`, backgroundSize: "120px 120px" }} />
 
-        {/* Executive header */}
-        <div className="px-6 pb-10 pt-2 max-w-6xl mx-auto">
-          <p className="text-xs mb-1" style={{ color: "rgba(255,255,255,0.45)" }}>
-            {new Date().toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
-          </p>
-          <h1 className="text-3xl font-bold text-white mb-1">Executive Overview</h1>
-          <p className="text-sm" style={{ color: "rgba(255,255,255,0.5)" }}>Final authority — HR Management System</p>
+      <nav className="px-6 h-14 flex items-center justify-between sticky top-0 z-20 relative"
+        style={{ backgroundColor: "rgba(8,19,15,0.75)", backdropFilter: "blur(20px)", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
+        <div className="flex items-center gap-3">
+          <img src="/estate-mark-white.png" alt="Estate Department" className="w-11 h-11 object-contain" />
+          <span className="font-semibold text-sm" style={{ color: ink }}>HR Module</span>
+          <span className="text-xs px-2 py-0.5 rounded-full" style={{ backgroundColor: "rgba(52,211,153,0.15)", color: "#6EE7B7" }}>Super Admin</span>
+        </div>
+        <div className="flex items-center gap-4 flex-wrap">
+          <Link href="/admin/leaves"    className="text-xs" style={{ color: mutedFaint }}>Leaves</Link>
+          <Link href="/admin/tasks"     className="text-xs" style={{ color: mutedFaint }}>Tasks</Link>
+          <Link href="/admin/murasalat" className="text-xs" style={{ color: mutedFaint }}>Murasalat</Link>
+          <Link href="/admin/arz"       className="text-xs" style={{ color: mutedFaint }}>Arz</Link>
+          <Link href="/admin/assets"    className="text-xs" style={{ color: mutedFaint }}>Assets</Link>
+          <Link href="/admin/documents" className="text-xs" style={{ color: mutedFaint }}>Documents</Link>
+          <Link href="/admin/lms"        className="text-xs" style={{ color: mutedFaint }}>L&D</Link>
+          <Link href="/admin/attendance" className="text-xs" style={{ color: mutedFaint }}>Attendance</Link>
+          <Link href="/admin/travel"    className="text-xs" style={{ color: mutedFaint }}>Travel & Expenses</Link>
+          <Link href="/admin/settings"  className="text-xs" style={{ color: mutedFaint }}>Settings</Link>
+          <form action="/api/admin/logout" method="POST">
+            <button type="submit" className="text-xs" style={{ color: "rgba(255,255,255,0.35)" }}>Sign Out</button>
+          </form>
+        </div>
+      </nav>
 
-          {/* Wide stat strip */}
-          <div className="flex flex-wrap gap-2 mt-6 animate-in">
-            {[
-              { label: "Awaiting You",    value: parseInt(s.awaiting, 10),       color: "#34D399", highlight: true },
-              { label: "Pending Admin",   value: parseInt(s.pending_admin, 10),  color: "#FCD34D", highlight: false },
-              { label: "Fully Approved",  value: parseInt(s.approved, 10),       color: "#6EE7B7", highlight: false },
-              { label: "Rejected",        value: parseInt(s.rejected, 10),       color: "#FCA5A5", highlight: false },
-              { label: "Active KGs",      value: parseInt(s.total_kgs, 10),      color: "rgba(255,255,255,0.7)", highlight: false },
-              { label: "Open Tasks",      value: parseInt(s.open_tasks, 10),     color: "rgba(255,255,255,0.7)", highlight: false },
-              { label: "Travel & Claims", value: parseInt(s.pending_travel, 10) + parseInt(s.pending_expenses, 10), color: "rgba(255,255,255,0.7)", highlight: false },
-            ].map(stat => (
-              <div key={stat.label} className="rounded-xl px-3 py-3 text-center flex-1 min-w-[110px] transition-transform hover:-translate-y-0.5"
-                style={{ backgroundColor: stat.highlight ? "rgba(52,211,153,0.2)" : "rgba(255,255,255,0.08)", border: stat.highlight ? "1px solid rgba(52,211,153,0.4)" : "1px solid rgba(255,255,255,0.04)" }}>
-                <p className="text-xl font-bold" style={{ color: stat.color }}>{stat.value}</p>
-                <p className="text-xs mt-0.5" style={{ color: "rgba(255,255,255,0.4)", fontSize: "10px" }}>{stat.label}</p>
-              </div>
-            ))}
-          </div>
+      {/* Executive header */}
+      <div className="px-6 pb-8 pt-6 max-w-6xl mx-auto relative">
+        <p className="text-xs mb-1" style={{ color: mutedFaint }}>
+          {new Date().toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
+        </p>
+        <h1 className="text-3xl font-semibold mb-1" style={{ color: ink }}>Executive Overview</h1>
+        <p className="text-sm" style={{ color: muted }}>Final authority — HR Management System</p>
+
+        {/* Wide stat strip */}
+        <div className="flex flex-wrap gap-2 mt-6">
+          {[
+            { label: "Awaiting You",    value: parseInt(s.awaiting, 10),       color: "#6EE7B7", highlight: true },
+            { label: "Pending Admin",   value: parseInt(s.pending_admin, 10),  color: "#D9B46C", highlight: false },
+            { label: "Fully Approved",  value: parseInt(s.approved, 10),       color: "#6EE7B7", highlight: false },
+            { label: "Rejected",        value: parseInt(s.rejected, 10),       color: "#FB7185", highlight: false },
+            { label: "Active KGs",      value: parseInt(s.total_kgs, 10),      color: muted, highlight: false },
+            { label: "Open Tasks",      value: parseInt(s.open_tasks, 10),     color: muted, highlight: false },
+            { label: "Travel & Claims", value: parseInt(s.pending_travel, 10) + parseInt(s.pending_expenses, 10), color: muted, highlight: false },
+          ].map(stat => (
+            <div key={stat.label} className="rounded-xl px-3 py-3 text-center flex-1 min-w-[110px]"
+              style={stat.highlight
+                ? { backgroundColor: "rgba(110,231,183,0.15)", border: "1px solid rgba(110,231,183,0.4)" }
+                : { backgroundColor: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.08)" }}>
+              <p className="text-xl font-bold" style={{ color: stat.color }}>{stat.value}</p>
+              <p className="text-xs mt-0.5" style={{ color: mutedFaint, fontSize: "10px" }}>{stat.label}</p>
+            </div>
+          ))}
         </div>
       </div>
 
-      {/* White body */}
-      <div className="max-w-6xl mx-auto px-6 py-8">
+      <div className="max-w-6xl mx-auto px-6 py-4 relative">
 
         {/* All modules grid */}
-        <div className="flex flex-wrap justify-center gap-2 mb-8 animate-in">
+        <div className="flex flex-wrap justify-center gap-2 mb-8">
           {[
-            { href: "/admin/leaves",     label: "Leaves",      badge: parseInt(s.awaiting,10) + parseInt(s.pending_admin,10), color: "#F59E0B" },
-            { href: "/admin/tasks",      label: "Tasks",       badge: parseInt(s.open_tasks,10),       color: "#3B82F6" },
-            { href: "/admin/travel",     label: "Travel & Expenses", badge: parseInt(s.pending_travel,10) + parseInt(s.pending_expenses,10), color: "#10B981" },
-            { href: "/admin/murasalat",  label: "Murasalat",  badge: parseInt(s.total_mura,10),        color: "#8B5CF6" },
-            { href: "/admin/arz",        label: "Arz",         badge: parseInt(s.open_arz,10),          color: "#EA580C" },
-            { href: "/admin/assets",     label: "Assets",      badge: parseInt(s.total_assets,10),      color: "#B45309" },
-            { href: "/admin/documents",  label: "Documents",   badge: parseInt(s.total_docs,10),        color: "#1D4ED8" },
-            { href: "/admin/lms",        label: "L&D",         badge: parseInt(s.active_courses,10),    color: "#059669" },
-            { href: "/admin/attendance", label: "Attendance",  badge: parseInt(s.clocked_today,10),     color: "#0891B2" },
-            { href: "/admin/settings",   label: "Settings",    badge: parseInt(s.total_kgs,10),         color: "#6B7280" },
+            { href: "/admin/leaves",     label: "Leaves",      badge: parseInt(s.awaiting,10) + parseInt(s.pending_admin,10), color: "#D9B46C" },
+            { href: "/admin/tasks",      label: "Tasks",       badge: parseInt(s.open_tasks,10),       color: "#93C5FD" },
+            { href: "/admin/travel",     label: "Travel & Expenses", badge: parseInt(s.pending_travel,10) + parseInt(s.pending_expenses,10), color: "#6EE7B7" },
+            { href: "/admin/murasalat",  label: "Murasalat",  badge: parseInt(s.total_mura,10),        color: "#C4B5FD" },
+            { href: "/admin/arz",        label: "Arz",         badge: parseInt(s.open_arz,10),          color: "#FDBA74" },
+            { href: "/admin/assets",     label: "Assets",      badge: parseInt(s.total_assets,10),      color: "#D9B46C" },
+            { href: "/admin/documents",  label: "Documents",   badge: parseInt(s.total_docs,10),        color: "#93C5FD" },
+            { href: "/admin/lms",        label: "L&D",         badge: parseInt(s.active_courses,10),    color: "#6EE7B7" },
+            { href: "/admin/attendance", label: "Attendance",  badge: parseInt(s.clocked_today,10),     color: "#67E8F9" },
+            { href: "/admin/settings",   label: "Settings",    badge: parseInt(s.total_kgs,10),         color: "rgba(255,255,255,0.6)" },
           ].map(m => (
             <Link key={m.label} href={m.href}
-              className="card-hover bg-white py-3 px-2 flex flex-col items-center gap-1.5 text-center relative w-[calc(25%-6px)] sm:w-[92px]"
-              style={{ borderRadius: "var(--radius-lg)", boxShadow: "var(--shadow-sm)" }}>
+              className="py-3 px-2 flex flex-col items-center gap-1.5 text-center relative w-[calc(25%-6px)] sm:w-[92px] rounded-xl"
+              style={glassCard}>
               {m.badge > 0 && (
-                <span className="absolute top-1.5 right-1.5 min-w-4 h-4 rounded-full text-white text-xs flex items-center justify-center font-bold px-1"
-                  style={{ backgroundColor: m.color, fontSize: "10px" }}>{m.badge}</span>
+                <span className="absolute top-1.5 right-1.5 min-w-4 h-4 rounded-full text-xs flex items-center justify-center font-bold px-1"
+                  style={{ backgroundColor: m.color, color: "#08130F", fontSize: "10px" }}>{m.badge}</span>
               )}
-              <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ backgroundColor: m.color + "18" }}>
+              <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ backgroundColor: "rgba(255,255,255,0.08)" }}>
                 <div className="w-2 h-2 rounded-full" style={{ backgroundColor: m.color }}></div>
               </div>
-              <span className="text-xs font-semibold leading-tight" style={{ color: "#1E293B" }}>{m.label}</span>
+              <span className="text-xs font-semibold leading-tight" style={{ color: ink }}>{m.label}</span>
             </Link>
           ))}
         </div>
 
         {/* Final approval queue */}
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-bold" style={{ color: "#1E293B" }}>
+          <h2 className="text-lg font-semibold" style={{ color: ink }}>
             Final Approval Queue
             {pendingLeaves.length > 0 && (
-              <span className="ml-2 text-sm px-2.5 py-0.5 rounded-full font-semibold" style={{ backgroundColor: "#ECFDF5", color: "#065F46" }}>
+              <span className="ml-2 text-sm px-2.5 py-0.5 rounded-full font-semibold" style={{ backgroundColor: "rgba(110,231,183,0.15)", color: "#6EE7B7" }}>
                 {pendingLeaves.length}
               </span>
             )}
           </h2>
-          <div className="flex items-center gap-2 text-xs px-4 py-2 rounded-full" style={{ backgroundColor: "#ECFDF5", color: "#065F46" }}>
-            <span className="w-1.5 h-1.5 rounded-full inline-block" style={{ backgroundColor: "#10B981" }}></span>
+          <div className="flex items-center gap-2 text-xs px-4 py-2 rounded-full" style={{ backgroundColor: "rgba(110,231,183,0.15)", color: "#6EE7B7" }}>
+            <span className="w-1.5 h-1.5 rounded-full inline-block" style={{ backgroundColor: "#34D399" }}></span>
             Admin approved · Awaiting your decision
           </div>
         </div>
 
         {pendingLeaves.length === 0 ? (
-          <div className="bg-white rounded-2xl py-16 text-center mb-8" style={{ boxShadow: "var(--shadow-sm)" }}>
-            <div className="w-12 h-12 rounded-full mx-auto mb-3 flex items-center justify-center" style={{ backgroundColor: "#ECFDF5" }}>
-              <svg width="24" height="24" fill="none" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" stroke="#065F46" strokeWidth="2" strokeLinecap="round"/></svg>
+          <div className="rounded-2xl py-16 text-center mb-8" style={glassCard}>
+            <div className="w-12 h-12 rounded-full mx-auto mb-3 flex items-center justify-center" style={{ backgroundColor: "rgba(110,231,183,0.15)" }}>
+              <svg width="24" height="24" fill="none" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" stroke="#6EE7B7" strokeWidth="2" strokeLinecap="round"/></svg>
             </div>
-            <p className="font-semibold text-sm" style={{ color: "#1E293B" }}>All clear</p>
-            <p className="text-xs mt-1" style={{ color: "#94A3B8" }}>No applications awaiting your approval</p>
+            <p className="font-semibold text-sm" style={{ color: ink }}>All clear</p>
+            <p className="text-xs mt-1" style={{ color: mutedFaint }}>No applications awaiting your approval</p>
           </div>
         ) : (
           <div className="space-y-3 mb-8">
@@ -164,7 +168,7 @@ export default async function SuperAdminPage() {
               const lm = LEAVE_META[leave.leave_type] ?? LEAVE_META.normal;
               const d = days(leave.start_date, leave.end_date);
               return (
-                <div key={leave.id} className="bg-white rounded-2xl p-5" style={{ boxShadow: "var(--shadow-sm)" }}>
+                <div key={leave.id} className="rounded-2xl p-5" style={glassCard}>
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-3 mb-3">
@@ -173,8 +177,8 @@ export default async function SuperAdminPage() {
                           {leave.employee_name.charAt(0)}
                         </div>
                         <div>
-                          <p className="text-sm font-bold" style={{ color: "#1E293B" }}>{leave.employee_name}</p>
-                          <p className="text-xs" style={{ color: "#94A3B8" }}>
+                          <p className="text-sm font-semibold" style={{ color: ink }}>{leave.employee_name}</p>
+                          <p className="text-xs" style={{ color: mutedFaint }}>
                             {leave.employee_code && <span>{leave.employee_code} · </span>}
                             {leave.employee_email}
                             {leave.department && <span> · {leave.department}</span>}
@@ -183,27 +187,27 @@ export default async function SuperAdminPage() {
                       </div>
                       <div className="flex items-center gap-2 flex-wrap mb-3">
                         <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{ backgroundColor: lm.bg, color: lm.color }}>{lm.label} Leave</span>
-                        <span className="text-xs font-medium" style={{ color: "#64748B" }}>{fmt(leave.start_date)} — {fmt(leave.end_date)}</span>
-                        <span className="text-xs px-2 py-0.5 rounded font-medium" style={{ backgroundColor: "#F1F5F9", color: "#475569" }}>{d} day{d !== 1 ? "s" : ""}</span>
-                        <span className="text-xs px-2 py-0.5 rounded font-medium" style={{ backgroundColor: "#ECFDF5", color: "#065F46" }}>Admin reviewed</span>
+                        <span className="text-xs font-medium" style={{ color: muted }}>{fmt(leave.start_date)} — {fmt(leave.end_date)}</span>
+                        <span className="text-xs px-2 py-0.5 rounded font-medium" style={{ backgroundColor: "rgba(255,255,255,0.08)", color: muted }}>{d} day{d !== 1 ? "s" : ""}</span>
+                        <span className="text-xs px-2 py-0.5 rounded font-medium" style={{ backgroundColor: "rgba(110,231,183,0.15)", color: "#6EE7B7" }}>Admin reviewed</span>
                       </div>
                       <div className="grid sm:grid-cols-2 gap-2 mb-3">
-                        <div className="p-3 rounded-xl" style={{ backgroundColor: "#F8FAFC" }}>
-                          <p className="text-xs font-medium mb-0.5" style={{ color: "#64748B" }}>Reason</p>
-                          <p className="text-sm" style={{ color: "#1E293B" }}>{leave.reason}</p>
+                        <div className="p-3 rounded-xl" style={{ backgroundColor: "rgba(255,255,255,0.04)" }}>
+                          <p className="text-xs font-medium mb-0.5" style={{ color: muted }}>Reason</p>
+                          <p className="text-sm" style={{ color: ink }}>{leave.reason}</p>
                         </div>
                         {leave.admin_note && (
-                          <div className="p-3 rounded-xl" style={{ backgroundColor: "#EFF6FF" }}>
-                            <p className="text-xs font-medium mb-0.5" style={{ color: "#1D4ED8" }}>Admin Note</p>
-                            <p className="text-sm" style={{ color: "#1E293B" }}>{leave.admin_note}</p>
+                          <div className="p-3 rounded-xl" style={{ backgroundColor: "rgba(96,165,250,0.1)" }}>
+                            <p className="text-xs font-medium mb-0.5" style={{ color: "#93C5FD" }}>Admin Note</p>
+                            <p className="text-sm" style={{ color: ink }}>{leave.admin_note}</p>
                           </div>
                         )}
                       </div>
                       <LeaveActionButtons leaveId={leave.id} role="super_admin" />
                     </div>
                     <div className="shrink-0 text-right">
-                      <p className="text-xs" style={{ color: "#94A3B8" }}>Applied</p>
-                      <p className="text-xs font-semibold mt-0.5" style={{ color: "#64748B" }}>{fmt(leave.created_at)}</p>
+                      <p className="text-xs" style={{ color: mutedFaint }}>Applied</p>
+                      <p className="text-xs font-semibold mt-0.5" style={{ color: muted }}>{fmt(leave.created_at)}</p>
                     </div>
                   </div>
                 </div>

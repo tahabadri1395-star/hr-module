@@ -3,8 +3,9 @@
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { getISTDateTime } from "@/lib/time";
+import { adminPageBg, ARCH_PATTERN, ink, muted, mutedFaint, gold, glassCard, glassPill } from "@/lib/desktop-theme";
 
-interface Record {
+interface AttendanceRecord {
   id: number; employee_id: number; employee_name: string; department: string | null;
   employee_code: string | null; date: string; clock_in: string | null; clock_out: string | null;
   status: "present" | "late" | "absent" | "half_day"; notes: string | null; marked_by: string;
@@ -18,10 +19,10 @@ interface Summary {
 interface Employee { id: number; name: string; department: string | null; }
 
 const STATUS_META = {
-  present:  { label: "Present",  color: "#16A34A", bg: "#F0FDF4" },
-  late:     { label: "Late",     color: "#B45309", bg: "#FFFBEB" },
-  absent:   { label: "Absent",   color: "#DC2626", bg: "#FEF2F2" },
-  half_day: { label: "Half Day", color: "#2563EB", bg: "#EFF6FF" },
+  present:  { label: "Present",  color: "#4ADE80", bg: "rgba(74,222,128,0.15)" },
+  late:     { label: "Late",     color: "#D9B46C", bg: "rgba(217,180,108,0.15)" },
+  absent:   { label: "Absent",   color: "#F87171", bg: "rgba(248,113,113,0.15)" },
+  half_day: { label: "Half Day", color: "#93C5FD", bg: "rgba(96,165,250,0.15)" },
 };
 
 function fmtTime(t: string | null) { if (!t) return "—"; return new Date(`2000-01-01T${t}`).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }); }
@@ -31,7 +32,7 @@ export default function AdminAttendancePage() {
   const today = getISTDateTime().date;
   const monthStart = today.slice(0, 7) + "-01";
 
-  const [records, setRecords]   = useState<Record[]>([]);
+  const [records, setRecords]   = useState<AttendanceRecord[]>([]);
   const [summary, setSummary]   = useState<Summary[]>([]);
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [from, setFrom]         = useState(monthStart);
@@ -74,75 +75,75 @@ export default function AdminAttendancePage() {
     load();
   }
 
-  const totalDays = records.length ? [...new Set(records.map(r => r.date))].length : 0;
   const presentCount = records.filter(r => r.status === "present").length;
   const lateCount    = records.filter(r => r.status === "late").length;
   const absentCount  = records.filter(r => r.status === "absent").length;
 
+  const inputStyle = { borderColor: "rgba(255,255,255,0.14)", backgroundColor: "rgba(255,255,255,0.06)", color: ink };
+
   return (
-    <div className="min-h-screen" style={{ backgroundColor: "#0F172A" }}>
-      <nav className="px-6 h-14 flex items-center justify-between max-w-6xl mx-auto sticky top-0 z-20" style={{ backgroundColor: "#0F172A" }}>
+    <div className="min-h-screen relative" style={{ background: adminPageBg }}>
+      <div aria-hidden className="absolute inset-0 pointer-events-none" style={{ backgroundImage: `url("${ARCH_PATTERN}")`, backgroundSize: "120px 120px" }} />
+      <nav className="px-6 h-14 flex items-center justify-between sticky top-0 z-10 relative"
+        style={{ backgroundColor: "rgba(11,14,23,0.75)", backdropFilter: "blur(20px)", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
         <div className="flex items-center gap-3">
           <div className="w-11 h-11 rounded-lg flex items-center justify-center p-1.5" style={{ backgroundColor: "#F59E0B" }}>
             <img src="/estate-mark.png" alt="Estate Department" className="w-full h-full object-contain" />
           </div>
-          <span className="font-bold text-sm text-white">HR Module</span>
+          <span className="font-semibold text-sm" style={{ color: ink }}>HR Module</span>
         </div>
-        <Link href="/admin" className="text-xs" style={{ color: "#475569" }}>← Dashboard</Link>
+        <Link href="/admin" className="text-xs" style={{ color: muted }}>← Dashboard</Link>
       </nav>
 
-      <div className="px-6 pb-6 pt-2 max-w-6xl mx-auto">
+      <div className="max-w-6xl mx-auto px-6 py-8 relative">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h1 className="text-2xl font-bold text-white">Time & Attendance</h1>
-            <p className="text-sm mt-0.5" style={{ color: "#475569" }}>Monitor KG attendance and clock-in records</p>
+            <h1 className="text-2xl font-semibold" style={{ color: ink }}>Time & Attendance</h1>
+            <p className="text-sm mt-0.5" style={{ color: muted }}>Monitor KG attendance and clock-in records</p>
           </div>
           <button onClick={() => { setShowForm(true); setMsg(""); }}
-            className="text-sm font-semibold px-4 py-2 rounded-xl text-black"
-            style={{ backgroundColor: "#F59E0B" }}>
+            className="text-sm font-semibold px-4 py-2 rounded-xl"
+            style={{ backgroundColor: gold, color: "#1B1630" }}>
             + Mark Attendance
           </button>
         </div>
 
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-3 gap-3 mb-6">
           {[
             { label: "Present", value: presentCount, color: "#4ADE80" },
-            { label: "Late",    value: lateCount,    color: "#FBBF24" },
+            { label: "Late",    value: lateCount,    color: "#D9B46C" },
             { label: "Absent",  value: absentCount,  color: "#F87171" },
           ].map(s => (
-            <div key={s.label} className="rounded-xl px-4 py-3 text-center" style={{ backgroundColor: "#1E293B" }}>
+            <div key={s.label} className="rounded-xl px-4 py-3 text-center" style={glassCard}>
               <p className="text-xl font-bold" style={{ color: s.color }}>{s.value}</p>
-              <p className="text-xs" style={{ color: "#475569" }}>{s.label}</p>
+              <p className="text-xs" style={{ color: muted }}>{s.label}</p>
             </div>
           ))}
         </div>
-      </div>
-
-      <div className="rounded-t-3xl min-h-screen px-6 py-6 max-w-6xl mx-auto" style={{ backgroundColor: "#F1F5F9" }}>
 
         {/* Mark form */}
         {showForm && (
-          <div className="bg-white rounded-2xl p-6 mb-5 shadow-sm" style={{ border: "2px solid #F59E0B" }}>
-            <h2 className="text-sm font-bold mb-4" style={{ color: "#1E293B" }}>Mark Attendance</h2>
-            {msg && <p className="mb-3 text-xs" style={{ color: "#DC2626" }}>{msg}</p>}
+          <div className="rounded-2xl p-6 mb-5" style={{ ...glassCard, border: "1px solid rgba(217,180,108,0.4)" }}>
+            <h2 className="text-sm font-semibold mb-4" style={{ color: ink }}>Mark Attendance</h2>
+            {msg && <p className="mb-3 text-xs" style={{ color: "#F87171" }}>{msg}</p>}
             <div className="grid grid-cols-2 gap-3 mb-3">
               <div>
-                <label className="block text-xs font-medium mb-1.5" style={{ color: "#64748B" }}>Khidmat Guzar *</label>
+                <label className="block text-xs font-medium mb-1.5" style={{ color: muted }}>Khidmat Guzar *</label>
                 <select value={form.employee_id} onChange={e => setForm(f => ({ ...f, employee_id: e.target.value }))}
-                  className="w-full px-3.5 py-2.5 rounded-xl text-sm border outline-none" style={{ borderColor: "#E2E8F0", color: "#1E293B" }}>
+                  className="w-full px-3.5 py-2.5 rounded-xl text-sm border outline-none glass-input" style={inputStyle}>
                   <option value="">Select…</option>
                   {employees.map(e => <option key={e.id} value={e.id}>{e.name}{e.department ? ` — ${e.department}` : ""}</option>)}
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-medium mb-1.5" style={{ color: "#64748B" }}>Date *</label>
+                <label className="block text-xs font-medium mb-1.5" style={{ color: muted }}>Date *</label>
                 <input type="date" value={form.date} onChange={e => setForm(f => ({ ...f, date: e.target.value }))}
-                  className="w-full px-3.5 py-2.5 rounded-xl text-sm border outline-none" style={{ borderColor: "#E2E8F0", color: "#1E293B" }} />
+                  className="w-full px-3.5 py-2.5 rounded-xl text-sm border outline-none glass-input" style={inputStyle} />
               </div>
               <div>
-                <label className="block text-xs font-medium mb-1.5" style={{ color: "#64748B" }}>Status *</label>
+                <label className="block text-xs font-medium mb-1.5" style={{ color: muted }}>Status *</label>
                 <select value={form.status} onChange={e => setForm(f => ({ ...f, status: e.target.value }))}
-                  className="w-full px-3.5 py-2.5 rounded-xl text-sm border outline-none" style={{ borderColor: "#E2E8F0", color: "#1E293B" }}>
+                  className="w-full px-3.5 py-2.5 rounded-xl text-sm border outline-none glass-input" style={inputStyle}>
                   <option value="present">Present</option>
                   <option value="late">Late</option>
                   <option value="absent">Absent</option>
@@ -150,28 +151,28 @@ export default function AdminAttendancePage() {
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-medium mb-1.5" style={{ color: "#64748B" }}>Notes</label>
+                <label className="block text-xs font-medium mb-1.5" style={{ color: muted }}>Notes</label>
                 <input value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))} placeholder="Optional"
-                  className="w-full px-3.5 py-2.5 rounded-xl text-sm border outline-none" style={{ borderColor: "#E2E8F0", color: "#1E293B" }} />
+                  className="w-full px-3.5 py-2.5 rounded-xl text-sm border outline-none glass-input" style={inputStyle} />
               </div>
               <div>
-                <label className="block text-xs font-medium mb-1.5" style={{ color: "#64748B" }}>Clock In</label>
+                <label className="block text-xs font-medium mb-1.5" style={{ color: muted }}>Clock In</label>
                 <input type="time" value={form.clock_in} onChange={e => setForm(f => ({ ...f, clock_in: e.target.value }))}
-                  className="w-full px-3.5 py-2.5 rounded-xl text-sm border outline-none" style={{ borderColor: "#E2E8F0", color: "#1E293B" }} />
+                  className="w-full px-3.5 py-2.5 rounded-xl text-sm border outline-none glass-input" style={inputStyle} />
               </div>
               <div>
-                <label className="block text-xs font-medium mb-1.5" style={{ color: "#64748B" }}>Clock Out</label>
+                <label className="block text-xs font-medium mb-1.5" style={{ color: muted }}>Clock Out</label>
                 <input type="time" value={form.clock_out} onChange={e => setForm(f => ({ ...f, clock_out: e.target.value }))}
-                  className="w-full px-3.5 py-2.5 rounded-xl text-sm border outline-none" style={{ borderColor: "#E2E8F0", color: "#1E293B" }} />
+                  className="w-full px-3.5 py-2.5 rounded-xl text-sm border outline-none glass-input" style={inputStyle} />
               </div>
             </div>
             <div className="flex gap-3">
               <button onClick={save} disabled={saving}
-                className="text-sm font-semibold px-5 py-2 rounded-xl text-black"
-                style={{ backgroundColor: "#F59E0B", opacity: saving ? 0.7 : 1 }}>
+                className="text-sm font-semibold px-5 py-2 rounded-xl"
+                style={{ backgroundColor: gold, color: "#1B1630", opacity: saving ? 0.7 : 1 }}>
                 {saving ? "Saving…" : "Save"}
               </button>
-              <button onClick={() => setShowForm(false)} className="text-sm px-4 py-2 rounded-xl border" style={{ borderColor: "#E2E8F0", color: "#64748B" }}>Cancel</button>
+              <button onClick={() => setShowForm(false)} className="text-sm px-4 py-2 rounded-xl border" style={{ borderColor: "rgba(255,255,255,0.16)", color: muted }}>Cancel</button>
             </div>
           </div>
         )}
@@ -179,20 +180,20 @@ export default function AdminAttendancePage() {
         {/* Filters */}
         <div className="flex flex-wrap gap-2 mb-4">
           <input type="date" value={from} onChange={e => setFrom(e.target.value)}
-            className="px-3 py-1.5 rounded-xl text-xs border bg-white outline-none" style={{ borderColor: "#E2E8F0", color: "#1E293B" }} />
-          <span className="text-xs self-center" style={{ color: "#94A3B8" }}>to</span>
+            className="px-3 py-1.5 rounded-xl text-xs border outline-none glass-input" style={inputStyle} />
+          <span className="text-xs self-center" style={{ color: mutedFaint }}>to</span>
           <input type="date" value={to} onChange={e => setTo(e.target.value)}
-            className="px-3 py-1.5 rounded-xl text-xs border bg-white outline-none" style={{ borderColor: "#E2E8F0", color: "#1E293B" }} />
+            className="px-3 py-1.5 rounded-xl text-xs border outline-none glass-input" style={inputStyle} />
           <select value={empFilter} onChange={e => setEmpFilter(e.target.value)}
-            className="px-3 py-1.5 rounded-xl text-xs border bg-white outline-none" style={{ borderColor: "#E2E8F0", color: "#1E293B" }}>
+            className="px-3 py-1.5 rounded-xl text-xs border outline-none glass-input" style={inputStyle}>
             <option value="">All KGs</option>
             {employees.map(e => <option key={e.id} value={e.id}>{e.name}</option>)}
           </select>
-          <div className="flex gap-1 p-1 rounded-xl bg-white shadow-sm" style={{ boxShadow: "var(--shadow-sm)" }}>
+          <div className="flex gap-1 p-1 rounded-xl" style={glassPill}>
             {(["summary", "records"] as const).map(v => (
               <button key={v} onClick={() => setView(v)}
                 className="text-xs px-3 py-1.5 rounded-lg font-medium capitalize"
-                style={{ backgroundColor: view === v ? "#0F172A" : "transparent", color: view === v ? "white" : "#64748B" }}>
+                style={{ backgroundColor: view === v ? gold : "transparent", color: view === v ? "#1B1630" : muted }}>
                 {v}
               </button>
             ))}
@@ -201,30 +202,30 @@ export default function AdminAttendancePage() {
 
         {/* Summary view */}
         {view === "summary" && (
-          <div className="bg-white rounded-2xl overflow-hidden shadow-sm" style={{ boxShadow: "var(--shadow-sm)" }}>
-            <div className="grid grid-cols-7 px-5 py-3 text-xs font-semibold" style={{ backgroundColor: "#F8FAFC", borderBottom: "1px solid #F1F5F9", color: "#64748B" }}>
+          <div className="rounded-2xl overflow-hidden" style={glassCard}>
+            <div className="grid grid-cols-7 px-5 py-3 text-xs font-semibold" style={{ backgroundColor: "rgba(255,255,255,0.04)", borderBottom: "1px solid rgba(255,255,255,0.08)", color: muted }}>
               <div className="col-span-2">Khidmat Guzar</div>
-              <div className="text-center" style={{ color: "#16A34A" }}>Present</div>
-              <div className="text-center" style={{ color: "#B45309" }}>Late</div>
-              <div className="text-center" style={{ color: "#DC2626" }}>Absent</div>
-              <div className="text-center" style={{ color: "#2563EB" }}>Half Day</div>
+              <div className="text-center" style={{ color: "#4ADE80" }}>Present</div>
+              <div className="text-center" style={{ color: "#D9B46C" }}>Late</div>
+              <div className="text-center" style={{ color: "#F87171" }}>Absent</div>
+              <div className="text-center" style={{ color: "#93C5FD" }}>Half Day</div>
               <div className="text-center">Total</div>
             </div>
             {summary.length === 0 ? (
-              <div className="py-12 text-center"><p className="text-sm" style={{ color: "#94A3B8" }}>No records for this period</p></div>
+              <div className="py-12 text-center"><p className="text-sm" style={{ color: mutedFaint }}>No records for this period</p></div>
             ) : (
-              <div className="divide-y" style={{ borderColor: "#F8FAFC" }}>
+              <div className="divide-y" style={{ borderColor: "rgba(255,255,255,0.06)" }}>
                 {summary.map(row => (
-                  <div key={row.id} className="grid grid-cols-7 px-5 py-3 items-center hover:bg-gray-50">
+                  <div key={row.id} className="grid grid-cols-7 px-5 py-3 items-center">
                     <div className="col-span-2">
-                      <p className="text-sm font-semibold" style={{ color: "#1E293B" }}>{row.name}</p>
-                      {row.department && <p className="text-xs" style={{ color: "#94A3B8" }}>{row.department}</p>}
+                      <p className="text-sm font-semibold" style={{ color: ink }}>{row.name}</p>
+                      {row.department && <p className="text-xs" style={{ color: mutedFaint }}>{row.department}</p>}
                     </div>
-                    <div className="text-center text-sm font-bold" style={{ color: "#16A34A" }}>{row.present}</div>
-                    <div className="text-center text-sm font-bold" style={{ color: "#B45309" }}>{row.late}</div>
-                    <div className="text-center text-sm font-bold" style={{ color: "#DC2626" }}>{row.absent}</div>
-                    <div className="text-center text-sm font-bold" style={{ color: "#2563EB" }}>{row.half_day}</div>
-                    <div className="text-center text-sm" style={{ color: "#64748B" }}>{row.total_marked}</div>
+                    <div className="text-center text-sm font-bold" style={{ color: "#4ADE80" }}>{row.present}</div>
+                    <div className="text-center text-sm font-bold" style={{ color: "#D9B46C" }}>{row.late}</div>
+                    <div className="text-center text-sm font-bold" style={{ color: "#F87171" }}>{row.absent}</div>
+                    <div className="text-center text-sm font-bold" style={{ color: "#93C5FD" }}>{row.half_day}</div>
+                    <div className="text-center text-sm" style={{ color: muted }}>{row.total_marked}</div>
                   </div>
                 ))}
               </div>
@@ -236,34 +237,34 @@ export default function AdminAttendancePage() {
         {view === "records" && (
           <div className="space-y-2">
             {records.length === 0 ? (
-              <div className="bg-white rounded-2xl py-12 text-center" style={{ boxShadow: "var(--shadow-sm)" }}>
-                <p className="text-sm" style={{ color: "#94A3B8" }}>No records for this period</p>
+              <div className="rounded-2xl py-12 text-center" style={glassCard}>
+                <p className="text-sm" style={{ color: mutedFaint }}>No records for this period</p>
               </div>
             ) : records.map(rec => {
               const meta = STATUS_META[rec.status];
               return (
-                <div key={rec.id} className="bg-white rounded-2xl px-5 py-3.5 flex items-center gap-3" style={{ boxShadow: "var(--shadow-sm)" }}>
+                <div key={rec.id} className="rounded-2xl px-5 py-3.5 flex items-center gap-3" style={glassCard}>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-0.5">
-                      <p className="text-sm font-semibold" style={{ color: "#1E293B" }}>{rec.employee_name}</p>
-                      {rec.department && <span className="text-xs px-1.5 py-0.5 rounded" style={{ backgroundColor: "#F1F5F9", color: "#64748B" }}>{rec.department}</span>}
+                      <p className="text-sm font-semibold" style={{ color: ink }}>{rec.employee_name}</p>
+                      {rec.department && <span className="text-xs px-1.5 py-0.5 rounded" style={glassPill}>{rec.department}</span>}
                     </div>
-                    <p className="text-xs" style={{ color: "#94A3B8" }}>
+                    <p className="text-xs" style={{ color: mutedFaint }}>
                       {fmtDate(rec.date)} · {fmtTime(rec.clock_in)} {rec.clock_out ? `→ ${fmtTime(rec.clock_out)}` : ""}
                       {rec.marked_by !== "self" && rec.marked_by !== "site_visit" ? ` · marked by ${rec.marked_by}` : ""}
                     </p>
                     {rec.marked_by === "site_visit" && (
-                      <p className="text-xs mt-0.5" style={{ color: "#7C3AED" }}>🧳 Auto-marked — approved site visit/travel</p>
+                      <p className="text-xs mt-0.5" style={{ color: "#C4B5FD" }}>🧳 Auto-marked — approved site visit/travel</p>
                     )}
                     {rec.marked_by === "self" && (
-                      <p className="text-xs mt-0.5" style={{ color: rec.clock_in_location_name ? "#16A34A" : "#DC2626" }}>
+                      <p className="text-xs mt-0.5" style={{ color: rec.clock_in_location_name ? "#4ADE80" : "#F87171" }}>
                         📍 {rec.clock_in_location_name || (rec.clock_in_lat ? "Location recorded, no site configured" : "No location recorded")}
                       </p>
                     )}
-                    {rec.notes && <p className="text-xs mt-0.5 italic" style={{ color: "#94A3B8" }}>{rec.notes}</p>}
+                    {rec.notes && <p className="text-xs mt-0.5 italic" style={{ color: mutedFaint }}>{rec.notes}</p>}
                   </div>
                   <span className="text-xs font-semibold px-2 py-0.5 rounded-full shrink-0" style={{ backgroundColor: meta.bg, color: meta.color }}>{meta.label}</span>
-                  <button onClick={() => del(rec.id)} className="text-xs px-2 py-1 rounded-lg border shrink-0" style={{ borderColor: "#FECACA", color: "#DC2626", backgroundColor: "#FEF2F2" }}>Del</button>
+                  <button onClick={() => del(rec.id)} className="text-xs px-2 py-1 rounded-lg border shrink-0" style={{ borderColor: "rgba(248,113,113,0.35)", color: "#F87171", backgroundColor: "rgba(248,113,113,0.1)" }}>Del</button>
                 </div>
               );
             })}

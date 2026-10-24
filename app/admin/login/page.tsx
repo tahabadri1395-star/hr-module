@@ -40,7 +40,7 @@ export default function AdminLoginPage() {
   return (
     <div
       className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden"
-      style={{ background: "radial-gradient(circle at 20% 15%, #1E293B, transparent 55%), radial-gradient(circle at 85% 80%, #334155, transparent 50%), linear-gradient(160deg, #0B0E17 0%, #111827 55%, #0F172A 100%)" }}
+      style={{ background: "radial-gradient(circle at 20% 15%, #4B5A70, transparent 55%), radial-gradient(circle at 85% 80%, #56647A, transparent 50%), linear-gradient(160deg, #283244 0%, #2F3A4D 55%, #344055 100%)" }}
     >
       <div aria-hidden className="absolute inset-0 pointer-events-none" style={{ backgroundImage: `url("${ARCH_PATTERN}")`, backgroundSize: "120px 120px" }} />
       <div aria-hidden className="absolute pointer-events-none" style={{

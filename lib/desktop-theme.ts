@@ -8,12 +8,12 @@ export const ARCH_PATTERN = `data:image/svg+xml,${encodeURIComponent(`
 </svg>
 `)}`;
 
-export const pageBg = "radial-gradient(circle at 20% 15%, #2A2560, transparent 55%), radial-gradient(circle at 85% 80%, #3B2F6E, transparent 50%), linear-gradient(160deg, #14152B 0%, #1B1B3A 55%, #211A3E 100%)";
-export const adminPageBg = "radial-gradient(circle at 20% 15%, #1E293B, transparent 55%), radial-gradient(circle at 85% 80%, #334155, transparent 50%), linear-gradient(160deg, #0B0E17 0%, #111827 55%, #0F172A 100%)";
+export const pageBg = "radial-gradient(circle at 20% 15%, #5A7090, transparent 55%), radial-gradient(circle at 85% 80%, #64708C, transparent 50%), linear-gradient(160deg, #34425A 0%, #3B4A63 55%, #424D68 100%)";
+export const adminPageBg = "radial-gradient(circle at 20% 15%, #4B5A70, transparent 55%), radial-gradient(circle at 85% 80%, #56647A, transparent 50%), linear-gradient(160deg, #283244 0%, #2F3A4D 55%, #344055 100%)";
 
 export const ink = "#FFFFFF";
-export const muted = "rgba(255,255,255,0.6)";
-export const mutedFaint = "rgba(255,255,255,0.45)";
+export const muted = "rgba(255,255,255,0.72)";
+export const mutedFaint = "rgba(255,255,255,0.58)";
 export const gold = "#D9B46C";
 export const goldSolid = "#C9A05C";
 

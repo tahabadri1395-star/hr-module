@@ -39,12 +39,12 @@ export default function LoginPage() {
   return (
     <div
       className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden"
-      style={{ background: "radial-gradient(circle at 20% 15%, #2A2560, transparent 55%), radial-gradient(circle at 85% 80%, #3B2F6E, transparent 50%), linear-gradient(160deg, #14152B 0%, #1B1B3A 55%, #211A3E 100%)" }}
+      style={{ background: "radial-gradient(circle at 20% 15%, #5A7090, transparent 55%), radial-gradient(circle at 85% 80%, #64708C, transparent 50%), linear-gradient(160deg, #34425A 0%, #3B4A63 55%, #424D68 100%)" }}
     >
       <div aria-hidden className="absolute inset-0 pointer-events-none" style={{ backgroundImage: `url("${ARCH_PATTERN}")`, backgroundSize: "120px 120px" }} />
       <div aria-hidden className="absolute pointer-events-none" style={{
         top: "-140px", right: "-100px", width: "480px", height: "480px", borderRadius: "9999px",
-        background: "radial-gradient(circle, rgba(124,58,237,0.22), transparent 70%)",
+        background: "radial-gradient(circle, rgba(170,195,225,0.20), transparent 70%)",
       }} />
       <div aria-hidden className="absolute pointer-events-none" style={{
         bottom: "-160px", left: "-120px", width: "500px", height: "500px", borderRadius: "9999px",

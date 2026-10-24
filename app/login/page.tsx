@@ -54,7 +54,7 @@ export default function LoginPage() {
       <div className="w-full max-w-sm relative">
         <div className="text-center mb-6 animate-in">
           <div className="inline-flex items-center justify-center mb-2">
-            <Image src="/estate-logo-white.png" alt="Estate Department" width={880} height={900} priority className="w-36 h-auto" />
+            <Image src="/estate-logo-white-v2.png" alt="Estate Department" width={880} height={900} priority className="w-36 h-auto" />
           </div>
           <h1 className="text-2xl font-semibold tracking-tight text-white">Khidmat Guzar Portal</h1>
           <p className="text-sm mt-1.5" style={{ color: "rgba(255,255,255,0.6)" }}>Sign in to access your HR portal</p>
